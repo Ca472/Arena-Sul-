@@ -5,34 +5,15 @@
 -- full read access so the dashboard can preview, update and remove draft media.
 
 -- Projects created with broad default ACLs may grant API roles operations such
--- as TRUNCATE, which bypasses RLS. Rebuild the privilege contract explicitly.
-do $$
-declare
-  owner_role text;
-begin
-  foreach owner_role in array array['postgres', 'supabase_admin']
-  loop
-    if exists (select 1 from pg_roles where rolname = owner_role)
-      and (
-        current_user = owner_role
-        or pg_has_role(current_user, owner_role, 'MEMBER')
-      ) then
-      execute format(
-        'alter default privileges for role %I in schema public revoke all privileges on tables from anon, authenticated',
-        owner_role
-      );
-      execute format(
-        'alter default privileges for role %I in schema public revoke all privileges on sequences from anon, authenticated',
-        owner_role
-      );
-      execute format(
-        'alter default privileges for role %I in schema public revoke execute on functions from public, anon, authenticated',
-        owner_role
-      );
-    end if;
-  end loop;
-end;
-$$;
+-- as TRUNCATE, which bypasses RLS. Rebuild the application-owner defaults
+-- explicitly. Supabase executes migrations as `postgres`; that role cannot
+-- change defaults owned by the platform-managed `supabase_admin` role.
+alter default privileges for role postgres in schema public
+  revoke all privileges on tables from anon, authenticated;
+alter default privileges for role postgres in schema public
+  revoke all privileges on sequences from anon, authenticated;
+alter default privileges for role postgres in schema public
+  revoke execute on functions from public, anon, authenticated;
 
 revoke all privileges on table
   public.admins,
