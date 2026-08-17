@@ -7,7 +7,7 @@ import { LoginForm } from "@/app/admin/login/login-form";
 import { getRuntimeMode } from "@/lib/config/runtime";
 
 type LoginPageProps = {
-  searchParams: Promise<{ erro?: string }>;
+  searchParams: Promise<{ erro?: string; senha?: string }>;
 };
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
-  const [{ erro }, mode] = await Promise.all([
+  const [{ erro, senha }, mode] = await Promise.all([
     searchParams,
     Promise.resolve(getRuntimeMode()),
   ]);
@@ -52,6 +52,24 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         {erro === "acesso" ? (
           <div className={styles.errorNotice} role="alert">
             A sessão não possui acesso administrativo.
+          </div>
+        ) : null}
+
+        {erro === "convite" ? (
+          <div className={styles.errorNotice} role="alert">
+            O convite é inválido ou expirou. Solicite um novo convite administrativo.
+          </div>
+        ) : null}
+
+        {erro === "sessao" ? (
+          <div className={styles.errorNotice} role="alert">
+            A sessão do convite expirou. Abra novamente o link recebido por e-mail.
+          </div>
+        ) : null}
+
+        {senha === "definida" ? (
+          <div className={styles.successNotice} role="status">
+            Senha definida com sucesso. Entre com seu e-mail e a nova senha.
           </div>
         ) : null}
 

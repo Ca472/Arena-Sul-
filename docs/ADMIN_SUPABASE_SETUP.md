@@ -27,13 +27,29 @@ Se nenhuma variável for configurada, o clone local também abre no modo demonst
 2. Aplique, nesta ordem, as migrações em `supabase/migrations/`. Prefira o CLI (`supabase db push`) para manter o histórico remoto alinhado.
 3. Em **Integrations → Data API → Settings**, desabilite **Automatically expose new tables and functions**. As migrações concedem explicitamente apenas os privilégios usados pelo portal.
 4. Em **Authentication → Providers**, mantenha o provedor de e-mail habilitado.
-5. Em **Authentication → Users**, crie cada usuário administrador com e-mail e senha.
-6. Para cada usuário, copie o UUID e registre a autorização no SQL Editor:
+5. Configure o fluxo de convite descrito abaixo e envie o convite em **Authentication → Users → Send invitation**.
+6. Assim que o convite criar o usuário, copie o UUID e registre a autorização no SQL Editor:
 
 ```sql
 insert into public.admins (user_id, display_name)
 values ('UUID_DO_USUARIO', 'Nome da pessoa');
 ```
+
+### Primeiro acesso por convite
+
+Em **Authentication → URL Configuration**, mantenha como **Site URL** a origem HTTPS em que o fluxo de autenticação realmente está publicado. A configuração do Supabase Auth é independente de `NEXT_PUBLIC_SITE_URL`. Não envie um convite apontando para localhost, para um deploy antigo ou para um Preview bloqueado por uma tela de login intermediária.
+
+Em **Authentication → Email Templates → Invite user**, use o endpoint SSR do portal:
+
+```html
+<a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite">
+  Aceitar convite e definir senha
+</a>
+```
+
+O callback aceita somente convites, troca o token de uso único por uma sessão em cookie e redireciona para `/admin/definir-senha`. O titular escolhe a própria senha e é desconectado em seguida, devendo comprovar a nova credencial no login normal. O callback nunca concede autorização administrativa: o acesso depende exclusivamente do UUID presente em `public.admins`.
+
+Configure também a política de senha no próprio Supabase Auth — não apenas na interface — com pelo menos 12 caracteres, letra maiúscula, letra minúscula, número e símbolo. Ative a proteção contra senhas vazadas se o plano permitir. Para um portal somente por convite, desabilite novos cadastros públicos.
 
 A migração cria:
 

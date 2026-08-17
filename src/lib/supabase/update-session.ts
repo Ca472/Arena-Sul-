@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { getPublicSupabaseConfig } from "@/lib/config/runtime";
+import { SUPABASE_COOKIE_OPTIONS } from "@/lib/supabase/cookie-options";
 import type { Database } from "@/lib/supabase/database.types";
 
 export type SessionRefreshResult = {
@@ -20,13 +21,17 @@ export async function refreshSupabaseSession(
   }
 
   const supabase = createServerClient<Database>(config.url, config.anonKey, {
+    cookieOptions: SUPABASE_COOKIE_OPTIONS,
     cookies: {
       getAll: () => request.cookies.getAll(),
-      setAll(cookiesToSet) {
+      setAll(cookiesToSet, headers) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
         response = NextResponse.next({ request });
         cookiesToSet.forEach(({ name, value, options }) => {
           response.cookies.set(name, value, options);
+        });
+        Object.entries(headers).forEach(([name, value]) => {
+          response.headers.set(name, value);
         });
       },
     },
@@ -37,6 +42,15 @@ export async function refreshSupabaseSession(
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // Every administrative response is user-specific. This also protects the
+  // uncommon case where a token refresh writes Set-Cookie headers at the edge.
+  response.headers.set(
+    "Cache-Control",
+    "private, no-cache, no-store, must-revalidate, max-age=0",
+  );
+  response.headers.set("Expires", "0");
+  response.headers.set("Pragma", "no-cache");
 
   return { response, userId: user?.id ?? null };
 }
