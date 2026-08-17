@@ -6,6 +6,9 @@ import { refreshSupabaseSession } from "@/lib/supabase/update-session";
 export async function proxy(request: NextRequest) {
   const mode = getRuntimeMode();
   const isLogin = request.nextUrl.pathname === "/admin/login";
+  const isPasswordRecoveryRequest =
+    request.nextUrl.pathname === "/admin/recuperar-senha";
+  const isPublicAdminRoute = isLogin || isPasswordRecoveryRequest;
   const isPasswordSetup = request.nextUrl.pathname === "/admin/definir-senha";
 
   if (mode === "demo") {
@@ -13,7 +16,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (mode === "misconfigured") {
-    if (!isLogin) {
+    if (!isPublicAdminRoute) {
       const loginUrl = new URL("/admin/login", request.url);
       loginUrl.searchParams.set("erro", "configuracao");
       return NextResponse.redirect(loginUrl);
@@ -23,7 +26,7 @@ export async function proxy(request: NextRequest) {
 
   const { response, userId } = await refreshSupabaseSession(request);
 
-  if (!userId && !isLogin) {
+  if (!userId && !isPublicAdminRoute) {
     const loginUrl = new URL("/admin/login", request.url);
     if (isPasswordSetup) {
       loginUrl.searchParams.set("erro", "sessao");

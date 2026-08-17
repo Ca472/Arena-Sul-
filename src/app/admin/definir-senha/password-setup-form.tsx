@@ -65,6 +65,24 @@ export function PasswordSetupForm() {
       return;
     }
 
+    const { data: admin, error: adminError } = await supabase
+      .from("admins")
+      .select("user_id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (adminError) {
+      setMessage("Não foi possível confirmar o acesso. Tente novamente.");
+      setPending(false);
+      return;
+    }
+
+    if (!admin) {
+      await supabase.auth.signOut({ scope: "local" });
+      window.location.replace("/admin/login?erro=acesso");
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser({
       password: parsed.data.password,
     });
@@ -73,16 +91,22 @@ export function PasswordSetupForm() {
       setMessage(
         error.code === "weak_password"
           ? "O Supabase recusou essa senha. Escolha uma combinação mais forte."
-          : "Não foi possível definir a senha. Tente novamente nesta página; se a sessão expirar, solicite um novo convite.",
+          : "Não foi possível definir a senha. Tente novamente nesta página; se a sessão expirar, solicite uma nova recuperação.",
       );
       setPending(false);
       return;
     }
 
-    // Require a fresh password login after onboarding. This proves that the
-    // chosen password works and avoids leaving the one-time invite session open.
-    await supabase.auth.signOut();
-    window.location.replace("/admin/login?senha=definida");
+    // Require a fresh password login after an invitation or recovery. This
+    // proves that the chosen credential works and closes the temporary session.
+    const { error: signOutError } = await supabase.auth.signOut({
+      scope: "global",
+    });
+    window.location.replace(
+      signOutError
+        ? "/admin/login?senha=definida&erro=encerramento"
+        : "/admin/login?senha=definida",
+    );
   }
 
   return (

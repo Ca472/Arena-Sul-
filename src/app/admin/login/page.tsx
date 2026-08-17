@@ -63,7 +63,23 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
 
         {erro === "sessao" ? (
           <div className={styles.errorNotice} role="alert">
-            A sessão do convite expirou. Abra novamente o link recebido por e-mail.
+            A sessão segura expirou. Abra novamente o link recebido ou solicite
+            uma nova recuperação de senha.
+          </div>
+        ) : null}
+
+        {erro === "recuperacao" ? (
+          <div className={styles.errorNotice} role="alert">
+            O link de recuperação é inválido, expirou ou foi aberto em outro
+            navegador. Solicite um novo link e abra-o no mesmo navegador.
+          </div>
+        ) : null}
+
+        {erro === "encerramento" ? (
+          <div className={styles.errorNotice} role="alert">
+            A senha foi alterada, mas não foi possível confirmar o encerramento
+            de todas as sessões. Feche o portal nos outros dispositivos antes
+            de entrar novamente.
           </div>
         ) : null}
 
@@ -83,7 +99,12 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
             </Link>
           </>
         ) : (
-          <LoginForm />
+          <>
+            <LoginForm />
+            <p className={styles.accountHelp}>
+              <Link href="/admin/recuperar-senha">Esqueci minha senha</Link>
+            </p>
+          </>
         )}
 
         <p className={styles.loginFooter}>

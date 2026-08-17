@@ -51,6 +51,29 @@ O callback aceita somente convites, troca o token de uso único por uma sessão 
 
 Configure também a política de senha no próprio Supabase Auth — não apenas na interface — com pelo menos 12 caracteres, letra maiúscula, letra minúscula, número e símbolo. Ative a proteção contra senhas vazadas se o plano permitir. Para um portal somente por convite, desabilite novos cadastros públicos.
 
+### Recuperação de senha
+
+Em **Authentication → URL Configuration → Redirect URLs**, autorize exatamente
+o callback de cada ambiente utilizado, por exemplo:
+
+```text
+https://SEU-DOMINIO.com.br/auth/recovery
+```
+
+Mantenha o link `{{ .ConfirmationURL }}` no template padrão de **Reset
+Password**. O formulário público em `/admin/recuperar-senha` chama
+`resetPasswordForEmail` com um `redirectTo` fixo para `/auth/recovery`. A tela
+sempre responde de forma genérica, exista ou não uma conta, evitando enumeração
+de administradores.
+
+O fluxo usa PKCE: o navegador que solicita a recuperação guarda temporariamente
+o verificador em cookie, e o callback servidor aceita somente o `code` de uso
+único. Por isso, o link do e-mail deve ser aberto no mesmo navegador e
+dispositivo em que foi solicitado. O callback grava a sessão em cookies,
+revalida o usuário no Supabase e confirma o UUID em `public.admins` antes de
+liberar `/admin/definir-senha`. Ele não aceita destino arbitrário, não processa
+tokens no navegador e não usa chave `service_role`.
+
 A migração cria:
 
 - `admins`: lista explícita de usuários autorizados;
@@ -140,6 +163,10 @@ As duas consultas públicas chamam `connection()` no modo Supabase. Isso força 
 - Publique o evento e confirme que ele passa a aparecer.
 - Remova uma foto e confirme a exclusão no banco e no Storage.
 - Tente acessar `/admin` em uma janela anônima e confirme o redirecionamento para `/admin/login`.
+- Solicite a recuperação para um e-mail inexistente e confirme que a resposta é idêntica à de um administrador.
+- Abra o link de recuperação no mesmo navegador, defina a senha e confirme que uma nova autenticação é exigida.
+- Abra o link em outro navegador e confirme a falha genérica, sem sessão nem token visível na URL final.
+- Tente concluir o callback com um usuário fora de `public.admins` e confirme a remoção da sessão e a negação de acesso.
 - Verifique no deploy que `DEMO_MODE=false` está configurado.
 - Confirme que o Security Advisor não apresenta alertas e que a exposição automática de novos objetos da Data API está desabilitada.
 - Se as migrações foram executadas pelo SQL Editor, confirme que as duas versões aparecem como local e remota em `supabase migration list`.

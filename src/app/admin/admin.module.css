@@ -683,6 +683,18 @@
   font-weight: 750;
 }
 
+.accountHelp {
+  margin: 14px 0 0;
+  color: var(--admin-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.accountHelp a {
+  color: var(--admin-green);
+  font-weight: 750;
+}
+
 @media (max-width: 900px) {
   .shellGrid {
     grid-template-columns: 1fr;

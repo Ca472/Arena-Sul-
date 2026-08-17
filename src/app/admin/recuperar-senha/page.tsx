@@ -1,19 +1,19 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { Metadata } from "next";
-import { connection } from "next/server";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 
 import styles from "@/app/admin/admin.module.css";
-import { PasswordSetupForm } from "@/app/admin/definir-senha/password-setup-form";
-import { getAdminIdentity } from "@/lib/auth/admin";
+import { PasswordRecoveryRequestForm } from "@/app/admin/recuperar-senha/password-recovery-request-form";
 import { getRuntimeMode } from "@/lib/config/runtime";
 
 export const metadata: Metadata = {
-  title: "Definir senha administrativa",
-  robots: { index: false, follow: false },
+  title: "Recuperar senha administrativa",
+  robots: { index: false, follow: false, noarchive: true },
 };
 
-export default async function PasswordSetupPage() {
+export default async function PasswordRecoveryRequestPage() {
   await connection();
 
   const mode = getRuntimeMode();
@@ -22,11 +22,6 @@ export default async function PasswordSetupPage() {
   }
   if (mode !== "supabase") {
     redirect("/admin/login?erro=configuracao");
-  }
-
-  const admin = await getAdminIdentity();
-  if (!admin || admin.isDemo) {
-    redirect("/admin/login?erro=acesso");
   }
 
   return (
@@ -42,16 +37,21 @@ export default async function PasswordSetupPage() {
           />
           <div>
             <p className={styles.eyebrow}>Acesso protegido</p>
-            <h1>Defina sua senha</h1>
+            <h1>Recupere sua senha</h1>
           </div>
         </div>
 
         <p className={styles.loginIntro}>
-          Sessão segura confirmada para <strong>{admin.email}</strong>. Escolha
-          uma nova senha exclusiva para a área administrativa.
+          Informe o e-mail administrativo. Por segurança, a resposta não revela
+          se o endereço está cadastrado. Solicite e abra o link no mesmo
+          navegador e dispositivo.
         </p>
 
-        <PasswordSetupForm />
+        <PasswordRecoveryRequestForm />
+
+        <p className={styles.loginFooter}>
+          <Link href="/admin/login">← Voltar ao login</Link>
+        </p>
       </section>
     </main>
   );
