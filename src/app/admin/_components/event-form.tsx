@@ -445,7 +445,7 @@ export function EventForm({ eventId, initialEvent, demoMode }: EventFormProps) {
                         src={photo.previewUrl}
                         alt={`Prévia de ${photo.file.name}`}
                         fill
-                        sizes="(max-width: 680px) 50vw, 220px"
+                        sizes="(max-width: 430px) calc(100vw - 68px), (max-width: 680px) 50vw, 220px"
                         unoptimized
                       />
                     </div>

@@ -69,8 +69,7 @@ export default async function AdminDashboardPage() {
                       src={event.coverPhoto.url}
                       alt={event.coverPhoto.altText || event.title}
                       fill
-                      sizes="100px"
-                      unoptimized
+                      sizes="(max-width: 520px) 64px, (max-width: 680px) 76px, 100px"
                     />
                   ) : null}
                 </div>

@@ -39,17 +39,31 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           </Link>
 
           <nav className={styles.nav} aria-label="Navegação administrativa">
-            <Link className={styles.navLink} href="/admin">Visão geral</Link>
-            <Link className={styles.navLink} href="/admin/eventos/novo">Novo evento</Link>
-            <Link className={styles.navLink} href="/">Ver o portal</Link>
+            <Link className={styles.navLink} href="/admin">
+              <span className={styles.desktopNavLabel}>Visão geral</span>
+              <span className={styles.mobileNavLabel}>Início</span>
+            </Link>
+            <Link className={styles.navLink} href="/admin/eventos/novo">
+              <span className={styles.desktopNavLabel}>Novo evento</span>
+              <span className={styles.mobileNavLabel}>Novo</span>
+            </Link>
+            <Link className={styles.navLink} href="/">
+              <span className={styles.desktopNavLabel}>Ver o portal</span>
+              <span className={styles.mobileNavLabel}>Site</span>
+            </Link>
           </nav>
 
           <div className={styles.account}>
-            <strong>{admin.displayName}</strong>
-            <span>{admin.email}</span>
+            <div className={styles.accountIdentity}>
+              <strong>{admin.displayName}</strong>
+              <span>{admin.email}</span>
+            </div>
             <form action={logoutAction}>
               <button className={styles.logoutButton} type="submit">
-                {admin.isDemo ? "Sair da demonstração" : "Encerrar sessão"}
+                <span className={styles.desktopLogoutLabel}>
+                  {admin.isDemo ? "Sair da demonstração" : "Encerrar sessão"}
+                </span>
+                <span className={styles.mobileLogoutLabel}>Sair</span>
               </button>
             </form>
           </div>

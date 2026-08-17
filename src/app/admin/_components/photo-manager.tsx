@@ -34,8 +34,7 @@ export function PhotoManager({ eventId, photos, demoMode }: PhotoManagerProps) {
                 src={photo.url}
                 alt={photo.altText}
                 fill
-                sizes="(max-width: 680px) 50vw, 280px"
-                unoptimized
+                sizes="(max-width: 430px) calc(100vw - 68px), (max-width: 680px) 50vw, 280px"
               />
             </div>
             <div className={styles.photoMeta}>

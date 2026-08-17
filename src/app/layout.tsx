@@ -66,6 +66,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#021f4e" },
     { media: "(prefers-color-scheme: dark)", color: "#011634" },
@@ -74,7 +75,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${montserrat.variable} ${leagueGothic.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${montserrat.variable} ${leagueGothic.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body>{children}</body>
     </html>
   );

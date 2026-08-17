@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const links = [
   { href: "/#arena", label: "A Arena" },
@@ -14,6 +14,9 @@ const links = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     document.body.classList.toggle("menu-open", open);
@@ -22,22 +25,103 @@ export function SiteHeader() {
       return () => document.body.classList.remove("menu-open");
     }
 
-    const handleEscape = (event: KeyboardEvent) => {
+    const inertStates = new Map<HTMLElement, boolean>();
+    const makeInert = (element: HTMLElement) => {
+      if (!inertStates.has(element)) {
+        inertStates.set(element, element.inert);
+      }
+      element.inert = true;
+    };
+
+    const header = toggleRef.current?.closest<HTMLElement>(".site-header");
+    const page = header?.closest<HTMLElement>(".public-site");
+
+    header
+      ?.querySelectorAll<HTMLElement>(".brand, .header-cta")
+      .forEach(makeInert);
+
+    let activeLayer = header;
+    while (activeLayer && page && activeLayer !== page) {
+      const parent = activeLayer.parentElement;
+      if (!parent) {
+        break;
+      }
+
+      Array.from(parent.children).forEach((sibling) => {
+        if (sibling !== activeLayer && sibling instanceof HTMLElement) {
+          makeInert(sibling);
+        }
+      });
+      activeLayer = parent;
+    }
+
+    firstLinkRef.current?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const navLinks = Array.from(
+        navRef.current?.querySelectorAll<HTMLAnchorElement>("a[href]") ?? [],
+      );
+      const focusable = toggleRef.current
+        ? [toggleRef.current, ...navLinks]
+        : navLinks;
+
+      if (focusable.length === 0) {
+        return;
+      }
+
+      const currentIndex = focusable.indexOf(
+        document.activeElement as HTMLButtonElement | HTMLAnchorElement,
+      );
+
+      if (event.shiftKey && currentIndex <= 0) {
+        event.preventDefault();
+        focusable.at(-1)?.focus();
+      } else if (!event.shiftKey && currentIndex === focusable.length - 1) {
+        event.preventDefault();
+        focusable[0]?.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.classList.remove("menu-open");
+      inertStates.forEach((wasInert, element) => {
+        element.inert = wasInert;
+      });
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 851px)");
+    const closeOnDesktop = (event: MediaQueryListEvent) => {
+      if (event.matches) {
         setOpen(false);
       }
     };
 
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.classList.remove("menu-open");
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [open]);
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   return (
-    <header className="site-header shell">
+    <header
+      className="site-header shell"
+      aria-label={open ? "Menu principal" : undefined}
+      aria-modal={open ? true : undefined}
+      role={open ? "dialog" : undefined}
+    >
       <Link className="brand" href="/" aria-label="Arena Sul Sports — início">
         <Image
           src="/images/arena-sul-logo.png"
@@ -49,6 +133,7 @@ export function SiteHeader() {
       </Link>
 
       <button
+        ref={toggleRef}
         className="menu-toggle"
         type="button"
         aria-expanded={open}
@@ -63,12 +148,18 @@ export function SiteHeader() {
       </button>
 
       <nav
+        ref={navRef}
         id="site-navigation"
         className={open ? "is-open" : undefined}
         aria-label="Navegação principal"
       >
-        {links.map((link) => (
-          <a key={link.href} href={link.href} onClick={() => setOpen(false)}>
+        {links.map((link, index) => (
+          <a
+            ref={index === 0 ? firstLinkRef : undefined}
+            key={link.href}
+            href={link.href}
+            onClick={() => setOpen(false)}
+          >
             {link.label}
           </a>
         ))}

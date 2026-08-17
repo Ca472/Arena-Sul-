@@ -166,6 +166,7 @@ export default async function Home() {
               alt=""
               width={1937}
               height={1291}
+              sizes="(max-width: 600px) 100vw, (max-width: 850px) 55vw, (max-width: 1100px) 35vw, 40vw"
               priority
             />
             <Image
@@ -174,13 +175,14 @@ export default async function Home() {
               alt=""
               width={1291}
               height={1936}
+              sizes="(max-width: 600px) 95vw, (max-width: 850px) 48vw, (max-width: 1100px) 32vw, 35vw"
               priority
             />
             <p className="visual-note">Esporte. Conexão. Experiência.</p>
           </div>
         </div>
 
-        <div className="stats shell" aria-label="Números da Arena Sul">
+        <div className="stats shell" role="group" aria-label="Números da Arena Sul">
           {stats.map((stat) => (
             <div className="stat" key={stat.label}>
               <strong>{stat.value}</strong>
@@ -263,7 +265,11 @@ export default async function Home() {
 
       <section className="amenities section">
         <div className="amenities-grid shell">
-          <div className="amenities-collage" aria-label="Galeria da estrutura">
+          <div
+            className="amenities-collage"
+            role="group"
+            aria-label="Galeria da estrutura"
+          >
             <figure className="collage-main">
               <Image
                 src="/images/courts-aerial.webp"

@@ -145,7 +145,7 @@ export default async function EventDetailPage({
                   src={photo.url}
                   alt={photo.altText || `Registro de ${event.title}`}
                   fill
-                  sizes="(max-width: 650px) 100vw, 50vw"
+                  sizes="(max-width: 920px) 100vw, 50vw"
                 />
               </figure>
             ))}
