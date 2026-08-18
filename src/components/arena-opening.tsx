@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./arena-opening.module.css";
 
 const OPENING_SEEN_KEY = "arena-sul-opening-seen";
-const OPENING_DURATION_MS = 2300;
-const LOADER_REPLAY_EVENT = "arena-sul:loader-replay";
+const OPENING_DURATION_MS = 2100;
+const ASSET_WAIT_LIMIT_MS = 1800;
 
 type ArenaOpeningProps = {
   children: ReactNode;
@@ -28,11 +28,37 @@ function rememberOpening() {
   }
 }
 
+async function waitForImage(image: HTMLImageElement) {
+  if (!image.complete) {
+    await new Promise<void>((resolve) => {
+      const finish = () => {
+        image.removeEventListener("load", finish);
+        image.removeEventListener("error", finish);
+        resolve();
+      };
+
+      image.addEventListener("load", finish, { once: true });
+      image.addEventListener("error", finish, { once: true });
+    });
+  }
+
+  if (image.naturalWidth > 0 && typeof image.decode === "function") {
+    await image.decode().catch(() => undefined);
+  }
+}
+
 export function ArenaOpening({ children }: ArenaOpeningProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
+  const restoreFocusRef = useRef(false);
   const [visible, setVisible] = useState(true);
 
   const dismiss = useCallback(() => {
+    const overlay = overlayRef.current;
+
+    if (overlay?.contains(document.activeElement)) {
+      restoreFocusRef.current = true;
+    }
+
     rememberOpening();
     setVisible(false);
   }, []);
@@ -53,20 +79,52 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
 
     const overlay = overlayRef.current;
 
-    if (
-      overlay
-        ?.getAnimations()
-        .some((animation) => animation.playState === "finished")
-    ) {
-      queueMicrotask(dismiss);
-      return;
-    }
-
     const portal = document.querySelector<HTMLElement>("main.public-site");
     const previousOverflow = document.body.style.overflow;
     const previousInert = portal?.inert ?? false;
     const previousAriaHidden = portal?.getAttribute("aria-hidden");
-    let dismissTimer = window.setTimeout(dismiss, OPENING_DURATION_MS);
+    let active = true;
+    let hasStarted = false;
+    let dismissTimer: number | undefined;
+    const assetWaitTimer = window.setTimeout(
+      dismiss,
+      ASSET_WAIT_LIMIT_MS,
+    );
+
+    const startOpening = () => {
+      const assets = Array.from(
+        overlay?.querySelectorAll<HTMLImageElement>("img[data-intro-asset]") ??
+          [],
+      );
+      const assetsReady =
+        assets.length > 0 &&
+        assets.every((image) => image.complete && image.naturalWidth > 0);
+
+      if (!active || hasStarted || !overlay?.isConnected) {
+        return;
+      }
+
+      if (!assetsReady) {
+        dismiss();
+        return;
+      }
+
+      hasStarted = true;
+
+      if (assetWaitTimer !== undefined) {
+        window.clearTimeout(assetWaitTimer);
+      }
+
+      overlay.dataset.introReady = "true";
+      dismissTimer = window.setTimeout(dismiss, OPENING_DURATION_MS);
+    };
+
+    const assets = Array.from(
+      overlay?.querySelectorAll<HTMLImageElement>("img[data-intro-asset]") ??
+        [],
+    );
+
+    void Promise.all(assets.map(waitForImage)).then(startOpening, dismiss);
 
     document.body.style.overflow = "hidden";
 
@@ -75,19 +133,7 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
       portal.setAttribute("aria-hidden", "true");
     }
 
-    const restartDismissTimer = () => {
-      window.clearTimeout(dismissTimer);
-      dismissTimer = window.setTimeout(dismiss, OPENING_DURATION_MS);
-
-      for (const animation of overlay?.getAnimations() ?? []) {
-        animation.cancel();
-        animation.play();
-      }
-    };
-
     const handleKeyDown = (event: KeyboardEvent) => {
-      restartDismissTimer();
-
       if (event.key === "Escape") {
         event.preventDefault();
         dismiss();
@@ -127,17 +173,10 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
       }
     };
 
-    const handlePointerDown = () => {
-      restartDismissTimer();
-    };
-
     const handleFocusIn = (event: FocusEvent) => {
       if (!overlay?.contains(event.target as Node)) {
         overlay?.querySelector<HTMLElement>("button")?.focus();
-        return;
       }
-
-      restartDismissTimer();
     };
 
     const handleMotionPreferenceChange = (event: MediaQueryListEvent) => {
@@ -146,29 +185,35 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
       }
     };
 
-    window.addEventListener(LOADER_REPLAY_EVENT, restartDismissTimer);
     document.addEventListener("keydown", handleKeyDown);
     document.addEventListener("focusin", handleFocusIn);
     reducedMotionQuery.addEventListener("change", handleMotionPreferenceChange);
-    overlay?.addEventListener("pointerdown", handlePointerDown);
 
     const focusFrame = window.requestAnimationFrame(() => {
       overlay?.querySelector<HTMLElement>("button")?.focus();
     });
 
     return () => {
-      const shouldRestoreFocus = overlay?.contains(document.activeElement);
+      active = false;
+      const shouldRestoreFocus =
+        restoreFocusRef.current ||
+        Boolean(overlay?.contains(document.activeElement));
 
-      window.clearTimeout(dismissTimer);
+      if (assetWaitTimer !== undefined) {
+        window.clearTimeout(assetWaitTimer);
+      }
+
+      if (dismissTimer !== undefined) {
+        window.clearTimeout(dismissTimer);
+      }
+
       window.cancelAnimationFrame(focusFrame);
-      window.removeEventListener(LOADER_REPLAY_EVENT, restartDismissTimer);
       document.removeEventListener("keydown", handleKeyDown);
       document.removeEventListener("focusin", handleFocusIn);
       reducedMotionQuery.removeEventListener(
         "change",
         handleMotionPreferenceChange,
       );
-      overlay?.removeEventListener("pointerdown", handlePointerDown);
       document.body.style.overflow = previousOverflow;
 
       if (portal) {
@@ -189,6 +234,7 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
           document
             .querySelector<HTMLElement>(".hero-title")
             ?.focus({ preventScroll: true });
+          restoreFocusRef.current = false;
         });
       }
     };
