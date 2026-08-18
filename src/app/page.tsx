@@ -8,9 +8,11 @@ import {
 } from "@/components/instagram-section";
 import { SiteHeader } from "@/components/site-header";
 
-const stats = [
+const stats: Array<{ value: string | null; label: string }> = [
   { value: "13", label: "quadras de areia" },
   { value: "1", label: "campo society" },
+  { value: null, label: "área de churrasqueira" },
+  { value: null, label: "bar" },
 ];
 
 const amenities = [
@@ -127,32 +129,21 @@ export default function Home() {
             <div className="hero-sun" />
             <div className="hero-slash hero-slash-one" />
             <div className="hero-slash hero-slash-two" />
-            <Image
-              className="athlete athlete-racket"
-              src="/images/athlete-racket.webp"
-              alt=""
-              width={1937}
-              height={1291}
-              sizes="(max-width: 600px) 100vw, (max-width: 850px) 55vw, (max-width: 1100px) 35vw, 40vw"
-              priority
-            />
-            <Image
-              className="athlete athlete-volleyball"
-              src="/images/athlete-volleyball.webp"
-              alt=""
-              width={1291}
-              height={1936}
-              sizes="(max-width: 600px) 95vw, (max-width: 850px) 48vw, (max-width: 1100px) 32vw, 35vw"
-              priority
-            />
             <p className="visual-note">Esporte. Família. Saúde.</p>
           </div>
         </div>
 
-        <div className="stats shell" role="group" aria-label="Números da Arena Sul">
+        <div
+          className="stats shell"
+          role="group"
+          aria-label="Estrutura e comodidades da Arena Sul"
+        >
           {stats.map((stat) => (
-            <div className="stat" key={stat.label}>
-              <strong>{stat.value}</strong>
+            <div
+              className={stat.value === null ? "stat stat-feature" : "stat"}
+              key={stat.label}
+            >
+              {stat.value !== null ? <strong>{stat.value}</strong> : null}
               <span>{stat.label}</span>
             </div>
           ))}

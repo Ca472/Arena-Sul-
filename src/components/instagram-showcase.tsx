@@ -20,6 +20,22 @@ const instagramDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
 });
 
+function ArenaStoryBadge() {
+  return (
+    <span className={styles.storyRing} aria-hidden="true">
+      <span className={styles.storyRingInner}>
+        <Image
+          className={styles.storyLogo}
+          src="/images/arena-sul-logo.png"
+          alt=""
+          width={72}
+          height={72}
+        />
+      </span>
+    </span>
+  );
+}
+
 function ControlledStoryVideo({
   item,
   shouldPlay,
@@ -121,9 +137,7 @@ function InstagramProfileFallback() {
       </div>
 
       <div className={styles.storyFallback}>
-        <span className={styles.storyRing} aria-hidden="true">
-          <span>AS</span>
-        </span>
+        <ArenaStoryBadge />
         <p className={styles.eyebrow}>Stories da Arena</p>
         <h3>Veja o que está acontecendo agora.</h3>
         <p>
@@ -309,9 +323,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
           </>
         ) : (
           <div className={styles.noStory}>
-            <span className={styles.storyRing} aria-hidden="true">
-              <span>AS</span>
-            </span>
+            <ArenaStoryBadge />
             <p>Nenhum Story ativo neste momento.</p>
             <a href={INSTAGRAM_STORIES_URL} target="_blank" rel="noopener noreferrer">
               Abrir Stories <span aria-hidden="true">↗</span>
