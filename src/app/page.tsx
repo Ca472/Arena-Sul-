@@ -194,7 +194,7 @@ export default function Home() {
         <div className="hero-grid shell">
           <div className="hero-copy">
             <p className="eyebrow">São José dos Campos · SP</p>
-            <h1 className="hero-title" tabIndex={-1}>
+            <h1 className="hero-title">
               O esporte encontra pessoas. <span>Eventos ganham vida.</span>
             </h1>
             <p className="hero-lead">
