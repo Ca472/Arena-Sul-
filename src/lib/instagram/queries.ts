@@ -7,7 +7,7 @@ import type {
   InstagramMediaKind,
 } from "./types";
 
-const DEFAULT_GRAPH_VERSION = "v25.0";
+const DEFAULT_GRAPH_VERSION = "v26.0";
 const INSTAGRAM_PROFILE_URL =
   "https://www.instagram.com/arenasulsports/";
 const STORY_MAX_AGE_MS = 25 * 60 * 60 * 1000;

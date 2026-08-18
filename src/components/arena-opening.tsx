@@ -4,7 +4,13 @@ import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./arena-opening.module.css";
 
-const OPENING_DURATION_MS = 5000;
+const INTRO_ANIMATION_DURATION_MS = 5000;
+const LOGO_HOLD_DURATION_MS = 5000;
+const OVERLAY_EXIT_DURATION_MS = 600;
+const OPENING_DURATION_MS =
+  INTRO_ANIMATION_DURATION_MS +
+  LOGO_HOLD_DURATION_MS +
+  OVERLAY_EXIT_DURATION_MS;
 const ASSET_WAIT_LIMIT_MS = 1800;
 
 type ArenaOpeningProps = {
