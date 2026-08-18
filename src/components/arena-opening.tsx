@@ -55,6 +55,7 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
   const [visible, setVisible] = useState(true);
 
   const dismiss = useCallback(() => {
+    delete document.documentElement.dataset.arenaOpening;
     scrollToOpeningDestination();
     setVisible(false);
 
@@ -67,6 +68,8 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
     if (!visible) {
       return;
     }
+
+    document.documentElement.dataset.arenaOpening = "active";
 
     const reducedMotionQuery = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -169,6 +172,10 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
         } else {
           portal.setAttribute("aria-hidden", previousAriaHidden);
         }
+      }
+
+      if (document.documentElement.dataset.arenaOpening === "active") {
+        delete document.documentElement.dataset.arenaOpening;
       }
 
     };

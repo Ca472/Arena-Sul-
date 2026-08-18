@@ -15,6 +15,24 @@ const stats: Array<{ value: string | null; label: string }> = [
   { value: null, label: "bar" },
 ];
 
+const heroSports = [
+  {
+    name: "Vôlei de Praia",
+    image: "/images/hero-volei-praia.jpg",
+    className: "hero-sport-slide hero-sport-slide-volleyball",
+  },
+  {
+    name: "Futevôlei",
+    image: "/images/hero-futevolei.jpg",
+    className: "hero-sport-slide hero-sport-slide-futevolei",
+  },
+  {
+    name: "Beach Tênis",
+    image: "/images/hero-beach-tennis.jpg",
+    className: "hero-sport-slide hero-sport-slide-beach-tennis",
+  },
+];
+
 const amenities = [
   "13 quadras de areia",
   "1 campo de futebol society",
@@ -126,10 +144,45 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-visual" aria-hidden="true">
-            <div className="hero-sun" />
-            <div className="hero-slash hero-slash-one" />
-            <div className="hero-slash hero-slash-two" />
+          <div
+            className="hero-visual"
+            role="img"
+            aria-label="Modalidades em destaque: Vôlei de Praia, Futevôlei e Beach Tênis"
+          >
+            <div className="hero-sun" aria-hidden="true" />
+            <div className="hero-slash hero-slash-one" aria-hidden="true" />
+            <div className="hero-slash hero-slash-two" aria-hidden="true" />
+
+            <div className="hero-sports-showcase" aria-hidden="true">
+              {heroSports.map((sport, index) => (
+                <figure className={sport.className} key={sport.name}>
+                  <Image
+                    className="hero-sport-photo"
+                    src={sport.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 600px) 72vw, (max-width: 900px) 42vw, 390px"
+                    loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "auto"}
+                  />
+                  <figcaption className="hero-sport-caption">
+                    <span>Modalidade em destaque</span>
+                    <strong>{sport.name}</strong>
+                  </figcaption>
+                </figure>
+              ))}
+
+              <div className="hero-sport-indicators">
+                {heroSports.map((sport) => (
+                  <span key={sport.name} />
+                ))}
+              </div>
+
+              <p className="hero-sports-static-label">
+                Vôlei de Praia · Futevôlei · Beach Tênis
+              </p>
+            </div>
+
             <p className="visual-note">Esporte. Família. Saúde.</p>
           </div>
         </div>
