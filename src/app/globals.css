@@ -1343,11 +1343,15 @@ img {
 
 .public-site .footer-instagram {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 48px;
-  padding-block: clamp(62px, 8vw, 92px);
+  grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.65fr) auto;
+  align-items: end;
+  column-gap: clamp(28px, 4vw, 48px);
+  padding-block: clamp(48px, 5vw, 64px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.public-site .footer-instagram-heading {
+  min-width: 0;
 }
 
 .public-site .footer .footer-instagram h2 {
@@ -1362,8 +1366,9 @@ img {
   overflow-wrap: anywhere;
 }
 
-.public-site .footer-instagram > div > p:last-child {
-  margin: 18px 0 0;
+.public-site .footer-instagram-summary {
+  max-width: 430px;
+  margin: 0 0 2px;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.65;
 }
@@ -1442,8 +1447,16 @@ img {
   line-height: 1.8;
 }
 
+.public-site .footer-location-actions {
+  display: flex;
+  width: min(100%, 310px);
+  align-items: stretch;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .public-site .button-location {
-  width: fit-content;
+  width: 100%;
   max-width: 100%;
   background: var(--orange);
   color: var(--navy);
@@ -1453,6 +1466,19 @@ img {
 .public-site .button-location:hover,
 .public-site .button-location:focus-visible {
   background: white;
+}
+
+.public-site .button-location-waze {
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  background: transparent;
+  color: white;
+}
+
+.public-site .button-location-waze:hover,
+.public-site .button-location-waze:focus-visible {
+  border-color: white;
+  background: white;
+  color: var(--navy);
 }
 
 .public-site .footer-grid {
@@ -1585,6 +1611,21 @@ img {
 
   .public-site .modality-card:last-child {
     grid-column: 2;
+  }
+
+  .public-site .footer-instagram {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    row-gap: 14px;
+  }
+
+  .public-site .footer-instagram-summary {
+    grid-column: 1;
+  }
+
+  .public-site .footer-instagram .button-instagram {
+    grid-column: 2;
+    grid-row: 1 / span 2;
   }
 
   .public-site .footer-grid {
@@ -1858,6 +1899,12 @@ img {
   .public-site .footer-instagram {
     grid-template-columns: 1fr;
     gap: 30px;
+  }
+
+  .public-site .footer-instagram-summary,
+  .public-site .footer-instagram .button-instagram {
+    grid-column: auto;
+    grid-row: auto;
   }
 }
 

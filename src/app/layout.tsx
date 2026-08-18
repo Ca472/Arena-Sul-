@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { League_Gothic, Montserrat } from "next/font/google";
+import { ArenaAudioPrimer } from "@/components/arena-audio-primer";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -80,7 +81,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${montserrat.variable} ${leagueGothic.variable}`}
       data-scroll-behavior="smooth"
     >
-      <body>{children}</body>
+      <body>
+        <ArenaAudioPrimer />
+        {children}
+      </body>
     </html>
   );
 }
