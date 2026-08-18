@@ -243,26 +243,26 @@ export default function Home() {
           >
             <figure className="collage-main">
               <Image
-                src="/images/estrutura-churrasqueira.jpg"
-                alt="Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras"
+                src="/images/courts-aerial.webp"
+                alt="Vista aérea das quadras da Arena Sul"
                 fill
-                sizes="(max-width: 900px) 60vw, 28vw"
+                sizes="(max-width: 900px) 100vw, 28vw"
               />
             </figure>
             <figure className="collage-secondary">
               <Image
-                src="/images/estrutura-bar-coberto.jpg"
-                alt="Área coberta do bar da Arena Sul com mesas e cadeiras"
+                src="/images/event-lounge.webp"
+                alt="Área de convivência preparada para um evento"
                 fill
                 sizes="(max-width: 900px) 50vw, 22vw"
               />
             </figure>
             <figure className="collage-tertiary">
               <Image
-                src="/images/estrutura-bar-convivencia.jpg"
-                alt="Área externa de convivência do bar com vista para as quadras de areia"
+                src="/images/group-class.webp"
+                alt="Atividade coletiva nas quadras de areia"
                 fill
-                sizes="(max-width: 900px) 64vw, 30vw"
+                sizes="(max-width: 900px) 50vw, 18vw"
               />
             </figure>
           </div>
@@ -283,6 +283,37 @@ export default function Home() {
               ))}
             </ul>
           </div>
+        </div>
+
+        <div
+          className="amenities-venue-gallery shell"
+          role="group"
+          aria-label="Bar, churrasqueira e áreas de convivência"
+        >
+          <figure className="venue-gallery-churrasqueira">
+            <Image
+              src="/images/estrutura-churrasqueira.jpg"
+              alt="Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras"
+              fill
+              sizes="(max-width: 850px) 46vw, 18vw"
+            />
+          </figure>
+          <figure className="venue-gallery-bar">
+            <Image
+              src="/images/estrutura-bar-coberto.jpg"
+              alt="Área coberta do bar da Arena Sul com mesas e cadeiras"
+              fill
+              sizes="(max-width: 850px) 46vw, 24vw"
+            />
+          </figure>
+          <figure className="venue-gallery-convivencia">
+            <Image
+              src="/images/estrutura-bar-convivencia.jpg"
+              alt="Área externa de convivência do bar com vista para as quadras de areia"
+              fill
+              sizes="(max-width: 850px) 100vw, 55vw"
+            />
+          </figure>
         </div>
       </section>
 

@@ -980,7 +980,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .collage-main img {
-  object-position: center 43%;
+  object-position: center;
 }
 
 .public-site .collage-secondary {
@@ -992,19 +992,54 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .collage-secondary img {
-  object-position: center 62%;
+  object-position: center;
 }
 
 .public-site .collage-tertiary {
-  right: 0;
-  bottom: 2%;
-  width: 64%;
-  height: 34%;
+  right: 7%;
+  bottom: 0;
+  width: 49%;
+  height: 47%;
   border: 10px solid var(--cream);
 }
 
 .public-site .collage-tertiary img {
-  object-position: center 53%;
+  object-position: center;
+}
+
+.public-site .amenities-venue-gallery {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.56fr) minmax(0, 0.75fr)
+    minmax(0, 1.78fr);
+  gap: clamp(12px, 1.4vw, 20px);
+  margin-top: clamp(42px, 6vw, 82px);
+}
+
+.public-site .amenities-venue-gallery figure {
+  position: relative;
+  min-height: clamp(280px, 27vw, 380px);
+  margin: 0;
+  overflow: hidden;
+  background: var(--navy);
+  border: 6px solid var(--cream);
+  box-shadow: 0 24px 60px rgba(2, 31, 78, 0.12);
+}
+
+.public-site .amenities-venue-gallery img {
+  object-fit: cover;
+}
+
+.public-site .venue-gallery-churrasqueira img {
+  object-position: center 58%;
+}
+
+.public-site .venue-gallery-bar img {
+  object-position: center 62%;
+}
+
+.public-site .venue-gallery-convivencia img {
+  object-position: center;
 }
 
 .public-site .amenities-copy .section-intro {
@@ -2056,6 +2091,28 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     grid-template-columns: 1fr;
   }
 
+  .public-site .amenities-venue-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .public-site .amenities-venue-gallery figure {
+    min-height: 0;
+  }
+
+  .public-site .venue-gallery-churrasqueira {
+    aspect-ratio: 3 / 4;
+  }
+
+  .public-site .venue-gallery-bar {
+    aspect-ratio: 3 / 4;
+  }
+
+  .public-site .venue-gallery-convivencia {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+  }
+
   .public-site .about-media {
     min-height: 580px;
   }
@@ -2345,6 +2402,15 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .amenities-collage {
     min-height: 510px;
+  }
+
+  .public-site .amenities-venue-gallery {
+    gap: 10px;
+    margin-top: 40px;
+  }
+
+  .public-site .amenities-venue-gallery figure {
+    border-width: 4px;
   }
 
   .public-site .amenities-list {
