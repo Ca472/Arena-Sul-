@@ -30,16 +30,36 @@ async function waitForImage(image: HTMLImageElement) {
   }
 }
 
+function scrollToOpeningDestination() {
+  const rawHash = window.location.hash.slice(1);
+  let target: HTMLElement | null = null;
+
+  if (rawHash) {
+    try {
+      target = document.getElementById(decodeURIComponent(rawHash));
+    } catch {
+      target = null;
+    }
+  }
+
+  if (target) {
+    target.scrollIntoView({ block: "start", behavior: "instant" });
+    return;
+  }
+
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+}
+
 export function ArenaOpening({ children }: ArenaOpeningProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
 
   const dismiss = useCallback(() => {
-    window.scrollTo(0, 0);
+    scrollToOpeningDestination();
     setVisible(false);
 
     window.requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
+      scrollToOpeningDestination();
     });
   }, []);
 
