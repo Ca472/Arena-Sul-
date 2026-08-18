@@ -892,6 +892,7 @@ img {
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
 .public-site .modality-content a {
