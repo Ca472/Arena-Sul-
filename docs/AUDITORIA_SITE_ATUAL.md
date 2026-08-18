@@ -47,13 +47,15 @@ As âncoras usam atributos internos do Wix e não acrescentam hashes à URL. Por
 
 ### Sobre nós
 
-> Nossa trajetória se cruza com o nascimento da história das locações de quadras de futebol Society em São José dos Campos. A primeira quadra nasceu no bairro Santana, há 30 anos, com a Sand Sports e de lá para cá, pudemos construir uma história do Futebol Society na cidade e região, além de promover a saúde pelo esporte - com o lema Esporte é Saúde - e cativar muitos amigos.
+> Nossa trajetória se cruza com o nascimento da história das locações de quadras de futebol Society em São José dos Campos. A primeira quadra nasceu no bairro Santana, há 9 anos, com a Sand Sports e de lá para cá, pudemos construir uma história do Futebol Society na cidade e região, além de promover a saúde pelo esporte - com o lema Esporte é Saúde - e cativar muitos amigos.
 >
 > Dessa experiência nasce a Arena Sul Sports, criada com a missão de promover a saúde e qualidade de vida de nossos clientes em um ambiente acolhedor e familiar, proporcionando as melhores condições para a prática do esporte.
 >
 > Já somos um negócio de sucesso pois contamos com a colaboração de profissionais motivados e capacitados que nos ajuda a manter e conquistar clientes fiéis e satisfeitos.
 
 O trecho final contém uma concordância a corrigir: “profissionais [...] que nos ajuda” deveria ser “que nos ajudam”.
+
+O período acima foi atualizado após a confirmação do cliente em 18/08/2026; o registro legado usava um dado diferente.
 
 ### Modalidades e estrutura
 

@@ -773,6 +773,10 @@ img {
   height: 78%;
 }
 
+.public-site .collage-main img {
+  object-position: center 43%;
+}
+
 .public-site .collage-secondary {
   top: 8%;
   right: 0;
@@ -781,12 +785,20 @@ img {
   border: 10px solid var(--cream);
 }
 
+.public-site .collage-secondary img {
+  object-position: center 62%;
+}
+
 .public-site .collage-tertiary {
-  right: 7%;
-  bottom: 0;
-  width: 49%;
-  height: 47%;
+  right: 0;
+  bottom: 2%;
+  width: 64%;
+  height: 34%;
   border: 10px solid var(--cream);
+}
+
+.public-site .collage-tertiary img {
+  object-position: center 53%;
 }
 
 .public-site .amenities-copy .section-intro {
