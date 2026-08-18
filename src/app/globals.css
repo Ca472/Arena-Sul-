@@ -554,7 +554,7 @@ img {
 
 .public-site .about-media > img {
   object-fit: cover;
-  object-position: 64% center;
+  object-position: center 42%;
   filter: saturate(0.92) contrast(1.03);
 }
 

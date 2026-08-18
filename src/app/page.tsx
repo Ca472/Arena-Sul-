@@ -67,7 +67,7 @@ const structuredData = {
   name: "Arena Sul Sports",
   url: "https://www.arenasulsports.com/",
   telephone: "+55 12 3307-1093",
-  image: "https://www.arenasulsports.com/images/arena-courts.webp",
+  image: "https://www.arenasulsports.com/images/arena-drone-2.jpg",
   description:
     "Arena esportiva em São José dos Campos para saúde, convivência em família e eventos corporativos e escolares.",
   address: {
@@ -155,8 +155,8 @@ export default function Home() {
         <div className="about-grid shell">
           <div className="about-media">
             <Image
-              src="/images/arena-courts.webp"
-              alt="Panorama das quadras de areia da Arena Sul Sports"
+              src="/images/arena-drone-2.jpg"
+              alt="Vista aérea das quadras e da estrutura da Arena Sul Sports"
               fill
               sizes="(max-width: 900px) 100vw, 52vw"
             />
