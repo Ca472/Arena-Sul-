@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { WhatsAppLabel } from "@/components/whatsapp-label";
+import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 
 const links = [
   { href: "/#arena", label: "A Arena" },
@@ -13,8 +14,7 @@ const links = [
   { href: "/#instagram", label: "Instagram" },
 ];
 
-const contactUrl =
-  "https://wa.me/551233071093?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20op%C3%A7%C3%B5es%20da%20Arena%20Sul.";
+const contactUrl = buildWhatsAppUrl();
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);

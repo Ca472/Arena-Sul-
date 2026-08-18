@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppLabel } from "@/components/whatsapp-label";
+import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 import { getPublishedEventBySlug } from "@/lib/events/queries";
 
 import styles from "../events.module.css";
@@ -88,9 +89,9 @@ export default async function EventDetailPage({
     notFound();
   }
 
-  const contactUrl = `https://wa.me/551233071093?text=${encodeURIComponent(
-    `Olá, quero saber mais sobre o evento “${event.title}” na Arena Sul.`,
-  )}`;
+  const contactUrl = buildWhatsAppUrl(
+    `Olá, Arena Sul! Gostaria de saber mais sobre o evento “${event.title}”. Poderiam me enviar as informações?`,
+  );
 
   return (
     <main className={`public-site ${styles.page}`}>

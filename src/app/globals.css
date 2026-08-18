@@ -1078,6 +1078,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 .public-site .modality-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: start;
   gap: 14px;
 }
 
@@ -1115,6 +1116,11 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   box-shadow: 0 24px 60px rgba(2, 31, 78, 0.12);
 }
 
+.public-site .modality-card[data-menu-open="true"] {
+  border-color: rgba(255, 145, 77, 0.72);
+  box-shadow: 0 24px 60px rgba(2, 31, 78, 0.14);
+}
+
 .public-site .modality-number {
   position: relative;
   z-index: 1;
@@ -1148,20 +1154,124 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   overflow-wrap: anywhere;
 }
 
-.public-site .modality-content a {
-  display: inline-flex;
-  min-height: 44px;
+.public-site .modality-menu-trigger {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 18px;
+  padding: 0;
+  cursor: pointer;
   align-items: center;
-  gap: 6px;
+  justify-content: space-between;
+  gap: 10px;
+  border: 0;
+  border-top: 1px solid rgba(2, 31, 78, 0.14);
+  background: transparent;
   color: var(--navy);
-  font-size: 0.72rem;
+  font-family: inherit;
+  font-size: clamp(0.72rem, 0.86vw, 0.82rem);
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.055em;
+  line-height: 1.3;
+  text-align: left;
   text-transform: uppercase;
 }
 
-.public-site .modality-content a span {
+.public-site .modality-menu-trigger:hover {
+  color: var(--orange-ink);
+}
+
+.public-site .modality-menu-trigger:focus-visible {
+  border-radius: 4px;
+  outline: 3px solid rgba(255, 145, 77, 0.55);
+  outline-offset: 3px;
+}
+
+.public-site .modality-menu-toggle {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 180ms ease;
+}
+
+.public-site
+  .modality-menu-trigger[aria-expanded="true"]
+  .modality-menu-toggle {
+  transform: rotate(45deg);
+}
+
+.public-site .modality-options {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 8px;
+  padding: 4px 0 0;
+}
+
+.public-site .modality-options[hidden] {
+  display: none;
+}
+
+.public-site .modality-option {
+  display: grid;
+  min-width: 0;
+  min-height: 56px;
+  grid-template-columns: 28px minmax(0, 1fr) 14px;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid rgba(2, 31, 78, 0.12);
+  border-radius: 6px;
+  background: var(--navy);
+  color: white;
+  font-size: clamp(0.75rem, 0.8vw, 0.84rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  text-decoration: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.public-site .modality-option:hover {
+  border-color: var(--orange);
+  background: #082d66;
+  transform: translateY(-2px);
+}
+
+.public-site .modality-option:focus-visible {
+  outline: 3px solid rgba(255, 145, 77, 0.65);
+  outline-offset: 2px;
+}
+
+.public-site .modality-option-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: white;
+}
+
+.public-site .modality-option-icon img {
+  width: 19px;
+  height: 19px;
+}
+
+.public-site .modality-option-arrow {
   color: var(--orange);
+  font-size: 0.86rem;
 }
 
 /* Events */
@@ -2383,6 +2493,11 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   .public-site .modality-card {
     min-height: 210px;
     margin: 0;
+  }
+
+  .public-site .modality-menu-trigger,
+  .public-site .modality-option {
+    font-size: 0.84rem;
   }
 
   .public-site .modality-content p {
