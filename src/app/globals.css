@@ -171,7 +171,10 @@ img {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   touch-action: manipulation;
-  transition: transform 180ms ease, color 180ms ease, background-color 180ms ease;
+  transition:
+    transform 180ms ease,
+    color 180ms ease,
+    background-color 180ms ease;
 }
 
 .public-site .button:hover,
@@ -236,7 +239,10 @@ img {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
 }
 
 .public-site .site-header nav .mobile-nav-cta {
@@ -298,7 +304,11 @@ img {
   min-height: 100svh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 78% 20%, rgba(58, 95, 154, 0.58), transparent 28%),
+    radial-gradient(
+      circle at 78% 20%,
+      rgba(58, 95, 154, 0.58),
+      transparent 28%
+    ),
     linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 54%, #082e65 100%);
   color: white;
 }
@@ -881,7 +891,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   z-index: 1;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(2, 31, 78, 0.96) 0%, rgba(2, 31, 78, 0.83) 56%, rgba(2, 31, 78, 0.63) 100%),
+    linear-gradient(
+      90deg,
+      rgba(2, 31, 78, 0.96) 0%,
+      rgba(2, 31, 78, 0.83) 56%,
+      rgba(2, 31, 78, 0.63) 100%
+    ),
     linear-gradient(0deg, rgba(1, 22, 52, 0.5), transparent);
 }
 
@@ -948,97 +963,22 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   background: var(--cream);
 }
 
-.public-site .amenities-grid {
+.public-site .amenities-heading {
   display: grid;
-  grid-template-columns: minmax(0, 0.98fr) minmax(0, 1.02fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  align-items: end;
   gap: clamp(54px, 8vw, 112px);
 }
 
-.public-site .amenities-collage {
-  position: relative;
-  min-height: 690px;
-}
-
-.public-site .amenities-collage figure {
-  position: absolute;
+.public-site .amenities-details .section-intro {
   margin: 0;
-  overflow: hidden;
-  background: var(--navy);
-  box-shadow: 0 24px 60px rgba(2, 31, 78, 0.12);
-}
-
-.public-site .amenities-collage img {
-  object-fit: cover;
-}
-
-.public-site .collage-main {
-  top: 0;
-  left: 0;
-  width: 60%;
-  height: 78%;
-}
-
-.public-site .collage-main img {
-  object-position: center;
-}
-
-.public-site .collage-secondary {
-  top: 8%;
-  right: 0;
-  width: 48%;
-  height: 38%;
-  border: 10px solid var(--cream);
-}
-
-.public-site .collage-secondary img {
-  object-position: center;
-}
-
-.public-site .collage-tertiary {
-  right: 7%;
-  bottom: 0;
-  width: 49%;
-  height: 47%;
-  border: 10px solid var(--cream);
-}
-
-.public-site .collage-tertiary img {
-  object-position: center;
-}
-
-.public-site .amenities-grid-followup {
-  margin-top: clamp(42px, 6vw, 82px);
-}
-
-.public-site .amenities-collage-additional .collage-main img {
-  object-position: center 58%;
-}
-
-.public-site .amenities-collage-additional .collage-secondary img {
-  object-position: center 62%;
-}
-
-.public-site .amenities-collage-additional .collage-tertiary {
-  right: 0;
-  width: 68%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-}
-
-.public-site .amenities-collage-additional .collage-tertiary img {
-  object-position: center;
-}
-
-.public-site .amenities-copy .section-intro {
-  margin-top: 24px;
 }
 
 .public-site .amenities-list {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0 24px;
-  margin: 38px 0 0;
+  margin: 28px 0 0;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--line);
@@ -1094,9 +1034,10 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   border: 1px solid rgba(2, 31, 78, 0.12);
   border-top: 5px solid var(--orange);
   background:
-    linear-gradient(145deg, rgba(58, 95, 154, 0.1), transparent 56%),
-    white;
-  transition: transform 220ms ease, box-shadow 220ms ease;
+    linear-gradient(145deg, rgba(58, 95, 154, 0.1), transparent 56%), white;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .public-site .modality-card::before {
@@ -1297,7 +1238,11 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   position: absolute;
   z-index: 1;
   inset: 0;
-  background: linear-gradient(90deg, rgba(1, 22, 52, 0.87), rgba(2, 31, 78, 0.42));
+  background: linear-gradient(
+    90deg,
+    rgba(1, 22, 52, 0.87),
+    rgba(2, 31, 78, 0.42)
+  );
 }
 
 .public-site .events-card {
@@ -1434,11 +1379,19 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   position: absolute;
   z-index: 1;
   inset: 0;
-  background: linear-gradient(0deg, rgba(1, 22, 52, 0.97), rgba(2, 31, 78, 0.1) 72%);
+  background: linear-gradient(
+    0deg,
+    rgba(1, 22, 52, 0.97),
+    rgba(2, 31, 78, 0.1) 72%
+  );
 }
 
 .public-site .companies-card .partnership-shade {
-  background: linear-gradient(0deg, rgba(44, 26, 12, 0.96), rgba(2, 31, 78, 0.12) 72%);
+  background: linear-gradient(
+    0deg,
+    rgba(44, 26, 12, 0.96),
+    rgba(2, 31, 78, 0.12) 72%
+  );
 }
 
 .public-site .partnership-copy {
@@ -1687,7 +1640,9 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
 .public-site .instagram-tile img {
   object-fit: cover;
-  transition: transform 500ms ease, opacity 500ms ease;
+  transition:
+    transform 500ms ease,
+    opacity 500ms ease;
 }
 
 .public-site .instagram-tile::after {
@@ -1992,17 +1947,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     width: min(70%, 350px);
   }
 
-  .public-site .about-grid,
-  .public-site .amenities-grid {
+  .public-site .about-grid {
     gap: 62px;
   }
 
   .public-site .about-media {
     min-height: 540px;
-  }
-
-  .public-site .amenities-collage {
-    min-height: 610px;
   }
 
   .public-site .structure-inner {
@@ -2070,15 +2020,21 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     color: white;
   }
 
-  .public-site .menu-toggle[aria-expanded="true"] > span:not(.sr-only):first-child {
+  .public-site
+    .menu-toggle[aria-expanded="true"]
+    > span:not(.sr-only):first-child {
     transform: translateY(7px) rotate(45deg);
   }
 
-  .public-site .menu-toggle[aria-expanded="true"] > span:not(.sr-only):nth-child(2) {
+  .public-site
+    .menu-toggle[aria-expanded="true"]
+    > span:not(.sr-only):nth-child(2) {
     opacity: 0;
   }
 
-  .public-site .menu-toggle[aria-expanded="true"] > span:not(.sr-only):nth-child(3) {
+  .public-site
+    .menu-toggle[aria-expanded="true"]
+    > span:not(.sr-only):nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
   }
 
@@ -2086,7 +2042,9 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     width: 18px;
     height: 2px;
     background: currentColor;
-    transition: opacity 160ms ease, transform 160ms ease;
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
   }
 
   .public-site .site-header nav {
@@ -2101,8 +2059,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     min-height: 100dvh;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding:
-      max(96px, calc(env(safe-area-inset-top, 0px) + 72px))
+    padding: max(96px, calc(env(safe-area-inset-top, 0px) + 72px))
       max(24px, env(safe-area-inset-right, 0px))
       max(40px, env(safe-area-inset-bottom, 0px))
       max(24px, env(safe-area-inset-left, 0px));
@@ -2115,7 +2072,9 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     visibility: hidden;
     pointer-events: none;
     transform: translateY(-16px);
-    transition: opacity 180ms ease, transform 180ms ease;
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
   }
 
   .public-site .site-header nav.is-open {
@@ -2185,7 +2144,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .about-grid,
-  .public-site .amenities-grid {
+  .public-site .amenities-heading {
     grid-template-columns: 1fr;
   }
 
@@ -2225,10 +2184,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .structure-heading {
     max-width: 700px;
-  }
-
-  .public-site .amenities-collage {
-    min-height: 660px;
   }
 
   .public-site .modality-grid {
@@ -2476,10 +2431,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     letter-spacing: 0.05em;
   }
 
-  .public-site .amenities-collage {
-    min-height: 510px;
-  }
-
   .public-site .amenities-list {
     grid-template-columns: 1fr;
   }
@@ -2703,15 +2654,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .structure-numbers strong {
     font-size: clamp(3rem, 17vw, 4rem);
-  }
-
-  .public-site .amenities-collage {
-    min-height: 430px;
-  }
-
-  .public-site .collage-secondary,
-  .public-site .collage-tertiary {
-    border-width: 6px;
   }
 
   .public-site .modality-content {
