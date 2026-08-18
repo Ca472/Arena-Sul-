@@ -1,5 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
+import { ArenaLoader } from "@/components/arena-loader";
+import { ArenaOpening } from "@/components/arena-opening";
 import { SiteHeader } from "@/components/site-header";
 import { getPublishedEvents } from "@/lib/events/queries";
 
@@ -59,6 +62,16 @@ const eventTypes = [
 const contactUrl =
   "https://wa.me/551233071093?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20op%C3%A7%C3%B5es%20da%20Arena%20Sul.";
 
+const arenaLocation =
+  "Arena Sul Sports, Rua Maurício Cardoso, 220, Jardim Sul, São José dos Campos, SP, 12236-495, Brasil";
+const arenaGooglePlaceId = "ChIJkWB_KrNKzJQR-wIxev1IPvc";
+const mapsPlaceUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(arenaLocation)}&query_place_id=${arenaGooglePlaceId}`;
+const mapsDirectionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(arenaLocation)}&destination_place_id=${arenaGooglePlaceId}`;
+const wazeDirectionsUrl =
+  "https://www.waze.com/ul?ll=-23.2513669%2C-45.8921909&navigate=yes&utm_source=arena_sul_portal";
+const mapsEmbedUrl =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3665.7724281961564!2d-45.892190899999996!3d-23.251366899999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cc4ab32a7f6091%3A0xf73e48fd7a3102fb!2sArena%20Sul%20Sports!5e0!3m2!1spt-BR!2sbr!4v1787057333290!5m2!1spt-BR!2sbr";
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "SportsActivityLocation",
@@ -80,8 +93,7 @@ const structuredData = {
     "https://www.instagram.com/arenasulsports/",
     "https://linktr.ee/arenasulsports",
   ],
-  hasMap:
-    "https://www.google.com/maps/dir/?api=1&destination=R.%20Maur%C3%ADcio%20Cardoso%2C%20220%20-%20Jardim%20Sul%2C%20S%C3%A3o%20Jos%C3%A9%20dos%20Campos%20-%20SP%2C%2012236-495%2C%20Brasil",
+  hasMap: mapsPlaceUrl,
 };
 
 const eventDateFormatter = new Intl.DateTimeFormat("pt-BR", {
@@ -91,11 +103,85 @@ const eventDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   timeZone: "America/Sao_Paulo",
 });
 
-export default async function Home() {
-  const publishedEvents = await getPublishedEvents({ limit: 3 });
+function EventsSectionFallback() {
+  return (
+    <section className="cases section" aria-labelledby="cases-title">
+      <div className="section-heading shell">
+        <div>
+          <p className="section-kicker">Últimos eventos</p>
+          <h2 id="cases-title">A Arena em movimento.</h2>
+        </div>
+        <p>Campeonatos, encontros e experiências vividas por aqui.</p>
+      </div>
+      <div className="all-events-link shell">
+        <Link className="text-link" href="/eventos">
+          Ver todos os eventos <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+async function PublishedEventsSection() {
+  const publishedEvents = await getPublishedEvents({ limit: 3 }).catch(
+    () => null,
+  );
+
+  if (publishedEvents === null) {
+    return <EventsSectionFallback />;
+  }
+
+  if (publishedEvents.length === 0) {
+    return null;
+  }
 
   return (
-    <main className="public-site">
+    <section className="cases section" aria-labelledby="cases-title">
+      <div className="section-heading shell">
+        <div>
+          <p className="section-kicker">Últimos eventos</p>
+          <h2 id="cases-title">A Arena em movimento.</h2>
+        </div>
+        <p>Campeonatos, encontros e experiências vividas por aqui.</p>
+      </div>
+      <div className="case-grid shell">
+        {publishedEvents.map((event) => (
+          <Link
+            className="case-card"
+            href={`/eventos/${event.slug}`}
+            key={event.id}
+          >
+            <div>
+              <Image
+                src={event.coverPhoto?.url ?? "/images/events-banner.webp"}
+                alt={
+                  event.coverPhoto?.altText || `Capa do evento ${event.title}`
+                }
+                fill
+                sizes="(max-width: 760px) 100vw, 33vw"
+              />
+            </div>
+            <p>{eventDateFormatter.format(new Date(event.startsAt))}</p>
+            <h3>{event.title}</h3>
+          </Link>
+        ))}
+      </div>
+      <div className="all-events-link shell">
+        <Link className="text-link" href="/eventos">
+          Ver todos os eventos <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+export default function Home() {
+  return (
+    <>
+      <ArenaOpening>
+        <ArenaLoader />
+      </ArenaOpening>
+      <main className="public-site">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -108,7 +194,7 @@ export default async function Home() {
         <div className="hero-grid shell">
           <div className="hero-copy">
             <p className="eyebrow">São José dos Campos · SP</p>
-            <h1 className="hero-title">
+            <h1 className="hero-title" tabIndex={-1}>
               O esporte encontra pessoas. <span>Eventos ganham vida.</span>
             </h1>
             <p className="hero-lead">
@@ -329,62 +415,75 @@ export default async function Home() {
         </div>
       </section>
 
-      {publishedEvents.length > 0 ? (
-        <section className="cases section" aria-labelledby="cases-title">
-          <div className="section-heading shell">
-            <div>
-              <p className="section-kicker">Últimos eventos</p>
-              <h2 id="cases-title">A Arena em movimento.</h2>
-            </div>
-            <p>Campeonatos, encontros e experiências vividas por aqui.</p>
-          </div>
-          <div className="case-grid shell">
-            {publishedEvents.map((event) => (
-              <Link
-                className="case-card"
-                href={`/eventos/${event.slug}`}
-                key={event.id}
-              >
-                <div>
-                  <Image
-                    src={event.coverPhoto?.url ?? "/images/events-banner.webp"}
-                    alt={
-                      event.coverPhoto?.altText ||
-                      `Capa do evento ${event.title}`
-                    }
-                    fill
-                    sizes="(max-width: 760px) 100vw, 33vw"
-                  />
-                </div>
-                <p>{eventDateFormatter.format(new Date(event.startsAt))}</p>
-                <h3>{event.title}</h3>
-              </Link>
-            ))}
-          </div>
-          <div className="all-events-link shell">
-            <Link className="text-link" href="/eventos">
-              Ver todos os eventos <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </section>
-      ) : null}
+      <Suspense fallback={<EventsSectionFallback />}>
+        <PublishedEventsSection />
+      </Suspense>
 
       <footer className="footer" id="contato">
         <div className="footer-instagram shell">
-          <div>
+          <div className="footer-instagram-heading">
             <p className="section-kicker light">No Instagram</p>
             <h2>@arenasulsports</h2>
-            <p>Acompanhe campeonatos, treinos e bastidores da Arena.</p>
           </div>
+          <p className="footer-instagram-summary">
+            Acompanhe campeonatos, treinos, novidades e os bastidores que
+            movimentam a Arena Sul todos os dias.
+          </p>
           <a
             className="button button-instagram"
             href="https://www.instagram.com/stories/highlights/17901721567915380/"
             target="_blank"
             rel="noreferrer"
+            aria-label="Ver o destaque Eventos da Arena Sul Sports no Instagram (abre em uma nova aba)"
           >
             Ver destaque “Eventos” <span aria-hidden="true">↗</span>
           </a>
         </div>
+        <section
+          className="footer-location shell"
+          aria-labelledby="arena-location-title"
+        >
+          <div className="footer-location-copy">
+            <p className="section-kicker light">Onde estamos</p>
+            <h2 id="arena-location-title">Venha para a Arena Sul.</h2>
+            <address>
+              Rua Maurício Cardoso, 220 — Jardim Sul
+              <br />
+              São José dos Campos — SP · 12236-495
+            </address>
+            <div className="footer-location-actions">
+              <a
+                className="button button-location"
+                href={mapsDirectionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Traçar rota para a Arena Sul Sports no Google Maps (abre em uma nova aba)"
+              >
+                Traçar rota no Google Maps <span aria-hidden="true">↗</span>
+              </a>
+              <a
+                className="button button-location button-location-waze"
+                href={wazeDirectionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Traçar rota para a Arena Sul Sports no Waze (abre em uma nova aba)"
+              >
+                Traçar rota no Waze <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          </div>
+          <div className="footer-map-frame">
+            <iframe
+              src={mapsEmbedUrl}
+              title="Mapa da Arena Sul Sports em São José dos Campos"
+              width="600"
+              height="450"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            />
+          </div>
+        </section>
         <div className="footer-grid shell">
           <div className="footer-brand">
             <Image
@@ -394,20 +493,6 @@ export default async function Home() {
               height={225}
             />
             <p>Esporte. Conexão. Experiência.</p>
-          </div>
-          <div>
-            <h2>Visite a Arena</h2>
-            <address>
-              Rua Maurício Cardoso, 220 — Jardim Sul<br />
-              São José dos Campos — SP · 12236-495
-            </address>
-            <a
-              href="https://www.google.com/maps/dir/?api=1&destination=R.%20Maur%C3%ADcio%20Cardoso%2C%20220%20-%20Jardim%20Sul%2C%20S%C3%A3o%20Jos%C3%A9%20dos%20Campos%20-%20SP%2C%2012236-495%2C%20Brasil"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Abrir rota <span aria-hidden="true">↗</span>
-            </a>
           </div>
           <div>
             <h2>Fale com a gente</h2>
@@ -436,6 +521,7 @@ export default async function Home() {
           <a href="/admin">Área administrativa</a>
         </div>
       </footer>
-    </main>
+      </main>
+    </>
   );
 }

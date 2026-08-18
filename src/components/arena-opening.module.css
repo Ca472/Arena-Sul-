@@ -1,0 +1,66 @@
+.overlay {
+  position: fixed;
+  z-index: 5000;
+  inset: 0;
+  animation: overlayFailsafe 1ms step-end 3s forwards;
+}
+
+@keyframes overlayFailsafe {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.skipButton {
+  position: fixed;
+  z-index: 5001;
+  top: max(20px, env(safe-area-inset-top, 0px));
+  right: max(20px, env(safe-area-inset-right, 0px));
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border: 0;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.skipButton:hover {
+  color: white;
+}
+
+.skipButton:focus-visible {
+  border-radius: 999px;
+  outline: 3px solid #ff914d;
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .skipButton {
+    top: max(10px, env(safe-area-inset-top, 0px));
+    right: max(10px, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .skipButton {
+    top: max(4px, env(safe-area-inset-top, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay {
+    display: none;
+    animation: none;
+  }
+}
