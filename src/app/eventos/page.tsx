@@ -59,8 +59,8 @@ export default async function EventsPage() {
         <div className={`shell ${styles.listingIntro}`}>
           <h2 id="event-list-title">A Arena em movimento</h2>
           <p>
-            Cada publicação desta página é gerenciada pelos proprietários na
-            área administrativa, sem alterações no código do portal.
+            Confira campeonatos, encontros e experiências realizadas na Arena
+            Sul.
           </p>
         </div>
 
