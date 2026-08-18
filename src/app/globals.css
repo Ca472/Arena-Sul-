@@ -146,11 +146,16 @@ img {
 }
 
 .public-site .section-heading > p,
+.public-site .section-summary > p,
 .public-site .section-intro {
   margin: 0;
   color: var(--muted);
   font-size: 1rem;
   line-height: 1.75;
+}
+
+.public-site .section-summary .text-link {
+  margin-top: 18px;
 }
 
 .public-site .button {
@@ -232,6 +237,10 @@ img {
   min-height: 44px;
   align-items: center;
   transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.public-site .site-header nav .mobile-nav-cta {
+  display: none;
 }
 
 .public-site .site-header nav a:hover,
@@ -454,7 +463,7 @@ img {
   bottom: 0;
   left: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   border-top: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(1, 22, 52, 0.76);
   backdrop-filter: blur(14px);
@@ -811,12 +820,12 @@ img {
 
 .public-site .modality-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .public-site .modality-card {
-  grid-column: span 2;
+  min-width: 0;
   overflow: hidden;
   border: 1px solid var(--line);
   background: white;
@@ -824,7 +833,7 @@ img {
 }
 
 .public-site .modality-card:nth-child(4) {
-  grid-column: 2 / span 2;
+  grid-column: auto;
 }
 
 .public-site .modality-card:hover {
@@ -834,7 +843,7 @@ img {
 
 .public-site .modality-image {
   position: relative;
-  height: 330px;
+  height: clamp(190px, 20vw, 260px);
   overflow: hidden;
   background: var(--navy);
 }
@@ -853,33 +862,33 @@ img {
   top: 16px;
   right: 16px;
   display: grid;
-  width: 48px;
-  height: 48px;
+  width: 42px;
+  height: 42px;
   place-items: center;
   border-radius: 50%;
   background: var(--orange);
   color: var(--navy);
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: 1.45rem;
+  font-size: 1.25rem;
 }
 
 .public-site .modality-content {
-  padding: 28px;
+  padding: 22px 20px 24px;
 }
 
 .public-site .modality-content h3 {
   margin: 0;
   color: var(--navy);
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: 2.55rem;
+  font-size: clamp(1.85rem, 2.7vw, 2.65rem);
   font-weight: 400;
   line-height: 0.95;
   text-transform: uppercase;
 }
 
 .public-site .modality-content p {
-  min-height: 76px;
-  margin: 18px 0 24px;
+  min-height: 44px;
+  margin: 13px 0 0;
   color: var(--muted);
   font-size: 0.86rem;
   line-height: 1.65;
@@ -905,7 +914,7 @@ img {
 
 .public-site .events {
   position: relative;
-  min-height: 780px;
+  min-height: 680px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -1327,15 +1336,48 @@ img {
 }
 
 .public-site .footer {
-  padding-top: 80px;
+  padding-top: 0;
   background: var(--navy-deep);
   color: white;
+}
+
+.public-site .footer-instagram {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 48px;
+  padding-block: clamp(62px, 8vw, 92px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.public-site .footer .footer-instagram h2 {
+  margin: 0;
+  color: white;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.018em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+
+.public-site .footer-instagram > div > p:last-child {
+  margin: 18px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.65;
+}
+
+.public-site .footer-instagram .button-instagram {
+  max-width: 280px;
+  text-align: center;
 }
 
 .public-site .footer-grid {
   display: grid;
   grid-template-columns: 1.3fr 1.5fr 0.8fr 0.7fr;
   gap: 52px;
+  padding-top: 64px;
   padding-bottom: 64px;
 }
 
@@ -1450,16 +1492,17 @@ img {
     gap: 56px;
   }
 
-  .public-site .modality-card {
-    grid-column: span 3;
+  .public-site .modality-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .public-site .modality-card,
   .public-site .modality-card:nth-child(4) {
-    grid-column: span 3;
+    grid-column: auto;
   }
 
   .public-site .modality-card:last-child {
-    grid-column: 2 / span 4;
+    grid-column: 2;
   }
 
   .public-site .footer-grid {
@@ -1564,6 +1607,20 @@ img {
     touch-action: manipulation;
   }
 
+  .public-site .site-header nav .mobile-nav-cta {
+    display: inline-flex;
+    min-height: 52px;
+    justify-content: center;
+    padding: 0 24px;
+    border-radius: 999px;
+    background: var(--orange);
+    color: var(--navy);
+    font-family: var(--font-body), Arial, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+  }
+
   .public-site .hero-grid {
     grid-template-columns: 1fr;
     min-height: 820px;
@@ -1594,7 +1651,7 @@ img {
   }
 
   .public-site .stat:nth-child(-n + 2) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+    border-bottom: 0;
   }
 
   .public-site .about-grid,
@@ -1633,6 +1690,14 @@ img {
 
   .public-site .amenities-collage {
     min-height: 660px;
+  }
+
+  .public-site .modality-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-site .modality-card:last-child {
+    grid-column: 1 / -1;
   }
 
   .public-site .events-card {
@@ -1692,6 +1757,11 @@ img {
 
   .public-site .footer-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .public-site .footer-instagram {
+    grid-template-columns: 1fr;
+    gap: 30px;
   }
 }
 
@@ -1830,15 +1900,17 @@ img {
   }
 
   .public-site .modality-grid {
-    display: block;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .public-site .modality-card {
-    margin-bottom: 24px;
+    margin: 0;
   }
 
   .public-site .modality-image {
-    height: 340px;
+    height: min(58vw, 220px);
   }
 
   .public-site .modality-content p {
@@ -1909,6 +1981,11 @@ img {
 
   .public-site .button-contact {
     width: 100%;
+  }
+
+  .public-site .footer-instagram .button-instagram {
+    width: 100%;
+    max-width: none;
   }
 
   .public-site .footer-grid {
@@ -2023,11 +2100,20 @@ img {
   }
 
   .public-site .modality-image {
-    height: min(104vw, 340px);
+    height: min(58vw, 210px);
   }
 
   .public-site .modality-content {
-    padding: 24px 22px;
+    padding: 18px 16px 20px;
+  }
+
+  .public-site .modality-content h3 {
+    font-size: clamp(1.65rem, 10vw, 2.25rem);
+  }
+
+  .public-site .modality-content p {
+    min-height: 0;
+    font-size: 0.78rem;
   }
 
   .public-site .events-copy,
@@ -2066,7 +2152,7 @@ img {
   }
 
   .public-site .footer {
-    padding-top: 64px;
+    padding-top: 0;
   }
 }
 

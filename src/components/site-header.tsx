@@ -7,10 +7,12 @@ import { useEffect, useRef, useState } from "react";
 const links = [
   { href: "/#arena", label: "A Arena" },
   { href: "/#estrutura", label: "Estrutura" },
-  { href: "/#modalidades", label: "Modalidades" },
+  { href: "/#modalidades", label: "Esportes" },
   { href: "/#eventos", label: "Eventos" },
-  { href: "/#contato", label: "Contato" },
 ];
+
+const contactUrl =
+  "https://wa.me/551233071093?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20op%C3%A7%C3%B5es%20da%20Arena%20Sul.";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -163,15 +165,24 @@ export function SiteHeader() {
             {link.label}
           </a>
         ))}
+        <a
+          className="mobile-nav-cta"
+          href={contactUrl}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => setOpen(false)}
+        >
+          Falar no WhatsApp
+        </a>
       </nav>
 
       <a
         className="header-cta"
-        href="https://wa.me/551233071093?text=Ol%C3%A1%2C%20quero%20planejar%20um%20evento%20na%20Arena%20Sul."
+        href={contactUrl}
         target="_blank"
         rel="noreferrer"
       >
-        Planeje seu evento
+        Falar no WhatsApp
       </a>
     </header>
   );
