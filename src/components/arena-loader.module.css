@@ -1,5 +1,5 @@
 .loader {
-  --intro-cycle: 1.85s;
+  --intro-cycle: 5s;
   position: relative;
   isolation: isolate;
   display: grid;
