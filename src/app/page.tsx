@@ -6,7 +6,9 @@ import {
   InstagramSection,
   InstagramSectionFallback,
 } from "@/components/instagram-section";
+import { ModalityCards } from "@/components/modality-cards";
 import { SiteHeader } from "@/components/site-header";
+import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 
 const stats: Array<{ value: string | null; label: string }> = [
   { value: "13", label: "quadras de areia" },
@@ -43,31 +45,7 @@ const amenities = [
   "Estrutura para grupos e eventos",
 ];
 
-const modalities = [
-  {
-    title: "Beach Tennis",
-    text: "Aulas e jogos para diferentes níveis, com saúde e diversão.",
-  },
-  {
-    title: "Futevôlei",
-    text: "Treinos, partidas e uma comunidade que vive o esporte.",
-  },
-  {
-    title: "Vôlei de areia",
-    text: "Aulas e jogos para diferentes níveis.",
-  },
-  {
-    title: "Futebol Society",
-    text: "Partidas, lazer e confraternizações para grupos.",
-  },
-  {
-    title: "Funcional",
-    text: "Treinos coletivos com foco em saúde e bem-estar.",
-  },
-];
-
-const contactUrl =
-  "https://wa.me/551233071093?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20op%C3%A7%C3%B5es%20da%20Arena%20Sul.";
+const contactUrl = buildWhatsAppUrl();
 
 const arenaLocation =
   "Arena Sul Sports, Rua Maurício Cardoso, 220, Jardim Sul, São José dos Campos, SP, 12236-495, Brasil";
@@ -341,19 +319,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="modality-grid shell">
-          {modalities.map((modality, index) => (
-            <article className="modality-card" key={modality.title}>
-              <span className="modality-number" aria-hidden="true">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <div className="modality-content">
-                <h3>{modality.title}</h3>
-                <p>{modality.text}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <ModalityCards />
       </section>
 
       <Suspense fallback={<InstagramSectionFallback />}>
