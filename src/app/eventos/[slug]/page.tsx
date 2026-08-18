@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
+import { WhatsAppLabel } from "@/components/whatsapp-label";
 import { getPublishedEventBySlug } from "@/lib/events/queries";
 
 import styles from "../events.module.css";
@@ -158,12 +159,17 @@ export default async function EventDetailPage({
           <p className={styles.eyebrow}>Sua ideia, nossa estrutura</p>
           <h2>Quer realizar um evento aqui?</h2>
           <p>
-            Converse com a equipe da Arena Sul e planeje campeonatos,
-            confraternizações, ações de marca, festas ou encontros.
+            Converse com a equipe da Arena Sul e planeje eventos corporativos,
+            eventos escolares, confraternizações, festas ou encontros.
           </p>
         </div>
-        <a className={styles.button} href={contactUrl} target="_blank" rel="noreferrer">
-          Falar no WhatsApp
+        <a
+          className={`${styles.button} whatsapp-cta`}
+          href={contactUrl}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <WhatsAppLabel />
         </a>
       </section>
 

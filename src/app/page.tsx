@@ -1,10 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Suspense } from "react";
 import { ArenaLoader } from "@/components/arena-loader";
 import { ArenaOpening } from "@/components/arena-opening";
+import {
+  InstagramSection,
+  InstagramSectionFallback,
+} from "@/components/instagram-section";
 import { SiteHeader } from "@/components/site-header";
-import { getPublishedEvents } from "@/lib/events/queries";
 
 const stats = [
   { value: "13", label: "quadras de areia" },
@@ -15,48 +17,32 @@ const amenities = [
   "13 quadras de areia",
   "Campo de futebol society",
   "Área de convivência",
-  "Espaço para aulas e treinos",
-  "Estrutura para grupos e eventos",
+  "Ambiente acolhedor para famílias",
+  "Estrutura para eventos corporativos",
+  "Espaço para eventos escolares",
 ];
 
 const modalities = [
   {
     title: "Beach Tennis",
-    image: "/images/racket-woman.webp",
-    alt: "Atleta praticando beach tennis na areia",
-    text: "Aulas, jogos e torneios para diferentes níveis.",
+    text: "Aulas e jogos para diferentes níveis, com saúde e diversão.",
   },
   {
     title: "Futevôlei",
-    image: "/images/footvolley-case.webp",
-    alt: "Atleta praticando futevôlei na Arena Sul",
     text: "Treinos, partidas e uma comunidade que vive o esporte.",
   },
   {
     title: "Vôlei de areia",
-    image: "/images/sand-sport-action.webp",
-    alt: "Atleta saltando para jogar vôlei de areia",
     text: "Aulas e jogos para diferentes níveis.",
   },
   {
     title: "Futebol Society",
-    image: "/images/courts-detail.webp",
-    alt: "Campo e quadras da Arena Sul Sports",
-    text: "Partidas, campeonatos e confraternizações.",
+    text: "Partidas, lazer e confraternizações para grupos.",
   },
   {
     title: "Funcional",
-    image: "/images/group-class.webp",
-    alt: "Turma em atividade esportiva coletiva na Arena Sul",
-    text: "Treinos coletivos ao ar livre.",
+    text: "Treinos coletivos com foco em saúde e bem-estar.",
   },
-];
-
-const eventTypes = [
-  "Campeonatos",
-  "Eventos corporativos",
-  "Eventos escolares",
-  "Confraternizações",
 ];
 
 const contactUrl =
@@ -80,7 +66,7 @@ const structuredData = {
   telephone: "+55 12 3307-1093",
   image: "https://www.arenasulsports.com/images/arena-courts.webp",
   description:
-    "Arena esportiva e espaço para eventos em São José dos Campos, com quadras de areia, campo society e área de convivência.",
+    "Arena esportiva em São José dos Campos para saúde, convivência em família e eventos corporativos e escolares.",
   address: {
     "@type": "PostalAddress",
     streetAddress: "Rua Maurício Cardoso, 220",
@@ -95,85 +81,6 @@ const structuredData = {
   ],
   hasMap: mapsPlaceUrl,
 };
-
-const eventDateFormatter = new Intl.DateTimeFormat("pt-BR", {
-  day: "2-digit",
-  month: "long",
-  year: "numeric",
-  timeZone: "America/Sao_Paulo",
-});
-
-function EventsSectionFallback() {
-  return (
-    <section className="cases section" aria-labelledby="cases-title">
-      <div className="section-heading shell">
-        <div>
-          <p className="section-kicker">Últimos eventos</p>
-          <h2 id="cases-title">A Arena em movimento.</h2>
-        </div>
-        <p>Campeonatos, encontros e experiências vividas por aqui.</p>
-      </div>
-      <div className="all-events-link shell">
-        <Link className="text-link" href="/eventos">
-          Ver todos os eventos <span aria-hidden="true">→</span>
-        </Link>
-      </div>
-    </section>
-  );
-}
-
-async function PublishedEventsSection() {
-  const publishedEvents = await getPublishedEvents({ limit: 3 }).catch(
-    () => null,
-  );
-
-  if (publishedEvents === null) {
-    return <EventsSectionFallback />;
-  }
-
-  if (publishedEvents.length === 0) {
-    return null;
-  }
-
-  return (
-    <section className="cases section" aria-labelledby="cases-title">
-      <div className="section-heading shell">
-        <div>
-          <p className="section-kicker">Últimos eventos</p>
-          <h2 id="cases-title">A Arena em movimento.</h2>
-        </div>
-        <p>Campeonatos, encontros e experiências vividas por aqui.</p>
-      </div>
-      <div className="case-grid shell">
-        {publishedEvents.map((event) => (
-          <Link
-            className="case-card"
-            href={`/eventos/${event.slug}`}
-            key={event.id}
-          >
-            <div>
-              <Image
-                src={event.coverPhoto?.url ?? "/images/events-banner.webp"}
-                alt={
-                  event.coverPhoto?.altText || `Capa do evento ${event.title}`
-                }
-                fill
-                sizes="(max-width: 760px) 100vw, 33vw"
-              />
-            </div>
-            <p>{eventDateFormatter.format(new Date(event.startsAt))}</p>
-            <h3>{event.title}</h3>
-          </Link>
-        ))}
-      </div>
-      <div className="all-events-link shell">
-        <Link className="text-link" href="/eventos">
-          Ver todos os eventos <span aria-hidden="true">→</span>
-        </Link>
-      </div>
-    </section>
-  );
-}
 
 export default function Home() {
   return (
@@ -193,13 +100,13 @@ export default function Home() {
 
         <div className="hero-grid shell">
           <div className="hero-copy">
-            <p className="eyebrow">São José dos Campos · SP</p>
+            <p className="eyebrow">Esporte · Família · Saúde</p>
             <h1 className="hero-title">
-              O esporte encontra pessoas. <span>Eventos ganham vida.</span>
+              Esporte é saúde. <span>Família é conexão.</span>
             </h1>
             <p className="hero-lead">
-              Um espaço para esporte, encontros e eventos em São José dos
-              Campos.
+              Um ambiente acolhedor para praticar esporte, cuidar da saúde e
+              viver bons momentos em família.
             </p>
             <div className="hero-actions">
               <a
@@ -238,7 +145,7 @@ export default function Home() {
               sizes="(max-width: 600px) 95vw, (max-width: 850px) 48vw, (max-width: 1100px) 32vw, 35vw"
               priority
             />
-            <p className="visual-note">Esporte. Conexão. Experiência.</p>
+            <p className="visual-note">Esporte. Família. Saúde.</p>
           </div>
         </div>
 
@@ -268,12 +175,12 @@ export default function Home() {
           </div>
 
           <div className="about-copy">
-            <p className="section-kicker">Sobre a Arena</p>
-            <h2>Mais do que uma arena, somos um ponto de encontro.</h2>
+            <p className="section-kicker">Nossa essência</p>
+            <h2>Um ponto de encontro para saúde e bons momentos.</h2>
             <p>
-              A Arena Sul reúne esporte, convivência e eventos em um ambiente
-              acolhedor para atletas, famílias, escolas, empresas e amigos em
-              São José dos Campos.
+              A Arena Sul aproxima famílias, amigos, escolas e empresas em um
+              ambiente acolhedor para praticar esporte, cuidar do bem-estar e
+              compartilhar experiências.
             </p>
             <a className="text-link" href="#estrutura">
               Conheça o espaço <span aria-hidden="true">→</span>
@@ -317,10 +224,10 @@ export default function Home() {
 
           <div className="amenities-copy">
             <p className="section-kicker">Estrutura</p>
-            <h2>Esporte e eventos em um só lugar.</h2>
+            <h2>Esporte, saúde e convivência.</h2>
             <p className="section-intro">
-              Um espaço versátil para treinar, competir, reunir pessoas e
-              celebrar.
+              Quadras e áreas de convivência para jogos, encontros, eventos
+              corporativos e eventos escolares.
             </p>
             <ul className="amenities-list">
               {amenities.map((item) => (
@@ -341,7 +248,10 @@ export default function Home() {
             <h2>Escolha seu esporte.</h2>
           </div>
           <div className="section-summary">
-            <p>Aulas, treinos, jogos e competições para diferentes níveis.</p>
+            <p>
+              Aulas, treinos e jogos para diferentes níveis, com foco em saúde,
+              convivência e diversão.
+            </p>
             <a
               className="text-link"
               href={contactUrl}
@@ -356,19 +266,9 @@ export default function Home() {
         <div className="modality-grid shell">
           {modalities.map((modality, index) => (
             <article className="modality-card" key={modality.title}>
-              <div className="modality-image">
-                <Image
-                  src={modality.image}
-                  alt={modality.alt}
-                  fill
-                  sizes={
-                    index === modalities.length - 1
-                      ? "(max-width: 850px) 100vw, (max-width: 1100px) 33vw, 20vw"
-                      : "(max-width: 850px) 50vw, (max-width: 1100px) 33vw, 20vw"
-                  }
-                />
-                <span>{String(index + 1).padStart(2, "0")}</span>
-              </div>
+              <span className="modality-number" aria-hidden="true">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <div className="modality-content">
                 <h3>{modality.title}</h3>
                 <p>{modality.text}</p>
@@ -378,67 +278,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="events" id="eventos">
-        <Image
-          className="events-background"
-          src="/images/events-banner.webp"
-          alt=""
-          fill
-          sizes="100vw"
-        />
-        <div className="events-shade" />
-        <div className="events-card shell">
-          <div className="events-copy">
-            <p className="section-kicker light">Eventos</p>
-            <h2>Seu evento acontece aqui.</h2>
-            <p>
-              Uma estrutura flexível para receber diferentes formatos e reunir
-              pessoas dentro e fora das quadras.
-            </p>
-            <a
-              className="button button-primary"
-              href={contactUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Solicitar uma proposta
-            </a>
-          </div>
-          <ul className="event-type-list">
-            {eventTypes.map((type, index) => (
-              <li key={type}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                {type}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <Suspense fallback={<EventsSectionFallback />}>
-        <PublishedEventsSection />
+      <Suspense fallback={<InstagramSectionFallback />}>
+        <InstagramSection />
       </Suspense>
 
       <footer className="footer" id="contato">
-        <div className="footer-instagram shell">
-          <div className="footer-instagram-heading">
-            <p className="section-kicker light">No Instagram</p>
-            <h2>@arenasulsports</h2>
-          </div>
-          <p className="footer-instagram-summary">
-            Acompanhe campeonatos, treinos, novidades e os bastidores que
-            movimentam a Arena Sul todos os dias.
-          </p>
-          <a
-            className="button button-instagram"
-            href="https://www.instagram.com/stories/highlights/17901721567915380/"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Ver o destaque Eventos da Arena Sul Sports no Instagram (abre em uma nova aba)"
-          >
-            Ver destaque “Eventos” <span aria-hidden="true">↗</span>
-          </a>
-        </div>
         <section
           className="footer-location shell"
           aria-labelledby="arena-location-title"
@@ -492,7 +336,7 @@ export default function Home() {
               width={225}
               height={225}
             />
-            <p>Esporte. Conexão. Experiência.</p>
+            <p>Esporte. Família. Saúde.</p>
           </div>
           <div>
             <h2>Fale com a gente</h2>
@@ -513,7 +357,7 @@ export default function Home() {
             <a href="#arena">A Arena</a>
             <a href="#estrutura">Estrutura</a>
             <a href="#modalidades">Esportes</a>
-            <a href="#eventos">Eventos</a>
+            <a href="#instagram">Instagram</a>
           </div>
         </div>
         <div className="footer-bottom shell">

@@ -310,7 +310,7 @@ export function EventForm({ eventId, initialEvent, demoMode }: EventFormProps) {
                 onChange={(event) => changeTitle(event.target.value)}
                 minLength={3}
                 maxLength={120}
-                placeholder="Ex.: Torneio de Beach Tennis 2026"
+                placeholder="Ex.: Evento Corporativo Arena Sul"
                 required
               />
               {state.fieldErrors?.title?.map((message) => (

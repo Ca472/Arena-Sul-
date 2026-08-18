@@ -4,11 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+import { WhatsAppLabel } from "@/components/whatsapp-label";
+
 const links = [
   { href: "/#arena", label: "A Arena" },
   { href: "/#estrutura", label: "Estrutura" },
   { href: "/#modalidades", label: "Esportes" },
-  { href: "/#eventos", label: "Eventos" },
+  { href: "/#instagram", label: "Instagram" },
 ];
 
 const contactUrl =
@@ -166,23 +168,23 @@ export function SiteHeader() {
           </a>
         ))}
         <a
-          className="mobile-nav-cta"
+          className="mobile-nav-cta whatsapp-cta"
           href={contactUrl}
           target="_blank"
           rel="noreferrer"
           onClick={() => setOpen(false)}
         >
-          Falar no WhatsApp
+          <WhatsAppLabel />
         </a>
       </nav>
 
       <a
-        className="header-cta"
+        className="header-cta whatsapp-cta"
         href={contactUrl}
         target="_blank"
         rel="noreferrer"
       >
-        Falar no WhatsApp
+        <WhatsAppLabel />
       </a>
     </header>
   );

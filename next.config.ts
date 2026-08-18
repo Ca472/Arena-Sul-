@@ -28,16 +28,30 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    remotePatterns: supabaseUrl
-      ? [
-          {
-            protocol: "https",
-            hostname: new URL(supabaseUrl).hostname,
-            port: "",
-            pathname: "/storage/v1/object/sign/event-photos/**",
-          },
-        ]
-      : [],
+    remotePatterns: [
+      ...(supabaseUrl
+        ? [
+            {
+              protocol: "https" as const,
+              hostname: new URL(supabaseUrl).hostname,
+              port: "",
+              pathname: "/storage/v1/object/sign/event-photos/**",
+            },
+          ]
+        : []),
+      {
+        protocol: "https",
+        hostname: "**.cdninstagram.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.fbcdn.net",
+        port: "",
+        pathname: "/**",
+      },
+    ],
   },
 };
 
