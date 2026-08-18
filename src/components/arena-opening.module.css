@@ -2,13 +2,30 @@
   position: fixed;
   z-index: 5000;
   inset: 0;
-  animation: overlayFailsafe 1ms step-end 3s forwards;
+  animation: overlayFailsafe 1ms step-end 4.2s forwards;
+}
+
+.overlay[data-intro-ready="true"] {
+  animation:
+    overlayExit 2.1s ease-in-out both,
+    overlayFailsafe 1ms step-end 4.2s forwards;
 }
 
 @keyframes overlayFailsafe {
   to {
     visibility: hidden;
     pointer-events: none;
+  }
+}
+
+@keyframes overlayExit {
+  0%,
+  88% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
   }
 }
 
@@ -53,7 +70,7 @@
 
 @media (max-height: 520px) and (orientation: landscape) {
   .skipButton {
-    top: max(4px, env(safe-area-inset-top, 0px));
+    top: max(8px, env(safe-area-inset-top, 0px));
     right: max(8px, env(safe-area-inset-right, 0px));
   }
 }

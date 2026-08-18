@@ -1,4 +1,5 @@
 .loader {
+  --intro-cycle: 1.85s;
   position: relative;
   isolation: isolate;
   display: grid;
@@ -6,663 +7,663 @@
   min-height: 100dvh;
   place-items: center;
   align-content: center;
-  gap: 16px;
+  gap: 6px;
   overflow: hidden;
   padding: max(24px, env(safe-area-inset-top, 0px))
     max(20px, env(safe-area-inset-right, 0px))
     max(24px, env(safe-area-inset-bottom, 0px))
     max(20px, env(safe-area-inset-left, 0px));
   background:
-    radial-gradient(circle at 50% 42%, rgba(58, 95, 154, 0.5), transparent 32%),
-    linear-gradient(145deg, #021f4e 0%, #011634 74%);
+    radial-gradient(circle at 51% 42%, rgba(58, 95, 154, 0.42), transparent 31%),
+    radial-gradient(circle at 76% 18%, rgba(255, 145, 77, 0.13), transparent 25%),
+    linear-gradient(145deg, #021f4e 0%, #011735 56%, #000c20 100%);
   color: white;
 }
 
-.loader::before,
+.loader::before {
+  position: absolute;
+  z-index: -2;
+  right: -12vw;
+  bottom: -42vh;
+  left: -12vw;
+  height: 76vh;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: 86px 86px;
+  content: "";
+  opacity: 0.52;
+  transform: perspective(620px) rotateX(66deg);
+  transform-origin: top center;
+}
+
 .loader::after {
   position: absolute;
   z-index: -1;
-  width: min(48vw, 520px);
-  height: min(48vw, 520px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 50%;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 8, 22, 0.5), transparent 18% 82%, rgba(0, 8, 22, 0.5)),
+    linear-gradient(0deg, rgba(0, 8, 22, 0.38), transparent 28% 82%, rgba(0, 8, 22, 0.25));
   content: "";
+  pointer-events: none;
 }
 
-.loader::before {
-  top: -28%;
-  left: -12%;
-}
-
-.loader::after {
-  right: -14%;
-  bottom: -32%;
-}
-
-.animation {
-  --loader-cycle: 1.9s;
+.stage {
   position: relative;
-  width: min(520px, 100%);
-  height: clamp(270px, 34vw, 330px);
+  width: min(1120px, 94vw, calc((100dvh - 132px) * 1.7778));
+  aspect-ratio: 16 / 9;
+  contain: layout paint;
+  transform: translateZ(0);
+  animation: stageImpact var(--intro-cycle) linear 1 both paused;
 }
 
-.courtGlow {
+.ambientGlow {
   position: absolute;
-  inset: 13% 4% 5%;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  inset: 12% 15% 9%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(75, 134, 225, 0.24),
+    rgba(20, 63, 127, 0.08) 46%,
+    transparent 72%
+  );
+}
+
+.courtPlane {
+  position: absolute;
+  right: 6%;
+  bottom: 5%;
+  left: 6%;
+  height: 27%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   background: radial-gradient(
     ellipse at center,
     rgba(255, 145, 77, 0.1),
-    transparent 65%
+    transparent 66%
   );
-  transform: perspective(380px) rotateX(67deg);
+  transform: perspective(420px) rotateX(67deg);
 }
 
-.courtLine {
+.courtPlane::before,
+.courtPlane::after {
   position: absolute;
-  right: 7%;
-  bottom: 16%;
-  left: 7%;
+  content: "";
+}
+
+.courtPlane::before {
+  top: 50%;
+  right: 8%;
+  left: 8%;
   height: 1px;
-  overflow: visible;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+}
+
+.courtPlane::after {
+  top: 7%;
+  bottom: 7%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.horizonLine {
+  position: absolute;
+  z-index: 1;
+  top: 47%;
+  right: 1%;
+  left: 1%;
+  height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.3) 18%,
-    rgba(255, 255, 255, 0.3) 82%,
+    rgba(77, 134, 223, 0.1) 20%,
+    rgba(255, 255, 255, 0.25) 50%,
+    rgba(255, 145, 77, 0.1) 80%,
     transparent
   );
+  opacity: 0.7;
 }
 
-.courtLine::after {
+.racketRig {
   position: absolute;
-  bottom: -22px;
+  z-index: 8;
+  top: -12%;
+  left: 1%;
+  width: 42%;
+  aspect-ratio: 2 / 3;
+  opacity: 0;
+  transform-origin: 24% 92%;
+  will-change: transform, opacity;
+  animation: racketSwing var(--intro-cycle)
+    cubic-bezier(0.42, 0, 0.22, 1) 1 both paused;
+}
+
+.racketImage,
+.ballImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.racketImage {
+  filter: drop-shadow(0 24px 30px rgba(0, 5, 15, 0.42));
+}
+
+.racketTrail {
+  position: absolute;
+  z-index: 5;
+  top: 24%;
+  left: 4%;
+  width: 48%;
+  height: 32%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 214deg at 72% 62%,
+    transparent 0 13%,
+    rgba(69, 135, 231, 0.02) 15%,
+    rgba(105, 165, 255, 0.22) 22%,
+    rgba(255, 255, 255, 0.34) 25%,
+    transparent 31% 100%
+  );
+  opacity: 0;
+  transform: rotate(-18deg) scale(0.72);
+  transform-origin: 74% 68%;
+  will-change: transform, opacity;
+  animation: racketTrailSweep var(--intro-cycle) ease-out 1 both paused;
+}
+
+.ballRig {
+  position: absolute;
+  z-index: 10;
+  top: 34%;
+  left: 53%;
+  width: clamp(48px, 7.4%, 86px);
+  aspect-ratio: 1;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: ballFlight var(--intro-cycle)
+    cubic-bezier(0.2, 0.72, 0.24, 1) 1 both paused;
+}
+
+.ballImage {
+  filter: drop-shadow(0 12px 16px rgba(0, 6, 18, 0.45));
+}
+
+.ballTrail {
+  position: absolute;
+  z-index: 6;
+  top: 38%;
+  left: 56%;
+  width: 39%;
+  height: 8%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 145, 77, 0.38) 26%,
+    transparent 100%
+  );
+  clip-path: polygon(0 38%, 100% 0, 100% 100%, 0 62%);
+  opacity: 0;
+  transform: rotate(-23deg) scaleX(0.16);
+  transform-origin: left center;
+  will-change: transform, opacity;
+  animation: ballTrailBurst var(--intro-cycle) ease-out 1 both paused;
+}
+
+.impactFlash,
+.impactRing,
+.impactParticles {
+  position: absolute;
+  z-index: 9;
+  top: 39%;
+  left: 56%;
+  width: clamp(92px, 13%, 148px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.impactFlash {
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.98) 0 5%,
+    rgba(255, 196, 148, 0.72) 12%,
+    rgba(255, 145, 77, 0.2) 35%,
+    transparent 68%
+  );
+  opacity: 0;
+  animation: impactFlash var(--intro-cycle) ease-out 1 both paused;
+}
+
+.impactRing {
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  box-shadow:
+    0 0 22px rgba(255, 145, 77, 0.38),
+    inset 0 0 20px rgba(255, 255, 255, 0.18);
+  opacity: 0;
+  animation: impactRing var(--intro-cycle) ease-out 1 both paused;
+}
+
+.impactParticles {
+  opacity: 0;
+  animation: particlesBurst var(--intro-cycle) ease-out 1 both paused;
+}
+
+.impactParticles span {
+  position: absolute;
+  top: 50%;
   left: 50%;
-  width: 1px;
-  height: 46px;
-  background: rgba(255, 255, 255, 0.2);
-  content: "";
-  transform: rotate(64deg);
-  transform-origin: center;
+  width: 68%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 178, 122, 0.95), transparent 76%);
+  transform-origin: left center;
+}
+
+.impactParticles span:nth-child(1) { transform: rotate(-13deg); }
+.impactParticles span:nth-child(2) { transform: rotate(28deg); }
+.impactParticles span:nth-child(3) { transform: rotate(69deg); }
+.impactParticles span:nth-child(4) { transform: rotate(112deg); }
+.impactParticles span:nth-child(5) { transform: rotate(158deg); }
+.impactParticles span:nth-child(6) { transform: rotate(205deg); }
+.impactParticles span:nth-child(7) { transform: rotate(251deg); }
+.impactParticles span:nth-child(8) { transform: rotate(309deg); }
+
+.brandLockup {
+  position: absolute;
+  z-index: 12;
+  top: 52%;
+  left: 50%;
+  display: grid;
+  width: clamp(176px, 23%, 252px);
+  aspect-ratio: 1;
+  place-items: center;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.72);
+  will-change: transform, opacity;
+  animation: brandReveal var(--intro-cycle)
+    cubic-bezier(0.2, 0.78, 0.24, 1) 1 both paused;
 }
 
 .logoHalo {
   position: absolute;
-  bottom: calc(3% - 18px);
-  left: 50%;
-  width: clamp(174px, 30vw, 210px);
-  height: clamp(174px, 30vw, 210px);
-  border: 1px solid rgba(255, 145, 77, 0.28);
+  inset: -13%;
+  border: 1px solid rgba(255, 145, 77, 0.42);
   border-radius: 50%;
-  opacity: 0.45;
-  transform: translateX(-50%) scale(0.86);
-  animation: haloImpact var(--loader-cycle) ease-out 1 both;
+  box-shadow:
+    0 0 0 12px rgba(255, 255, 255, 0.025),
+    0 0 82px rgba(53, 116, 211, 0.24);
 }
 
 .logoHalo::before,
 .logoHalo::after {
   position: absolute;
-  inset: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: inherit;
   content: "";
 }
 
+.logoHalo::before { inset: 10%; }
 .logoHalo::after {
-  inset: -15px;
-  border-color: rgba(58, 95, 154, 0.38);
-}
-
-.logoBadge {
-  position: absolute;
-  z-index: 4;
-  bottom: 3%;
-  left: 50%;
-  display: grid;
-  width: clamp(142px, 25vw, 164px);
-  height: clamp(142px, 25vw, 164px);
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 45% 38%, white, rgba(245, 248, 253, 0.96) 68%),
-    white;
-  box-shadow:
-    0 26px 70px rgba(0, 0, 0, 0.3),
-    0 0 0 8px rgba(255, 255, 255, 0.035);
-  transform: translateX(-50%);
-  animation: logoImpact var(--loader-cycle) ease-in-out 1 both;
+  inset: -11%;
+  border-color: rgba(58, 95, 154, 0.26);
 }
 
 .logo {
-  width: 83%;
-  height: 83%;
-  object-fit: contain;
-}
-
-.racket {
-  position: absolute;
-  z-index: 5;
-  top: 7%;
-  left: 15%;
-  width: clamp(102px, 21vw, 126px);
-  height: clamp(188px, 37vw, 226px);
-  transform-origin: 68% 91%;
-  animation: racketSwing var(--loader-cycle)
-    cubic-bezier(0.56, 0.05, 0.28, 1) 1 both;
-}
-
-.racketHead {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 63%;
-  overflow: hidden;
-  border: clamp(7px, 1.4vw, 9px) solid #ff914d;
-  border-radius: 52% 52% 48% 48%;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 12px,
-      rgba(255, 255, 255, 0.62) 12px 13px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 12px,
-      rgba(255, 255, 255, 0.62) 12px 13px
-    ),
-    rgba(2, 31, 78, 0.96);
-  box-shadow:
-    0 15px 32px rgba(0, 0, 0, 0.27),
-    inset 0 0 24px rgba(58, 95, 154, 0.34);
-}
-
-.racketHead::after {
-  position: absolute;
-  inset: 11%;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: inherit;
-  content: "";
-}
-
-.racketHandle {
-  position: absolute;
-  top: 58%;
-  left: 44%;
-  width: 14%;
-  height: 42%;
-  border-radius: 2px 2px 8px 8px;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 8px,
-      rgba(2, 31, 78, 0.28) 8px 10px
-    ),
-    linear-gradient(90deg, #f7f9fc, #aebbd0 48%, #f7f9fc);
-  box-shadow:
-    inset 0 -37% 0 #ff914d,
-    0 9px 18px rgba(0, 0, 0, 0.2);
-}
-
-.ball {
-  position: absolute;
-  z-index: 7;
-  top: 32%;
-  left: 48%;
-  width: clamp(29px, 6vw, 36px);
-  height: clamp(29px, 6vw, 36px);
-  border: 3px solid rgba(255, 255, 255, 0.88);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 32% 28%, #ffc294 0 13%, transparent 14%),
-    #ff914d;
-  box-shadow:
-    0 10px 25px rgba(255, 145, 77, 0.42),
-    0 0 0 5px rgba(255, 145, 77, 0.08);
-  animation: ballFlight var(--loader-cycle)
-    cubic-bezier(0.2, 0.68, 0.24, 1) 1 both;
-}
-
-.speedTrail {
-  position: absolute;
-  z-index: 3;
-  top: 37%;
-  left: 28%;
-  width: 28%;
-  height: 54px;
-  opacity: 0;
-  transform: rotate(-13deg);
-  animation: trailBurst var(--loader-cycle) ease-out 1 both;
-}
-
-.speedTrail span {
-  position: absolute;
-  right: 0;
-  width: 100%;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.72));
-}
-
-.speedTrail span:nth-child(1) {
-  top: 5px;
-}
-
-.speedTrail span:nth-child(2) {
-  top: 24px;
-  right: 9%;
-  width: 76%;
-}
-
-.speedTrail span:nth-child(3) {
-  top: 43px;
-  right: 20%;
-  width: 58%;
-}
-
-.impactRing,
-.impactSpark {
-  position: absolute;
-  z-index: 6;
-  top: calc(32% - clamp(27px, 5vw, 38px));
-  left: calc(48% - clamp(27px, 5vw, 38px));
-  width: clamp(78px, 15vw, 104px);
-  height: clamp(78px, 15vw, 104px);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.impactRing {
-  border: 2px solid rgba(255, 255, 255, 0.88);
-  border-radius: 50%;
-  transform: scale(0.28);
-  animation: impactRing var(--loader-cycle) ease-out 1 both;
-}
-
-.impactSpark {
-  animation: impactSpark var(--loader-cycle) ease-out 1 both;
-}
-
-.impactSpark span {
-  position: absolute;
-  top: 49%;
-  left: 50%;
-  width: 48%;
-  height: 3px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, rgba(255, 145, 77, 0.95), transparent);
-  transform-origin: left center;
-}
-
-.impactSpark span:nth-child(1) {
-  transform: rotate(-25deg);
-}
-
-.impactSpark span:nth-child(2) {
-  transform: rotate(34deg);
-}
-
-.impactSpark span:nth-child(3) {
-  transform: rotate(150deg);
-}
-
-.impactSpark span:nth-child(4) {
-  transform: rotate(207deg);
-}
-
-.status {
   position: relative;
-  z-index: 2;
-  display: grid;
-  gap: 6px;
-  text-align: center;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 36px rgba(0, 5, 16, 0.38));
 }
 
-.status p {
-  margin: 0;
+.signature {
+  position: relative;
+  z-index: 15;
+  display: grid;
+  gap: 5px;
+  margin-top: -8px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: signatureReveal var(--intro-cycle) ease-out 1 both paused;
 }
+
+.signature p { margin: 0; }
 
 .statusEyebrow {
   color: #ff914d;
   font-size: 0.64rem;
   font-weight: 800;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
 }
 
 .statusText {
-  color: rgba(255, 255, 255, 0.84);
-  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
-.soundButton {
-  position: relative;
-  z-index: 2;
-  display: inline-flex;
-  min-width: 142px;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 9px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.86);
-  font: inherit;
-  font-size: 0.67rem;
-  font-weight: 800;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition:
-    border-color 180ms ease,
-    background 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+:global([data-arena-opening][data-intro-ready="true"]) .stage,
+:global([data-arena-opening][data-intro-ready="true"]) .racketRig,
+:global([data-arena-opening][data-intro-ready="true"]) .racketTrail,
+:global([data-arena-opening][data-intro-ready="true"]) .ballRig,
+:global([data-arena-opening][data-intro-ready="true"]) .ballTrail,
+:global([data-arena-opening][data-intro-ready="true"]) .impactFlash,
+:global([data-arena-opening][data-intro-ready="true"]) .impactRing,
+:global([data-arena-opening][data-intro-ready="true"]) .impactParticles,
+:global([data-arena-opening][data-intro-ready="true"]) .brandLockup,
+:global([data-arena-opening][data-intro-ready="true"]) .signature {
+  animation-play-state: running;
 }
 
-.soundButton:hover {
-  border-color: rgba(255, 145, 77, 0.82);
-  background: rgba(255, 145, 77, 0.12);
-  color: white;
-  transform: translateY(-1px);
-}
-
-.soundButton:focus-visible {
-  outline: 3px solid #ff914d;
-  outline-offset: 4px;
-}
-
-.soundButton[aria-pressed="true"] {
-  border-color: rgba(255, 145, 77, 0.7);
-  background: rgba(255, 145, 77, 0.15);
-  color: white;
-}
-
-.soundIcon {
-  display: inline-flex;
-  height: 16px;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.soundIcon span {
-  width: 2px;
-  border-radius: 99px;
-  background: currentColor;
-}
-
-.soundIcon span:nth-child(1) {
-  height: 7px;
-}
-
-.soundIcon span:nth-child(2) {
-  height: 14px;
-}
-
-.soundIcon span:nth-child(3) {
-  height: 10px;
+@keyframes stageImpact {
+  0%, 40%, 100% { transform: translate3d(0, 0, 0); }
+  43% { transform: translate3d(-2px, 1px, 0); }
+  45% { transform: translate3d(2px, -1px, 0); }
+  47% { transform: translate3d(-1px, 0, 0); }
 }
 
 @keyframes racketSwing {
-  0%,
-  20% {
-    transform: translate(-12%, 3%) rotate(-10deg);
+  0%, 7% {
+    opacity: 0;
+    transform: translate3d(-42%, 18%, 0) rotate(-30deg) scale(0.88);
   }
-
-  35% {
-    transform: translate(-20%, 1%) rotate(-25deg);
+  14% { opacity: 1; }
+  30% {
+    opacity: 1;
+    transform: translate3d(-25%, 10%, 0) rotate(-42deg) scale(0.96);
   }
-
-  45% {
-    transform: translate(42%, -8%) rotate(34deg);
+  42% {
+    opacity: 1;
+    transform: translate3d(48%, 2%, 0) rotate(18deg) scale(1.02);
   }
-
-  61% {
-    transform: translate(35%, -4%) rotate(20deg);
+  52% {
+    opacity: 0.94;
+    transform: translate3d(61%, -5%, 0) rotate(29deg) scale(1.01);
   }
+  67% {
+    opacity: 0.16;
+    transform: translate3d(69%, -9%, 0) rotate(34deg) scale(0.99);
+  }
+  76%, 100% {
+    opacity: 0;
+    transform: translate3d(72%, -10%, 0) rotate(36deg) scale(0.98);
+  }
+}
 
-  78%,
-  100% {
-    transform: translate(-12%, 3%) rotate(-10deg);
+@keyframes racketTrailSweep {
+  0%, 24% {
+    opacity: 0;
+    transform: rotate(-30deg) scale(0.58);
+  }
+  34% { opacity: 0.22; }
+  44% {
+    opacity: 0.9;
+    transform: rotate(18deg) scale(1.08);
+  }
+  59%, 100% {
+    opacity: 0;
+    transform: rotate(28deg) scale(1.2);
   }
 }
 
 @keyframes ballFlight {
-  0%,
-  39% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-
-  44% {
-    opacity: 1;
-    transform: translate(5%, 0) scaleX(0.76) scaleY(1.17);
-  }
-
-  57% {
-    opacity: 1;
-    transform: translate(190%, -92%) scale(0.94) rotate(120deg);
-  }
-
-  82%,
-  100% {
+  0% {
     opacity: 0;
-    transform: translate(510%, -285%) scale(0.62) rotate(310deg);
+    transform: translate3d(520%, -165%, 0) rotate(-80deg) scale(0.52);
+  }
+  9% { opacity: 1; }
+  34% {
+    opacity: 1;
+    transform: translate3d(26%, -8%, 0) rotate(76deg) scale(0.96);
+  }
+  41% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(104deg) scaleX(0.72) scaleY(1.14);
+  }
+  46% {
+    opacity: 1;
+    transform: translate3d(20%, -10%, 0) rotate(184deg) scale(1.02);
+  }
+  64% {
+    opacity: 0.92;
+    transform: translate3d(430%, -230%, 0) rotate(570deg) scale(0.62);
+  }
+  75%, 100% {
+    opacity: 0;
+    transform: translate3d(650%, -355%, 0) rotate(790deg) scale(0.34);
   }
 }
 
-@keyframes trailBurst {
-  0%,
-  37% {
+@keyframes ballTrailBurst {
+  0%, 40% {
     opacity: 0;
-    transform: translateX(-12%) rotate(-13deg) scaleX(0.55);
+    transform: rotate(-23deg) scaleX(0.12);
   }
-
-  46% {
-    opacity: 0.8;
-    transform: translateX(0) rotate(-13deg) scaleX(1);
+  47% {
+    opacity: 0.82;
+    transform: rotate(-23deg) scaleX(0.92);
   }
-
-  63%,
-  100% {
+  62% {
+    opacity: 0.26;
+    transform: rotate(-23deg) scaleX(1.1);
+  }
+  72%, 100% {
     opacity: 0;
-    transform: translateX(32%) rotate(-13deg) scaleX(1.08);
+    transform: rotate(-23deg) scaleX(1.18);
+  }
+}
+
+@keyframes impactFlash {
+  0%, 39% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.18);
+  }
+  42% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.76);
+  }
+  49% {
+    opacity: 0.46;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  58%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.48);
   }
 }
 
 @keyframes impactRing {
-  0%,
-  39% {
+  0%, 40% {
     opacity: 0;
-    transform: scale(0.28);
+    transform: translate(-50%, -50%) scale(0.22);
   }
-
-  45% {
-    opacity: 0.92;
-  }
-
-  64%,
-  100% {
+  43% { opacity: 0.94; }
+  60%, 100% {
     opacity: 0;
-    transform: scale(1.38);
+    transform: translate(-50%, -50%) scale(1.62);
   }
 }
 
-@keyframes impactSpark {
-  0%,
-  40% {
+@keyframes particlesBurst {
+  0%, 40% {
     opacity: 0;
-    transform: scale(0.4) rotate(-8deg);
+    transform: translate(-50%, -50%) scale(0.28) rotate(-6deg);
   }
+  44% { opacity: 1; }
+  59%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.28) rotate(8deg);
+  }
+}
 
-  45% {
+@keyframes brandReveal {
+  0%, 45% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.72);
+  }
+  57% {
     opacity: 1;
+    transform: translate(-50%, -50%) scale(1.055);
   }
+  68%, 100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
 
-  60%,
-  100% {
+@keyframes signatureReveal {
+  0%, 56% {
     opacity: 0;
-    transform: scale(1.2) rotate(8deg);
+    transform: translateY(10px);
+  }
+  70%, 100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes logoImpact {
-  0%,
-  39%,
-  100% {
-    transform: translateX(-50%) scale(1);
-  }
-
-  48% {
-    transform: translateX(-50%) scale(1.065);
-  }
-
-  58% {
-    transform: translateX(-50%) scale(0.99);
-  }
-}
-
-@keyframes haloImpact {
-  0%,
-  39%,
-  100% {
-    opacity: 0.28;
-    transform: translateX(-50%) scale(0.84);
-  }
-
-  50% {
-    opacity: 0.8;
-    transform: translateX(-50%) scale(1.04);
-  }
-
-  70% {
-    opacity: 0.32;
-    transform: translateX(-50%) scale(1.13);
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .loader {
-    gap: 14px;
-    padding-inline: max(14px, env(safe-area-inset-left, 0px))
-      max(14px, env(safe-area-inset-right, 0px));
+    gap: 0;
+    padding-inline: max(12px, env(safe-area-inset-left, 0px))
+      max(12px, env(safe-area-inset-right, 0px));
   }
 
-  .animation {
-    width: min(390px, 100%);
-    height: 270px;
+  .stage {
+    width: min(440px, 96vw);
+    aspect-ratio: 4 / 5;
   }
 
-  .racket {
-    left: 10%;
+  .racketRig {
+    top: 4%;
+    left: -7%;
+    width: 56%;
   }
 
-  .ball {
-    left: 47%;
+  .racketTrail {
+    top: 29%;
+    left: -2%;
+    width: 60%;
+    height: 27%;
   }
 
+  .ballRig {
+    top: 36%;
+    left: 55%;
+    width: clamp(48px, 16%, 68px);
+  }
+
+  .ballTrail {
+    top: 39%;
+    left: 58%;
+    width: 46%;
+  }
+
+  .impactFlash,
   .impactRing,
-  .impactSpark {
-    left: calc(47% - clamp(27px, 5vw, 38px));
+  .impactParticles {
+    top: 40%;
+    left: 58%;
+    width: clamp(88px, 27%, 118px);
+  }
+
+  .brandLockup {
+    top: 57%;
+    width: clamp(174px, 55%, 222px);
+  }
+
+  .courtPlane {
+    right: 2%;
+    bottom: 14%;
+    left: 2%;
+    height: 20%;
+  }
+
+  .horizonLine { top: 52%; }
+  .signature { margin-top: -18px; }
+
+  .statusText {
+    max-width: 300px;
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
   }
 }
 
 @media (max-height: 520px) and (orientation: landscape) {
   .loader {
-    gap: 8px;
-    padding-block: max(10px, env(safe-area-inset-top, 0px))
-      max(10px, env(safe-area-inset-bottom, 0px));
+    gap: 0;
+    padding-block: max(5px, env(safe-area-inset-top, 0px))
+      max(5px, env(safe-area-inset-bottom, 0px));
   }
 
-  .animation {
-    width: min(430px, 72vw);
-    height: 188px;
+  .stage {
+    width: min(770px, 78vw, calc((100dvh - 30px) * 1.7778));
   }
 
-  .logoBadge {
-    width: 112px;
-    height: 112px;
+  .signature {
+    position: absolute;
+    bottom: max(7px, env(safe-area-inset-bottom, 0px));
   }
 
-  .logoHalo {
-    bottom: calc(3% - 12px);
-    width: 138px;
-    height: 138px;
+  .statusEyebrow { display: none; }
+  .statusText { font-size: 0.61rem; }
+}
+
+@media (min-width: 1800px) and (min-height: 900px) {
+  .stage {
+    width: min(1320px, 72vw, calc((100dvh - 160px) * 1.7778));
   }
 
-  .racket {
-    top: 2%;
-    left: 14%;
-    width: 82px;
-    height: 148px;
+  .brandLockup { width: 270px; }
+}
+
+@media (min-width: 2400px) and (min-height: 1300px) {
+  .stage {
+    width: min(2100px, 72vw, calc((100dvh - 240px) * 1.7778));
   }
 
-  .ball {
-    top: 29%;
-    width: 27px;
-    height: 27px;
-  }
+  .ballRig { width: 128px; }
 
+  .impactFlash,
   .impactRing,
-  .impactSpark {
-    top: calc(29% - 30px);
-    width: 76px;
-    height: 76px;
+  .impactParticles {
+    width: 190px;
   }
 
-  .status {
-    gap: 2px;
+  .brandLockup { width: 360px; }
+
+  .signature {
+    gap: 8px;
+    margin-top: 0;
   }
 
-  .statusEyebrow {
-    display: none;
-  }
-
-  .statusText {
-    font-size: 0.66rem;
-  }
-
-  .soundButton {
-    min-height: 44px;
-    padding-block: 7px;
-  }
+  .statusEyebrow { font-size: 0.78rem; }
+  .statusText { font-size: 0.9rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .logoBadge,
-  .logoHalo,
-  .racket,
-  .ball,
-  .speedTrail,
+  .stage,
+  .racketRig,
+  .racketTrail,
+  .ballRig,
+  .ballTrail,
+  .impactFlash,
   .impactRing,
-  .impactSpark {
+  .impactParticles,
+  .brandLockup,
+  .signature {
     animation: none;
-  }
-
-  .racket {
-    transform: translate(-3%, 0) rotate(8deg);
-  }
-
-  .ball {
-    opacity: 1;
-    transform: translate(25%, -8%);
-  }
-
-  .speedTrail,
-  .impactRing,
-  .impactSpark {
-    display: none;
-  }
-
-  .soundButton {
-    display: none;
   }
 }
