@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./arena-opening.module.css";
 
 const INTRO_ANIMATION_DURATION_MS = 5000;
-const LOGO_HOLD_DURATION_MS = 5000;
+const LOGO_HOLD_DURATION_MS = 3000;
 const OVERLAY_EXIT_DURATION_MS = 600;
 const OPENING_DURATION_MS =
   INTRO_ANIMATION_DURATION_MS +
