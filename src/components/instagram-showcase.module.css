@@ -1,0 +1,477 @@
+.showcase,
+.fallbackGrid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1.25fr);
+  gap: clamp(22px, 4vw, 52px);
+  align-items: start;
+}
+
+.storyColumn,
+.reelsColumn,
+.profileFallback,
+.storyFallback {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(1, 22, 52, 0.7);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.18);
+}
+
+.storyColumn,
+.reelsColumn {
+  padding: clamp(18px, 2.5vw, 28px);
+}
+
+.panelHeading {
+  display: flex;
+  min-height: 64px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.panelHeading h3,
+.storyFallback h3 {
+  margin: 7px 0 0;
+  color: white;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.1rem, 3.4vw, 3.5rem);
+  font-weight: 400;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.panelHeading > span,
+.panelHeading > a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.panelHeading > a:hover,
+.panelHeading > a:focus-visible {
+  color: var(--orange);
+}
+
+.storyStatus {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+
+.storyStatus > span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.storyStatus > button {
+  min-width: 72px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--orange);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.storyStatus > button:hover,
+.storyStatus > button:focus-visible {
+  color: white;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--orange);
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.storyStage {
+  position: relative;
+  width: min(100%, 360px);
+  aspect-ratio: 9 / 16;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 70% 18%, rgba(255, 145, 77, 0.34), transparent 26%),
+    var(--navy-deep);
+}
+
+.storyStage > img,
+.storyStage > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mediaExternalLink {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(2, 31, 78, 0.88);
+  color: white;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(12px);
+}
+
+.storyControls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.storyControls button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  place-items: center;
+  background: transparent;
+  cursor: pointer;
+}
+
+.storyControls button span {
+  width: 22px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.32);
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.storyControls button[aria-current="true"] span {
+  width: 34px;
+  background: var(--orange);
+}
+
+.reelRail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.reelCard {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.reelCard:hover,
+.reelCard:focus-visible {
+  border-color: rgba(255, 145, 77, 0.76);
+  transform: translateY(-4px);
+}
+
+.reelMedia {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--navy-deep);
+}
+
+.reelMedia img,
+.reelMedia video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 350ms ease;
+}
+
+.reelCard:hover .reelMedia img,
+.reelCard:focus-visible .reelMedia img {
+  transform: scale(1.035);
+}
+
+.playIcon {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 0.82rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+.reelMeta {
+  display: grid;
+  gap: 7px;
+  padding: 16px;
+}
+
+.reelMeta > span {
+  color: var(--orange);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reelMeta strong {
+  display: -webkit-box;
+  overflow: hidden;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.noStory,
+.noReels {
+  display: grid;
+  min-height: 280px;
+  place-items: center;
+  align-content: center;
+  gap: 16px;
+  padding: 34px;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.noStory a,
+.noReels a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--orange);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.profileFallback {
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: clamp(30px, 5vw, 58px);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 145, 77, 0.3), transparent 30%),
+    linear-gradient(145deg, rgba(1, 22, 52, 0.76), rgba(58, 95, 154, 0.7));
+}
+
+.profileFallback > img {
+  width: 118px;
+  height: 118px;
+  margin-bottom: 28px;
+  object-fit: contain;
+}
+
+.profileFallback h3 {
+  margin: 8px 0 0;
+  color: white;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(3rem, 5vw, 5.4rem);
+  font-weight: 400;
+  line-height: 0.9;
+  overflow-wrap: anywhere;
+  text-transform: uppercase;
+}
+
+.profileFallback > p:not(.eyebrow) {
+  max-width: 460px;
+  margin: 24px 0 30px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
+}
+
+.storyFallback {
+  position: relative;
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: clamp(30px, 5vw, 58px);
+  background:
+    radial-gradient(circle at 72% 22%, rgba(255, 145, 77, 0.42), transparent 24%),
+    linear-gradient(145deg, rgba(58, 95, 154, 0.8), rgba(1, 22, 52, 0.96));
+}
+
+.storyFallback::before {
+  position: absolute;
+  top: -90px;
+  right: -80px;
+  width: 310px;
+  height: 310px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  content: "";
+}
+
+.storyFallback > * {
+  position: relative;
+  z-index: 1;
+}
+
+.storyFallback > p:not(.eyebrow) {
+  max-width: 420px;
+  margin: 22px 0 28px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.7;
+}
+
+.storyRing {
+  display: grid;
+  width: 92px;
+  height: 92px;
+  margin-bottom: 26px;
+  padding: 4px;
+  border-radius: 50%;
+  place-items: center;
+  background: conic-gradient(var(--orange), #d44fe9, #ffdc63, var(--orange));
+}
+
+.storyRing span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  border: 4px solid var(--navy);
+  border-radius: inherit;
+  place-items: center;
+  background: white;
+  color: var(--navy);
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 2rem;
+}
+
+.storyLink {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .showcase,
+  .fallbackGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .storyColumn {
+    max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .profileFallback,
+  .storyFallback {
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 600px) {
+  .storyColumn,
+  .reelsColumn {
+    padding: 16px;
+  }
+
+  .panelHeading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .storyStatus {
+    width: 100%;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panelHeading > span,
+  .panelHeading > a {
+    min-height: 44px;
+  }
+
+  .storyStage {
+    width: min(100%, 340px);
+  }
+
+  .reelRail {
+    display: flex;
+    margin-inline: -16px;
+    padding-inline: 16px;
+    overflow-x: auto;
+    scroll-padding-inline: 16px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .reelCard {
+    width: min(72vw, 270px);
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  .profileFallback {
+    min-height: 380px;
+    border-radius: 20px;
+  }
+
+  .storyFallback {
+    min-height: 380px;
+    border-radius: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reelCard,
+  .reelMedia img,
+  .storyControls button span {
+    transition: none;
+  }
+
+  .reelCard:hover,
+  .reelCard:focus-visible {
+    transform: none;
+  }
+}

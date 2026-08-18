@@ -58,7 +58,7 @@ export function ArenaLoader() {
       </div>
       <div className={styles.signature} aria-hidden="true">
         <p className={styles.statusEyebrow}>Arena Sul Sports</p>
-        <p className={styles.statusText}>Esporte. Conexão. Experiência.</p>
+        <p className={styles.statusText}>Esporte. Família. Saúde.</p>
       </div>
     </div>
   );

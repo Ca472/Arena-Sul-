@@ -249,7 +249,7 @@ img {
 }
 
 .public-site .header-cta {
-  padding: 14px 20px;
+  padding: 8px 16px 8px 10px;
   border: 1px solid rgba(255, 255, 255, 0.58);
   border-radius: 999px;
   color: white;
@@ -257,6 +257,26 @@ img {
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+.public-site .whatsapp-cta {
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.public-site .whatsapp-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  border-radius: 50%;
+  place-items: center;
+  background: white;
+}
+
+.public-site .whatsapp-icon img {
+  width: 20px;
+  height: 20px;
 }
 
 .public-site .header-cta:hover,
@@ -825,15 +845,32 @@ img {
 }
 
 .public-site .modality-card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
   min-width: 0;
+  min-height: clamp(250px, 22vw, 320px);
+  flex-direction: column;
+  padding: clamp(24px, 2.6vw, 34px) clamp(20px, 2.2vw, 28px);
   overflow: hidden;
-  border: 1px solid var(--line);
-  background: white;
+  border: 1px solid rgba(2, 31, 78, 0.12);
+  border-top: 5px solid var(--orange);
+  background:
+    linear-gradient(145deg, rgba(58, 95, 154, 0.1), transparent 56%),
+    white;
   transition: transform 220ms ease, box-shadow 220ms ease;
 }
 
-.public-site .modality-card:nth-child(4) {
-  grid-column: auto;
+.public-site .modality-card::before {
+  position: absolute;
+  z-index: -1;
+  top: -92px;
+  right: -96px;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(58, 95, 154, 0.14);
+  border-radius: 50%;
+  content: "";
 }
 
 .public-site .modality-card:hover {
@@ -841,39 +878,19 @@ img {
   box-shadow: 0 24px 60px rgba(2, 31, 78, 0.12);
 }
 
-.public-site .modality-image {
+.public-site .modality-number {
   position: relative;
-  height: clamp(190px, 20vw, 260px);
-  overflow: hidden;
-  background: var(--navy);
-}
-
-.public-site .modality-image img {
-  object-fit: cover;
-  transition: transform 500ms ease;
-}
-
-.public-site .modality-card:hover .modality-image img {
-  transform: scale(1.045);
-}
-
-.public-site .modality-image > span {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--orange);
-  color: var(--navy);
+  z-index: 1;
+  color: var(--orange-ink);
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: 1.25rem;
+  font-size: clamp(3.2rem, 5vw, 5rem);
+  line-height: 0.85;
 }
 
 .public-site .modality-content {
-  padding: 22px 20px 24px;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
 }
 
 .public-site .modality-content h3 {
@@ -887,7 +904,6 @@ img {
 }
 
 .public-site .modality-content p {
-  min-height: 44px;
   margin: 13px 0 0;
   color: var(--muted);
   font-size: 0.86rem;
@@ -1221,11 +1237,51 @@ img {
 /* Instagram */
 
 .public-site .instagram {
+  position: relative;
   padding-block: clamp(88px, 10vw, 138px);
   background:
     linear-gradient(130deg, rgba(58, 95, 154, 0.25), transparent 45%),
     var(--navy);
   color: white;
+}
+
+.public-site .anchor-alias {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.public-site .instagram-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  align-items: end;
+  gap: clamp(32px, 6vw, 86px);
+  margin-bottom: clamp(42px, 6vw, 76px);
+}
+
+.public-site .instagram-heading h2 {
+  max-width: 840px;
+  margin: 14px 0 0;
+  color: white;
+  font-size: clamp(3.8rem, 7vw, 7.4rem);
+  line-height: 0.88;
+  overflow-wrap: anywhere;
+}
+
+.public-site .instagram-heading-copy {
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+}
+
+.public-site .instagram-heading-copy p {
+  max-width: 520px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.75;
 }
 
 .public-site .instagram-grid {
@@ -1610,10 +1666,6 @@ img {
     grid-column: auto;
   }
 
-  .public-site .modality-card:last-child {
-    grid-column: 2;
-  }
-
   .public-site .footer-instagram {
     grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
@@ -1783,6 +1835,15 @@ img {
     min-height: 580px;
   }
 
+  .public-site .about::after {
+    display: none;
+  }
+
+  .public-site .about-copy > p:not(.section-kicker) {
+    color: #3f5069;
+    font-weight: 500;
+  }
+
   .public-site .about-copy {
     max-width: 700px;
   }
@@ -1813,11 +1874,12 @@ img {
   }
 
   .public-site .modality-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .public-site .modality-card:last-child {
-    grid-column: 1 / -1;
+  .public-site .instagram-heading {
+    grid-template-columns: 1fr;
+    align-items: start;
   }
 
   .public-site .events-card {
@@ -2045,16 +2107,13 @@ img {
 
   .public-site .modality-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 
   .public-site .modality-card {
+    min-height: 210px;
     margin: 0;
-  }
-
-  .public-site .modality-image {
-    height: min(58vw, 220px);
   }
 
   .public-site .modality-content p {
@@ -2107,16 +2166,10 @@ img {
     font-size: 2.15rem;
   }
 
-  .public-site .instagram-mosaic {
-    grid-template-columns: 1.15fr 0.85fr;
-    grid-template-rows: repeat(2, 160px);
-    min-height: 0;
-  }
-
-  .public-site .instagram-intro h2 {
+  .public-site .instagram-heading h2 {
     max-width: 100%;
-    font-size: clamp(2.45rem, 12vw, 4rem);
-    line-height: 0.95;
+    font-size: clamp(3.2rem, 10.5vw, 5.4rem);
+    line-height: 0.9;
   }
 
   .public-site .contact-inner {
@@ -2265,12 +2318,8 @@ img {
     border-width: 6px;
   }
 
-  .public-site .modality-image {
-    height: min(58vw, 210px);
-  }
-
   .public-site .modality-content {
-    padding: 18px 16px 20px;
+    margin-top: 44px;
   }
 
   .public-site .modality-content h3 {

@@ -35,7 +35,7 @@ const DEMO_EVENT_ROWS: Array<Omit<ArenaEvent, "coverPhoto">> = [
         url: "/images/tournament-podium.webp",
         storagePath: null,
         originalName: "tournament-podium.png",
-        altText: "Pódio de torneio na Arena Sul",
+        altText: "Pódio do Festival Arena Sul",
         mimeType: "image/png",
         sizeBytes: 0,
         width: 1200,

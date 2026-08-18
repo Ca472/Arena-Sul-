@@ -19,11 +19,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.arenasulsports.com",
   ),
   title: {
-    default: "Arena Sul Sports | Esporte, conexão e experiência",
+    default: "Arena Sul Sports | Esporte, família e saúde",
     template: "%s | Arena Sul Sports",
   },
   description:
-    "Arena esportiva e espaço para eventos em São José dos Campos, com 13 quadras de areia, campo society e estrutura completa.",
+    "Arena esportiva para saúde e convivência em família, com estrutura para eventos corporativos e escolares em São José dos Campos.",
   keywords: [
     "Arena Sul Sports",
     "quadras de areia São José dos Campos",
@@ -31,8 +31,11 @@ export const metadata: Metadata = {
     "futevôlei",
     "vôlei de areia",
     "futebol society",
+    "esporte e saúde São José dos Campos",
+    "atividades em família São José dos Campos",
     "espaço para eventos São José dos Campos",
     "eventos corporativos",
+    "eventos escolares",
   ],
   alternates: { canonical: "/" },
   openGraph: {
@@ -40,9 +43,9 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "/",
     siteName: "Arena Sul Sports",
-    title: "Arena Sul Sports | Esporte, conexão e experiência",
+    title: "Arena Sul Sports | Esporte, família e saúde",
     description:
-      "Esporte, eventos e convivência em uma estrutura completa no Vale do Paraíba.",
+      "Esporte, saúde e convivência em família, com estrutura para eventos corporativos e escolares.",
     images: [
       {
         url: "/images/arena-sul-og-background.jpg",
@@ -54,9 +57,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arena Sul Sports | Esporte, conexão e experiência",
+    title: "Arena Sul Sports | Esporte, família e saúde",
     description:
-      "Esporte, eventos e convivência em uma estrutura completa no Vale do Paraíba.",
+      "Esporte, saúde e convivência em família, com estrutura para eventos corporativos e escolares.",
     images: ["/images/arena-sul-og-background.jpg"],
   },
   category: "sports",

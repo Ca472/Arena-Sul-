@@ -10,12 +10,12 @@ import styles from "./events.module.css";
 export const metadata: Metadata = {
   title: "Eventos",
   description:
-    "Conheça campeonatos, encontros e experiências realizados na Arena Sul Sports, em São José dos Campos.",
+    "Conheça eventos corporativos, eventos escolares, confraternizações e encontros realizados na Arena Sul Sports.",
   alternates: { canonical: "/eventos" },
   openGraph: {
     title: "Eventos da Arena Sul Sports",
     description:
-      "Esporte, convivência e experiências que ganham vida nas quadras da Arena Sul.",
+      "Eventos corporativos, escolares e encontros especiais na Arena Sul Sports.",
     url: "/eventos",
     images: [
       {
@@ -47,10 +47,10 @@ export default async function EventsPage() {
       <section className={styles.hero}>
         <div className={`shell ${styles.heroInner}`}>
           <p className={styles.eyebrow}>Galeria da Arena</p>
-          <h1>Eventos que ganham vida.</h1>
+          <h1>Encontros que aproximam.</h1>
           <p>
-            Campeonatos, encontros, experiências corporativas e dias que ficam
-            registrados dentro e fora das quadras.
+            Eventos corporativos, eventos escolares, confraternizações e dias
+            especiais registrados dentro e fora das quadras.
           </p>
         </div>
       </section>
@@ -59,8 +59,8 @@ export default async function EventsPage() {
         <div className={`shell ${styles.listingIntro}`}>
           <h2 id="event-list-title">A Arena em movimento</h2>
           <p>
-            Confira campeonatos, encontros e experiências realizadas na Arena
-            Sul.
+            Confira encontros de famílias, escolas e empresas realizados na
+            Arena Sul.
           </p>
         </div>
 
