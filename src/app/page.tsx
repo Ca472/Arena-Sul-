@@ -17,11 +17,12 @@ const stats: Array<{ value: string | null; label: string }> = [
 
 const amenities = [
   "13 quadras de areia",
-  "Campo de futebol society",
-  "Área de convivência",
-  "Ambiente acolhedor para famílias",
-  "Estrutura para eventos corporativos",
-  "Espaço para eventos escolares",
+  "1 campo de futebol society",
+  "3 churrasqueiras para aniversários e confraternizações",
+  "Bar e cozinha",
+  "Vestiários",
+  "Aulas de esportes de areia",
+  "Estrutura para grupos e eventos",
 ];
 
 const modalities = [
