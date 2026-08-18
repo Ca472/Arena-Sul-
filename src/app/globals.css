@@ -439,11 +439,217 @@ img {
   opacity: 0.18;
 }
 
+.public-site .hero-sports-showcase {
+  position: absolute;
+  z-index: 4;
+  top: 1%;
+  right: 4%;
+  width: min(64%, 390px);
+  aspect-ratio: 3 / 4;
+  isolation: isolate;
+}
+
+.public-site .hero-sports-showcase::before {
+  position: absolute;
+  z-index: -1;
+  inset: 18px -18px -18px 18px;
+  content: "";
+  border: 1px solid rgba(255, 145, 77, 0.62);
+  border-radius: 30px;
+  background: rgba(1, 22, 52, 0.5);
+  transform: rotate(3deg);
+}
+
+.public-site .hero-sport-slide {
+  --sport-delay: -0.45s;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  margin: 0;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+  border-radius: 28px;
+  background: #0b2d5d;
+  box-shadow: 0 30px 70px rgba(0, 10, 30, 0.38);
+  opacity: 0;
+  transform: translate3d(24px, 16px, 0) scale(0.97);
+  animation: heroSportSlide 15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation-delay: var(--sport-delay);
+  will-change: transform, opacity;
+}
+
+.public-site .hero-sport-slide-volleyball {
+  --sport-delay: -0.45s;
+  opacity: 1;
+}
+
+.public-site .hero-sport-slide-futevolei {
+  --sport-delay: 4.55s;
+}
+
+.public-site .hero-sport-slide-beach-tennis {
+  --sport-delay: 9.55s;
+}
+
+.public-site .hero-sport-photo {
+  object-fit: cover;
+}
+
+.public-site .hero-sport-slide-volleyball .hero-sport-photo {
+  object-position: 58% 48%;
+}
+
+.public-site .hero-sport-slide-futevolei .hero-sport-photo {
+  object-position: 48% 40%;
+}
+
+.public-site .hero-sport-slide-beach-tennis .hero-sport-photo {
+  object-position: 48% 54%;
+}
+
+.public-site .hero-sport-slide::after {
+  position: absolute;
+  inset: 34% 0 0;
+  content: "";
+  background: linear-gradient(180deg, transparent, rgba(1, 22, 52, 0.9));
+  pointer-events: none;
+}
+
+.public-site .hero-sport-caption {
+  position: absolute;
+  z-index: 2;
+  right: 22px;
+  bottom: 22px;
+  left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: white;
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  animation: heroSportCaption 15s ease-in-out infinite;
+  animation-delay: var(--sport-delay);
+}
+
+.public-site .hero-sport-caption span {
+  color: var(--orange);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.public-site .hero-sport-caption strong {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.15rem, 3.3vw, 3.4rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.public-site .hero-sport-indicators {
+  position: absolute;
+  z-index: 8;
+  top: 50%;
+  right: -31px;
+  display: grid;
+  gap: 8px;
+  transform: translateY(-50%);
+}
+
+.public-site .hero-sport-indicators span {
+  --sport-delay: -0.45s;
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  animation: heroSportIndicator 15s ease-in-out infinite;
+  animation-delay: var(--sport-delay);
+}
+
+.public-site .hero-sport-indicators span:first-child {
+  background: var(--orange);
+}
+
+.public-site .hero-sport-indicators span:nth-child(2) {
+  --sport-delay: 4.55s;
+}
+
+.public-site .hero-sport-indicators span:nth-child(3) {
+  --sport-delay: 9.55s;
+}
+
+.public-site .hero-sports-static-label {
+  display: none;
+}
+
+@keyframes heroSportSlide {
+  0% {
+    opacity: 0;
+    transform: translate3d(24px, 16px, 0) scale(0.97);
+  }
+
+  3%,
+  30% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  36%,
+  100% {
+    opacity: 0;
+    transform: translate3d(-20px, -8px, 0) scale(1.025);
+  }
+}
+
+@keyframes heroSportCaption {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+
+  5%,
+  29% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+
+  34%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes heroSportIndicator {
+  0%,
+  30% {
+    width: 28px;
+    background: var(--orange);
+    opacity: 1;
+  }
+
+  36%,
+  100% {
+    width: 18px;
+    background: rgba(255, 255, 255, 0.3);
+    opacity: 0.65;
+  }
+}
+
+html[data-arena-opening="active"] .public-site .hero-sport-slide,
+html[data-arena-opening="active"] .public-site .hero-sport-caption,
+html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
+  animation: none;
+}
+
 .public-site .visual-note {
   position: absolute;
   z-index: 9;
-  right: 0;
-  bottom: 9%;
+  right: auto;
+  bottom: 3%;
+  left: -2%;
   margin: 0;
   padding: 14px 20px;
   border-radius: 14px 0 0 14px;
@@ -1645,7 +1851,12 @@ img {
   }
 
   .public-site .hero-visual {
-    opacity: 0.72;
+    opacity: 1;
+  }
+
+  .public-site .hero-sports-showcase {
+    right: 0;
+    width: min(70%, 350px);
   }
 
   .public-site .about-grid,
@@ -1819,7 +2030,13 @@ img {
     width: 70%;
     height: 390px;
     min-height: 0;
-    opacity: 0.64;
+    opacity: 1;
+  }
+
+  .public-site .hero-sports-showcase {
+    top: 0;
+    right: 18%;
+    width: min(76%, 292px);
   }
 
   .public-site .stats {
@@ -2024,7 +2241,7 @@ img {
   .public-site .hero-grid {
     min-height: auto;
     padding-top: 42px;
-    padding-bottom: clamp(160px, 42vw, 210px);
+    padding-bottom: clamp(360px, 92vw, 390px);
   }
 
   .public-site .hero-title {
@@ -2049,6 +2266,27 @@ img {
     bottom: 184px;
     width: 132%;
     height: 320px;
+  }
+
+  .public-site .hero-sports-showcase {
+    top: auto;
+    right: 10%;
+    bottom: 0;
+    width: min(52%, 270px);
+  }
+
+  .public-site .hero-sport-caption {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+  }
+
+  .public-site .hero-sport-caption strong {
+    font-size: clamp(1.9rem, 9vw, 2.55rem);
+  }
+
+  .public-site .hero-sport-indicators {
+    right: -24px;
   }
 
   .public-site .visual-note {
@@ -2258,7 +2496,7 @@ img {
   .public-site .hero-grid {
     min-height: auto;
     padding-top: 30px;
-    padding-bottom: 150px;
+    padding-bottom: 360px;
   }
 
   .public-site .hero-title {
@@ -2279,6 +2517,11 @@ img {
     bottom: 170px;
     width: 150%;
     height: 290px;
+  }
+
+  .public-site .hero-sports-showcase {
+    right: 10%;
+    width: min(54%, 250px);
   }
 
   .public-site .stat {
@@ -2392,7 +2635,7 @@ img {
     bottom: 0;
     width: 150%;
     height: 360px;
-    opacity: 0.78;
+    opacity: 1;
   }
 }
 
@@ -2407,9 +2650,9 @@ img {
   }
 
   .public-site .hero-grid {
-    min-height: 620px;
+    min-height: 720px;
     padding-top: 38px;
-    padding-bottom: 230px;
+    padding-bottom: 400px;
   }
 
   .public-site .hero-visual {
@@ -2417,6 +2660,27 @@ img {
     bottom: 92px;
     width: 54%;
     height: 300px;
+  }
+
+  .public-site .hero-sports-showcase {
+    top: auto;
+    right: 16%;
+    bottom: 0;
+    width: min(72%, 210px);
+  }
+
+  .public-site .hero-sport-caption {
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .public-site .hero-sport-caption span {
+    font-size: 0.55rem;
+  }
+
+  .public-site .hero-sport-caption strong {
+    font-size: 1.75rem;
   }
 }
 
@@ -2430,5 +2694,44 @@ img {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .public-site .hero-sport-slide,
+  .public-site .hero-sport-caption,
+  .public-site .hero-sport-indicators span {
+    animation: none !important;
+  }
+
+  .public-site .hero-sport-slide {
+    opacity: 0;
+    transform: none;
+  }
+
+  .public-site .hero-sport-slide-volleyball {
+    opacity: 1;
+  }
+
+  .public-site .hero-sport-caption,
+  .public-site .hero-sport-indicators {
+    display: none;
+  }
+
+  .public-site .hero-sports-static-label {
+    position: absolute;
+    z-index: 3;
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    display: block;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(1, 22, 52, 0.9);
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1.45;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 }
