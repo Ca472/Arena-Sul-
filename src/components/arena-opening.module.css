@@ -2,13 +2,13 @@
   position: fixed;
   z-index: 5000;
   inset: 0;
-  animation: overlayFailsafe 1ms step-end 7.1s forwards;
+  animation: overlayFailsafe 1ms step-end 13s forwards;
 }
 
 .overlay[data-intro-ready="true"] {
   animation:
-    overlayExit 5s ease-in-out both,
-    overlayFailsafe 1ms step-end 7.1s forwards;
+    overlayExit 600ms ease-in-out 10s both,
+    overlayFailsafe 1ms step-end 13s forwards;
 }
 
 @keyframes overlayFailsafe {
@@ -19,12 +19,11 @@
 }
 
 @keyframes overlayExit {
-  0%,
-  88% {
+  from {
     opacity: 1;
   }
 
-  100% {
+  to {
     opacity: 0;
   }
 }
