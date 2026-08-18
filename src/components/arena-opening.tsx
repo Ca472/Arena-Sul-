@@ -35,7 +35,12 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
   const [visible, setVisible] = useState(true);
 
   const dismiss = useCallback(() => {
+    window.scrollTo(0, 0);
     setVisible(false);
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+    });
   }, []);
 
   useEffect(() => {
