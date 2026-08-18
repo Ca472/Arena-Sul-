@@ -285,35 +285,37 @@ export default function Home() {
           </div>
         </div>
 
-        <div
-          className="amenities-venue-gallery shell"
-          role="group"
-          aria-label="Bar, churrasqueira e áreas de convivência"
-        >
-          <figure className="venue-gallery-churrasqueira">
-            <Image
-              src="/images/estrutura-churrasqueira.jpg"
-              alt="Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras"
-              fill
-              sizes="(max-width: 850px) 46vw, 18vw"
-            />
-          </figure>
-          <figure className="venue-gallery-bar">
-            <Image
-              src="/images/estrutura-bar-coberto.jpg"
-              alt="Área coberta do bar da Arena Sul com mesas e cadeiras"
-              fill
-              sizes="(max-width: 850px) 46vw, 24vw"
-            />
-          </figure>
-          <figure className="venue-gallery-convivencia">
-            <Image
-              src="/images/estrutura-bar-convivencia.jpg"
-              alt="Área externa de convivência do bar com vista para as quadras de areia"
-              fill
-              sizes="(max-width: 850px) 100vw, 55vw"
-            />
-          </figure>
+        <div className="amenities-grid amenities-grid-followup shell">
+          <div
+            className="amenities-collage amenities-collage-additional"
+            role="group"
+            aria-label="Bar, churrasqueira e áreas de convivência"
+          >
+            <figure className="collage-main">
+              <Image
+                src="/images/estrutura-churrasqueira.jpg"
+                alt="Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras"
+                fill
+                sizes="(max-width: 850px) 60vw, 28vw"
+              />
+            </figure>
+            <figure className="collage-secondary">
+              <Image
+                src="/images/estrutura-bar-coberto.jpg"
+                alt="Área coberta do bar da Arena Sul com mesas e cadeiras"
+                fill
+                sizes="(max-width: 850px) 48vw, 22vw"
+              />
+            </figure>
+            <figure className="collage-tertiary">
+              <Image
+                src="/images/estrutura-bar-convivencia.jpg"
+                alt="Área externa de convivência do bar com vista para as quadras de areia"
+                fill
+                sizes="(max-width: 850px) 68vw, 30vw"
+              />
+            </figure>
+          </div>
         </div>
       </section>
 
