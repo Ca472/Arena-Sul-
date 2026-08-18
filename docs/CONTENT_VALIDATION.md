@@ -22,7 +22,7 @@ O PDF foi usado como referência de conteúdo e direção visual. Nenhuma instru
 | Futebol Society, Beach Tennis, Futevôlei, Funcional e Vôlei de Areia | Publicado | Confirmar modalidades ativas no lançamento |
 | 13 quadras para esportes de areia | Publicado | Reconfirmar a contagem com os proprietários |
 | 1 campo/quadra de Futebol Society | Publicado | Reconfirmar a nomenclatura preferida |
-| História iniciada há cerca de 30 anos com a Sand Sports, em Santana | Publicado | Cliente deve aprovar a versão editorial final |
+| História de 9 anos no esporte da região | Publicado | Dado corrigido e confirmado pelo cliente em 18/08/2026 |
 
 ## Alegações do PDF que exigem aprovação expressa
 

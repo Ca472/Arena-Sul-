@@ -161,7 +161,7 @@ export default function Home() {
               sizes="(max-width: 900px) 100vw, 52vw"
             />
             <div className="about-badge">
-              <strong>30</strong>
+              <strong>9</strong>
               <span>anos de história no esporte da região</span>
             </div>
           </div>
@@ -190,26 +190,26 @@ export default function Home() {
           >
             <figure className="collage-main">
               <Image
-                src="/images/courts-aerial.webp"
-                alt="Vista aérea das quadras da Arena Sul"
+                src="/images/estrutura-churrasqueira.jpg"
+                alt="Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras"
                 fill
-                sizes="(max-width: 900px) 100vw, 28vw"
+                sizes="(max-width: 900px) 60vw, 28vw"
               />
             </figure>
             <figure className="collage-secondary">
               <Image
-                src="/images/event-lounge.webp"
-                alt="Área de convivência preparada para um evento"
+                src="/images/estrutura-bar-coberto.jpg"
+                alt="Área coberta do bar da Arena Sul com mesas e cadeiras"
                 fill
                 sizes="(max-width: 900px) 50vw, 22vw"
               />
             </figure>
             <figure className="collage-tertiary">
               <Image
-                src="/images/group-class.webp"
-                alt="Atividade coletiva nas quadras de areia"
+                src="/images/estrutura-bar-convivencia.jpg"
+                alt="Área externa de convivência do bar com vista para as quadras de areia"
                 fill
-                sizes="(max-width: 900px) 50vw, 18vw"
+                sizes="(max-width: 900px) 64vw, 30vw"
               />
             </figure>
           </div>
