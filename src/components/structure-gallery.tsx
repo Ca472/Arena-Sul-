@@ -131,6 +131,7 @@ export function StructureGallery() {
   const [isMobilePortrait, setIsMobilePortrait] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const pointerStartX = useRef<number | null>(null);
+  const pointerStartY = useRef<number | null>(null);
   const interactionPaused = isHovered || isFocusWithin;
 
   const autoplayEnabled =
@@ -343,24 +344,31 @@ export function StructureGallery() {
         onPointerDown={(event) => {
           if (event.pointerType !== "mouse") {
             pointerStartX.current = event.clientX;
+            pointerStartY.current = event.clientY;
           }
         }}
         onPointerCancel={() => {
           pointerStartX.current = null;
+          pointerStartY.current = null;
         }}
         onPointerUp={(event) => {
-          if (pointerStartX.current === null) {
+          if (pointerStartX.current === null || pointerStartY.current === null) {
             return;
           }
 
-          const distance = event.clientX - pointerStartX.current;
+          const distanceX = event.clientX - pointerStartX.current;
+          const distanceY = event.clientY - pointerStartY.current;
           pointerStartX.current = null;
+          pointerStartY.current = null;
 
-          if (Math.abs(distance) < SWIPE_THRESHOLD_PX) {
+          if (
+            Math.abs(distanceX) < SWIPE_THRESHOLD_PX ||
+            Math.abs(distanceX) <= Math.abs(distanceY) * 1.2
+          ) {
             return;
           }
 
-          if (distance > 0) {
+          if (distanceX > 0) {
             showPrevious();
           } else {
             showNext();
@@ -370,8 +378,8 @@ export function StructureGallery() {
         {slides.map((slide, index) => {
           const isActive = index === activeIndex;
           const desktopSizes = slide.mobileSrc
-            ? "(max-width: 600px) and (orientation: portrait) 1px, (max-width: 1220px) calc(100vw - 40px), 1180px"
-            : "(max-width: 600px) calc(100vw - 28px), (max-width: 1220px) calc(100vw - 40px), 1180px";
+            ? "(max-width: 600px) and (orientation: portrait) 1px, (max-width: 1220px) calc(100vw - 40px), (max-width: 1599px) 1180px, 1320px"
+            : "(max-width: 600px) calc(100vw - 28px), (max-width: 1220px) calc(100vw - 40px), (max-width: 1599px) 1180px, 1320px";
           const shouldRenderImage =
             isActive ||
             index === previousIndex ||

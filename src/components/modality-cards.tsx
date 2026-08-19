@@ -179,7 +179,7 @@ export function ModalityCards() {
                 src={modality.image.src}
                 alt={modality.image.alt}
                 fill
-                sizes="(max-width: 600px) calc(100vw - 28px), (max-width: 850px) calc((100vw - 54px) / 2), (max-width: 1100px) calc((100vw - 68px) / 3), 225px"
+                sizes="(max-width: 600px) calc(100vw - 28px), (max-width: 850px) calc((100vw - 54px) / 2), (max-width: 1100px) calc((100vw - 68px) / 3), (max-width: 1599px) 225px, 260px"
                 style={{ objectPosition: modality.image.objectPosition }}
               />
               <span className="modality-number" aria-hidden="true">
