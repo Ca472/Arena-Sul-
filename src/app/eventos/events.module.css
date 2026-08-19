@@ -463,6 +463,13 @@
     font-size: clamp(3.65rem, 19vw, 5.15rem);
   }
 
+  .listingIntro h2,
+  .story h2,
+  .galleryHeading h2,
+  .cta h2 {
+    font-size: clamp(2.8rem, 14.5vw, 4rem);
+  }
+
   .listing {
     padding-block: 68px;
   }
@@ -516,16 +523,16 @@
   }
 
   .detailHero {
-    min-height: 540px;
+    min-height: max(320px, calc(100svh - 88px));
   }
 
   .detailHeroInner {
-    padding-top: 60px;
-    padding-bottom: 46px;
+    padding-top: 34px;
+    padding-bottom: 32px;
   }
 
   .backLink {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
   }
 }
 

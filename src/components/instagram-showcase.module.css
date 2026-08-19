@@ -410,6 +410,21 @@
   .storyFallback {
     min-height: 420px;
   }
+
+  .reelRail {
+    display: flex;
+    padding-bottom: 8px;
+    overflow-x: auto;
+    scroll-padding-inline: 2px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .reelCard {
+    width: min(42vw, 270px);
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
 }
 
 @media (max-width: 600px) {
@@ -440,6 +455,11 @@
     width: min(100%, 340px);
   }
 
+  .storyControls {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
   .reelRail {
     display: flex;
     margin-inline: -16px;
@@ -461,9 +481,25 @@
     border-radius: 20px;
   }
 
+  .profileFallback h3 {
+    font-size: clamp(2.25rem, 11.5vw, 3rem);
+    line-height: 0.95;
+  }
+
   .storyFallback {
     min-height: 380px;
     border-radius: 20px;
+  }
+}
+
+@media (max-width: 900px) and (max-height: 520px) and (orientation: landscape) {
+  .storyStage {
+    width: min(36vw, 200px);
+  }
+
+  .profileFallback,
+  .storyFallback {
+    min-height: 320px;
   }
 }
 

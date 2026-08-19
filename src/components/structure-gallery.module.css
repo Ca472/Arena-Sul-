@@ -346,6 +346,10 @@
     font-size: clamp(1.95rem, 9.5vw, 2.75rem);
   }
 
+  .caption > span {
+    font-size: 0.7rem;
+  }
+
   .caption p {
     font-size: 0.84rem;
     line-height: 1.55;
