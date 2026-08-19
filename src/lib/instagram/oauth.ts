@@ -3,6 +3,9 @@ import "server-only";
 import { z } from "zod";
 
 import {
+  validateInstagramAccountIdentity,
+} from "@/lib/instagram/account-validation";
+import {
   getInstagramOAuthPublicConfig,
   getInstagramOAuthSecretConfig,
 } from "@/lib/instagram/config";
@@ -21,7 +24,7 @@ export type InstagramOAuthStage =
   | "long_token_response"
   | "profile_request"
   | "profile_response"
-  | "account_validation";
+  | "username_validation";
 
 export class InstagramOAuthError extends Error {
   readonly stage: InstagramOAuthStage;
@@ -55,7 +58,6 @@ const longLivedTokenSchema = z.object({
 });
 
 const profileItemSchema = z.object({
-  id: z.union([z.string(), z.number()]).transform(String),
   user_id: z.union([z.string(), z.number()]).transform(String),
   username: z.string().min(1),
 });
@@ -177,7 +179,7 @@ export async function exchangeInstagramAuthorizationCode(
   const profileEndpoint = new URL(
     `https://graph.instagram.com/${config.graphVersion}/me`,
   );
-  profileEndpoint.searchParams.set("fields", "id,user_id,username");
+  profileEndpoint.searchParams.set("fields", "user_id,username");
 
   let profileResponse: Response;
   try {
@@ -202,18 +204,18 @@ export async function exchangeInstagramAuthorizationCode(
   }
   const profile =
     "data" in parsedProfile ? parsedProfile.data[0] : parsedProfile;
-  const username = profile.username.trim().toLowerCase();
+  const account = validateInstagramAccountIdentity(
+    profile,
+    config.expectedUsername,
+  );
 
-  if (
-    username !== config.expectedUsername ||
-    profile.id !== shortToken.user_id
-  ) {
-    throw new InstagramOAuthError("account_validation");
+  if (!account) {
+    throw new InstagramOAuthError("username_validation");
   }
 
   return {
-    userId: profile.user_id,
-    username,
+    userId: account.userId,
+    username: account.username,
     accessToken: longToken.access_token,
     scopes,
     expiresAt: new Date(Date.now() + longToken.expires_in * 1000).toISOString(),

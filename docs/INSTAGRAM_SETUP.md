@@ -97,7 +97,7 @@ teste e administração do aplicativo.
    access_token=<token curto>
    ```
 
-6. O portal consulta `GET /v26.0/me?fields=id,user_id,username`, aceita somente
+6. O portal consulta `GET /v26.0/me?fields=user_id,username`, aceita somente
    `@arenasulsports`, cifra o token com AES-256-GCM e salva apenas o valor cifrado
    no banco. App Secret, código e tokens não aparecem em página ou log.
 
@@ -130,7 +130,7 @@ valores.
 
 ### 4. Validar antes de ativar em produção
 
-1. Confirmar o perfil com `GET /v26.0/me?fields=id,user_id,username`.
+1. Confirmar o perfil com `GET /v26.0/me?fields=user_id,username`.
 2. Consultar `/v26.0/{user_id}/media` e confirmar que os Reels chegam com
    `media_product_type=REELS`.
 3. Publicar ou manter um Story ativo e consultar
