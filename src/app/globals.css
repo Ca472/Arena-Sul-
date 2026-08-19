@@ -392,7 +392,12 @@ img {
 
 .public-site .hero-title span {
   display: block;
+  margin-top: 0.14em;
   color: var(--orange);
+  font-size: clamp(2.8rem, 4.8vw, 5.25rem);
+  line-height: 0.93;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
 .public-site .hero-lead {
@@ -678,7 +683,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   bottom: 0;
   left: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border-top: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(1, 22, 52, 0.76);
   backdrop-filter: blur(14px);
@@ -2172,15 +2177,23 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
-  .public-site .stat:nth-child(2n) {
+  .public-site .stat {
+    grid-column: span 2;
+  }
+
+  .public-site .stat:nth-child(3) {
     border-right: 0;
   }
 
-  .public-site .stat:nth-child(-n + 2) {
+  .public-site .stat:nth-child(-n + 3) {
     border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  }
+
+  .public-site .stat:nth-child(n + 4) {
+    grid-column: span 3;
   }
 
   .public-site .about-grid,
@@ -2423,12 +2436,34 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .stats {
     position: relative;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: auto;
   }
 
   .public-site .stat {
+    grid-column: auto;
     min-height: 92px;
     padding: 15px;
+    border-right: 1px solid rgba(255, 255, 255, 0.13);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  }
+
+  .public-site .stat:nth-child(n + 4) {
+    grid-column: auto;
+  }
+
+  .public-site .stat:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .public-site .stat:nth-child(3) {
+    border-right: 1px solid rgba(255, 255, 255, 0.13);
+  }
+
+  .public-site .stat:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
   }
 
   .public-site .stat strong {

@@ -14,8 +14,9 @@ import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 const stats: Array<{ value: string | null; label: string }> = [
   { value: "13", label: "quadras de areia" },
   { value: "1", label: "quadra society" },
-  { value: null, label: "área de churrasqueira" },
-  { value: null, label: "bar" },
+  { value: "3", label: "áreas de churrasqueira" },
+  { value: null, label: "bares e cozinha completos" },
+  { value: "90", label: "carros · estacionamento gratuito" },
 ];
 
 const heroSports = [
@@ -102,7 +103,8 @@ export default function Home() {
             <div className="hero-copy">
               <p className="eyebrow">Esporte · Família · Saúde</p>
               <h1 className="hero-title">
-                Esporte é saúde. <span>Família é conexão.</span>
+                Esporte é saúde.
+                <span>Maior Complexo Esportivo do Vale do Paraíba.</span>
               </h1>
               <p className="hero-lead">
                 Um ambiente acolhedor para praticar esporte, cuidar da saúde e
@@ -203,7 +205,9 @@ export default function Home() {
 
             <div className="about-copy">
               <p className="section-kicker">Nossa essência</p>
-              <h2>Um ponto de encontro para saúde e bons momentos.</h2>
+              <h2>
+                Um ponto de encontro para saúde, lazer e bons momentos.
+              </h2>
               <p>
                 A Arena Sul aproxima famílias, amigos, escolas e empresas em um
                 ambiente acolhedor para praticar esporte, cuidar do bem-estar e
