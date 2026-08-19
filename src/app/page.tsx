@@ -21,16 +21,25 @@ const stats: Array<{ value: string | null; label: string }> = [
 
 const heroSports = [
   {
+    id: "volei-praia",
     name: "Vôlei de Praia",
     image: "/images/hero-volei-praia.jpg",
     className: "hero-sport-slide hero-sport-slide-volleyball",
   },
   {
+    id: "futevolei",
     name: "Futevôlei",
     image: "/images/hero-futevolei.jpg",
     className: "hero-sport-slide hero-sport-slide-futevolei",
   },
   {
+    id: "volei-praia-atleta",
+    name: "Vôlei de Praia",
+    image: "/images/hero-volei-praia-atleta.jpg",
+    className: "hero-sport-slide hero-sport-slide-volleyball-athlete",
+  },
+  {
+    id: "beach-tennis",
     name: "Beach Tênis",
     image: "/images/hero-beach-tennis.jpg",
     className: "hero-sport-slide hero-sport-slide-beach-tennis",
@@ -139,7 +148,7 @@ export default function Home() {
 
               <div className="hero-sports-showcase" aria-hidden="true">
                 {heroSports.map((sport, index) => (
-                  <figure className={sport.className} key={sport.name}>
+                  <figure className={sport.className} key={sport.id}>
                     <Image
                       className="hero-sport-photo"
                       src={sport.image}
@@ -158,7 +167,7 @@ export default function Home() {
 
                 <div className="hero-sport-indicators">
                   {heroSports.map((sport) => (
-                    <span key={sport.name} />
+                    <span key={sport.id} />
                   ))}
                 </div>
 
