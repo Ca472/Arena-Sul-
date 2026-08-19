@@ -11,12 +11,27 @@ import { SiteHeader } from "@/components/site-header";
 import { StructureGallery } from "@/components/structure-gallery";
 import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 
-const stats: Array<{ value: string | null; label: string }> = [
+type ArenaStat = {
+  value: string | null;
+  label: string;
+  ariaLabel?: string;
+};
+
+type Amenity = {
+  label: string;
+  whatsappMessage?: string;
+};
+
+const stats: ArenaStat[] = [
   { value: "13", label: "quadras de areia" },
   { value: "1", label: "quadra society" },
   { value: "3", label: "áreas de churrasqueira" },
   { value: null, label: "bares e cozinha completos" },
-  { value: "90", label: "carros · estacionamento gratuito" },
+  {
+    value: "90",
+    label: "carros · capacidade do estacionamento",
+    ariaLabel: "Estacionamento para 90 carros",
+  },
 ];
 
 const heroSports = [
@@ -46,14 +61,18 @@ const heroSports = [
   },
 ];
 
-const amenities = [
-  "13 quadras de areia",
-  "1 quadra de futebol society",
-  "3 churrasqueiras para aniversários e confraternizações",
-  "Bar e cozinha",
-  "Vestiários",
-  "Aulas de esportes de areia",
-  "Estrutura para grupos e eventos",
+const amenities: Amenity[] = [
+  { label: "13 quadras de areia" },
+  { label: "1 quadra de futebol society" },
+  {
+    label: "3 churrasqueiras para aniversários e confraternizações",
+    whatsappMessage:
+      "Olá, Arena Sul! Vim do Site. Gostaria de saber mais sobre a locação do espaço para aniversários e confraternizações.",
+  },
+  { label: "Bar e cozinha" },
+  { label: "Vestiários" },
+  { label: "Aulas de esportes de areia" },
+  { label: "Estrutura para grupos e eventos" },
 ];
 
 const contactUrl = buildWhatsAppUrl();
@@ -189,6 +208,7 @@ export default function Home() {
               <div
                 className={stat.value === null ? "stat stat-feature" : "stat"}
                 key={stat.label}
+                aria-label={stat.ariaLabel}
               >
                 {stat.value !== null ? <strong>{stat.value}</strong> : null}
                 <span>{stat.label}</span>
@@ -242,9 +262,30 @@ export default function Home() {
               </p>
               <ul className="amenities-list">
                 {amenities.map((item) => (
-                  <li key={item}>
-                    <span aria-hidden="true">✓</span>
-                    {item}
+                  <li key={item.label}>
+                    <span className="amenity-check" aria-hidden="true">
+                      ✓
+                    </span>
+                    <div className="amenity-content">
+                      {item.label}
+                      {item.whatsappMessage ? (
+                        <a
+                          className="amenity-whatsapp-link"
+                          href={buildWhatsAppUrl(item.whatsappMessage)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Saiba mais sobre a locação das churrasqueiras no WhatsApp (abre em uma nova aba)"
+                        >
+                          <Image
+                            src="/icons/whatsapp.svg"
+                            alt=""
+                            width={20}
+                            height={20}
+                          />
+                          Saiba mais no WhatsApp
+                        </a>
+                      ) : null}
+                    </div>
                   </li>
                 ))}
               </ul>

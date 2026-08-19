@@ -350,7 +350,7 @@ img {
   grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
   align-items: center;
   min-height: calc(100svh - 228px);
-  padding-block: 66px 112px;
+  padding-block: 66px 152px;
 }
 
 .public-site .hero-copy {
@@ -1016,7 +1016,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   line-height: 1.45;
 }
 
-.public-site .amenities-list li span {
+.public-site .amenity-check {
   display: grid;
   width: 20px;
   height: 20px;
@@ -1025,6 +1025,47 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   background: var(--orange);
   color: var(--navy);
   font-size: 0.7rem;
+}
+
+.public-site .amenity-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.public-site .amenity-whatsapp-link {
+  display: inline-flex;
+  min-height: 44px;
+  max-width: 100%;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px 8px 9px;
+  border: 1px solid rgba(4, 39, 83, 0.12);
+  border-radius: 999px;
+  background: var(--navy);
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-decoration: none;
+  touch-action: manipulation;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.public-site .amenity-whatsapp-link:hover,
+.public-site .amenity-whatsapp-link:focus-visible {
+  background: var(--blue);
+  transform: translateY(-1px);
+}
+
+.public-site .amenity-whatsapp-link img {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
 }
 
 /* Modalities */
@@ -3020,7 +3061,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .hero-grid {
     min-height: calc(100svh - 88px);
-    padding-block: 32px 112px;
+    padding-block: 32px 128px;
   }
 
   .public-site .hero-title {
