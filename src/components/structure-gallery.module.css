@@ -390,6 +390,10 @@
     aspect-ratio: 16 / 9;
   }
 
+  .arrowControls {
+    top: 34%;
+  }
+
   .caption {
     bottom: 18px;
     left: 18px;
