@@ -123,7 +123,6 @@ export function StructureGallery() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [outgoingIndex, setOutgoingIndex] = useState<number | null>(null);
   const [pendingIndex, setPendingIndex] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocusWithin, setIsFocusWithin] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -135,7 +134,6 @@ export function StructureGallery() {
   const interactionPaused = isHovered || isFocusWithin;
 
   const autoplayEnabled =
-    isPlaying &&
     !interactionPaused &&
     isVisible &&
     pageVisible &&
@@ -147,9 +145,6 @@ export function StructureGallery() {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updatePreference = () => {
       setPrefersReducedMotion(mediaQuery.matches);
-      if (mediaQuery.matches) {
-        setIsPlaying(false);
-      }
     };
 
     updatePreference();
@@ -229,12 +224,8 @@ export function StructureGallery() {
   );
 
   const requestSlide = useCallback(
-    (index: number, announce = true, pausePlayback = true) => {
+    (index: number, announce = true) => {
       const nextIndex = wrapIndex(index);
-
-      if (pausePlayback) {
-        setIsPlaying(false);
-      }
 
       if (nextIndex === activeIndex) {
         pendingIndexRef.current = null;
@@ -275,7 +266,7 @@ export function StructureGallery() {
     }
 
     const intervalId = window.setInterval(() => {
-      requestSlide(activeIndex + 1, false, false);
+      requestSlide(activeIndex + 1, false);
     }, AUTO_ROTATE_MS);
 
     return () => window.clearInterval(intervalId);
@@ -319,18 +310,6 @@ export function StructureGallery() {
 
   const showPrevious = () => requestSlide(activeIndex - 1);
   const showNext = () => requestSlide(activeIndex + 1);
-
-  const togglePlayback = () => {
-    const nextPlaying = !isPlaying;
-    setIsPlaying(nextPlaying);
-    setStatusMessage(
-      nextPlaying && interactionPaused
-        ? "A animação será retomada ao sair dos controles"
-        : nextPlaying
-          ? "Animação da galeria retomada"
-          : "Animação da galeria pausada",
-    );
-  };
 
   const previousIndex = wrapIndex(activeIndex - 1);
   const nextIndex = wrapIndex(activeIndex + 1);
@@ -480,17 +459,6 @@ export function StructureGallery() {
             aria-label="Mostrar foto anterior"
           >
             <span aria-hidden="true">←</span>
-          </button>
-          <button
-            type="button"
-            onClick={togglePlayback}
-            disabled={prefersReducedMotion}
-          >
-            {prefersReducedMotion
-              ? "Movimento reduzido"
-              : isPlaying
-                ? "Pausar animação"
-                : "Retomar animação"}
           </button>
           <button
             type="button"

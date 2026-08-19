@@ -44,11 +44,11 @@
   background:
     linear-gradient(
       90deg,
-      rgba(1, 18, 48, 0.84) 0%,
-      rgba(1, 18, 48, 0.28) 52%,
-      rgba(1, 18, 48, 0.08) 100%
+      rgba(1, 18, 48, 0.52) 0%,
+      rgba(1, 18, 48, 0.14) 48%,
+      transparent 76%
     ),
-    linear-gradient(0deg, rgba(1, 18, 48, 0.72) 0%, transparent 54%);
+    linear-gradient(0deg, rgba(1, 18, 48, 0.46) 0%, transparent 46%);
   pointer-events: none;
 }
 
@@ -77,14 +77,17 @@
 .caption {
   position: absolute;
   z-index: 4;
-  bottom: clamp(28px, 5vw, 64px);
-  left: clamp(24px, 5vw, 68px);
-  width: min(610px, calc(100% - 48px));
-  padding: clamp(20px, 3vw, 34px);
-  border-left: 5px solid #ff914d;
-  background: rgba(2, 31, 78, 0.86);
+  bottom: clamp(18px, 3vw, 38px);
+  left: clamp(18px, 3vw, 40px);
+  width: min(450px, calc(100% - 36px));
+  padding: clamp(14px, 1.7vw, 20px);
+  border-left: 3px solid #ff914d;
+  border-radius: 0 16px 16px 0;
+  background: rgba(2, 31, 78, 0.64);
   color: white;
-  box-shadow: 0 18px 50px rgba(1, 18, 48, 0.28);
+  box-shadow: 0 12px 34px rgba(1, 18, 48, 0.18);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   opacity: 0;
   transform: translate3d(0, 18px, 0);
   transition:
@@ -100,19 +103,19 @@
 .caption > span {
   display: block;
   color: #ff914d;
-  font-size: 0.72rem;
+  font-size: 0.64rem;
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .caption h3 {
-  max-width: 13ch;
-  margin: 10px 0 12px;
+  max-width: 15ch;
+  margin: 6px 0 8px;
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: clamp(3.2rem, 7vw, 6.6rem);
+  font-size: clamp(2.15rem, 4.5vw, 4.25rem);
   font-weight: 400;
-  line-height: 0.86;
+  line-height: 0.9;
   letter-spacing: -0.025em;
   text-transform: uppercase;
   overflow-wrap: anywhere;
@@ -122,8 +125,8 @@
   max-width: 52ch;
   margin: 0;
   color: rgba(255, 255, 255, 0.86);
-  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
-  line-height: 1.65;
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
+  line-height: 1.45;
 }
 
 .counter {
@@ -199,12 +202,6 @@
     transform 180ms ease;
 }
 
-.arrowControls button:nth-child(2) {
-  min-width: 172px;
-  padding-inline: 20px;
-  text-transform: uppercase;
-}
-
 .arrowControls button:hover,
 .arrowControls button:focus-visible,
 .dot:hover,
@@ -224,13 +221,6 @@
 .arrowControls button:active,
 .dot:active {
   transform: scale(0.96);
-}
-
-.arrowControls button:disabled {
-  border-color: rgba(2, 31, 78, 0.12);
-  background: rgba(2, 31, 78, 0.05);
-  color: rgba(2, 31, 78, 0.62);
-  cursor: default;
 }
 
 .dot {
@@ -275,7 +265,7 @@
   }
 
   .caption h3 {
-    font-size: clamp(3rem, 10vw, 5rem);
+    font-size: clamp(2rem, 6.5vw, 3.4rem);
   }
 }
 
@@ -288,11 +278,9 @@
 
   .arrowControls {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) 48px;
-  }
-
-  .arrowControls button:nth-child(2) {
-    min-width: 0;
+    width: 100%;
+    grid-template-columns: repeat(2, 48px);
+    justify-content: space-between;
   }
 
   .pagination {
@@ -315,24 +303,25 @@
   .slide::after {
     background: linear-gradient(
       0deg,
-      rgba(1, 18, 48, 0.92) 0%,
-      rgba(1, 18, 48, 0.12) 72%
+      rgba(1, 18, 48, 0.56) 0%,
+      rgba(1, 18, 48, 0.12) 45%,
+      transparent 68%
     );
   }
 
   .caption {
-    right: 16px;
-    bottom: 18px;
-    left: 16px;
+    right: 14px;
+    bottom: 14px;
+    left: 14px;
     width: auto;
-    padding: 18px 18px 20px;
-    border-left-width: 4px;
+    padding: 14px;
+    background: rgba(2, 31, 78, 0.62);
   }
 
   .caption h3 {
     max-width: 15ch;
-    margin-block: 8px 10px;
-    font-size: clamp(2.5rem, 14vw, 4.1rem);
+    margin-block: 6px 8px;
+    font-size: clamp(1.95rem, 9.5vw, 2.75rem);
   }
 
   .caption p {
@@ -343,6 +332,12 @@
   .counter {
     top: 14px;
     right: 14px;
+  }
+}
+
+@media (max-width: 430px) {
+  .caption p {
+    display: none;
   }
 }
 
@@ -376,13 +371,13 @@
   .caption {
     bottom: 18px;
     left: 18px;
-    max-width: 54%;
+    max-width: 46%;
     padding: 14px 18px;
   }
 
   .caption h3 {
     margin-block: 5px 7px;
-    font-size: clamp(2rem, 7vw, 3.2rem);
+    font-size: clamp(1.7rem, 5vw, 2.45rem);
   }
 
   .caption p {
