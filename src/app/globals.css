@@ -488,7 +488,7 @@ img {
   box-shadow: 0 30px 70px rgba(0, 10, 30, 0.38);
   opacity: 0;
   transform: translate3d(24px, 16px, 0) scale(0.97);
-  animation: heroSportSlide 15s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: heroSportSlide 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   animation-delay: var(--sport-delay);
   will-change: transform, opacity;
 }
@@ -503,7 +503,7 @@ img {
 }
 
 .public-site .hero-sport-slide-beach-tennis {
-  --sport-delay: 9.55s;
+  --sport-delay: 14.55s;
 }
 
 .public-site .hero-sport-photo {
@@ -516,6 +516,14 @@ img {
 
 .public-site .hero-sport-slide-futevolei .hero-sport-photo {
   object-position: 48% 40%;
+}
+
+.public-site .hero-sport-slide-volleyball-athlete {
+  --sport-delay: 9.55s;
+}
+
+.public-site .hero-sport-slide-volleyball-athlete .hero-sport-photo {
+  object-position: 50% 12%;
 }
 
 .public-site .hero-sport-slide-beach-tennis .hero-sport-photo {
@@ -542,7 +550,7 @@ img {
   color: white;
   opacity: 0;
   transform: translate3d(0, 16px, 0);
-  animation: heroSportCaption 15s ease-in-out infinite;
+  animation: heroSportCaption 20s ease-in-out infinite;
   animation-delay: var(--sport-delay);
 }
 
@@ -580,7 +588,7 @@ img {
   height: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.3);
-  animation: heroSportIndicator 15s ease-in-out infinite;
+  animation: heroSportIndicator 20s ease-in-out infinite;
   animation-delay: var(--sport-delay);
 }
 
@@ -596,6 +604,10 @@ img {
   --sport-delay: 9.55s;
 }
 
+.public-site .hero-sport-indicators span:nth-child(4) {
+  --sport-delay: 14.55s;
+}
+
 .public-site .hero-sports-static-label {
   display: none;
 }
@@ -606,13 +618,13 @@ img {
     transform: translate3d(24px, 16px, 0) scale(0.97);
   }
 
-  3%,
-  30% {
+  2.25%,
+  22.5% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
 
-  36%,
+  27%,
   100% {
     opacity: 0;
     transform: translate3d(-20px, -8px, 0) scale(1.025);
@@ -625,13 +637,13 @@ img {
     transform: translate3d(0, 16px, 0);
   }
 
-  5%,
-  29% {
+  3.75%,
+  21.75% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
 
-  34%,
+  25.5%,
   100% {
     opacity: 0;
     transform: translate3d(0, -8px, 0);
@@ -640,13 +652,13 @@ img {
 
 @keyframes heroSportIndicator {
   0%,
-  30% {
+  22.5% {
     width: 28px;
     background: var(--orange);
     opacity: 1;
   }
 
-  36%,
+  27%,
   100% {
     width: 18px;
     background: rgba(255, 255, 255, 0.3);
