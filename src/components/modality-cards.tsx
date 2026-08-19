@@ -36,12 +36,12 @@ const modalities: Modality[] = [
       {
         label: "Agendar aula experimental",
         message:
-          "Olá, Arena Sul! Gostaria de agendar uma aula experimental de Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula experimental de Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
       },
       {
         label: "Reservar quadra de areia",
         message:
-          "Olá, Arena Sul! Gostaria de reservar uma quadra de areia para jogar Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
       },
     ],
   },
@@ -58,12 +58,12 @@ const modalities: Modality[] = [
       {
         label: "Agendar aula experimental",
         message:
-          "Olá, Arena Sul! Gostaria de agendar uma aula experimental de futevôlei. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula experimental de futevôlei. Poderiam me informar os dias, horários e valores disponíveis?",
       },
       {
         label: "Reservar quadra de areia",
         message:
-          "Olá, Arena Sul! Gostaria de reservar uma quadra de areia para jogar futevôlei. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar futevôlei. Poderiam me informar os dias, horários e valores disponíveis?",
       },
     ],
   },
@@ -80,12 +80,12 @@ const modalities: Modality[] = [
       {
         label: "Agendar aula experimental",
         message:
-          "Olá, Arena Sul! Gostaria de agendar uma aula experimental de vôlei de praia. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula experimental de vôlei de praia. Poderiam me informar os dias, horários e valores disponíveis?",
       },
       {
         label: "Reservar quadra de areia",
         message:
-          "Olá, Arena Sul! Gostaria de reservar uma quadra de areia para jogar vôlei de praia. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar vôlei de praia. Poderiam me informar os dias, horários e valores disponíveis?",
       },
     ],
   },
@@ -94,15 +94,15 @@ const modalities: Modality[] = [
     text: "Partidas, lazer e confraternizações para grupos.",
     image: {
       src: "/images/modality-futebol-society.png",
-      alt: "Bola de futebol em primeiro plano no campo society da Arena Sul.",
+      alt: "Bola de futebol em primeiro plano na quadra society da Arena Sul.",
       objectPosition: "50% 68%",
     },
-    menuLabel: "Reservar campo",
+    menuLabel: "Reservar quadra",
     actions: [
       {
-        label: "Reservar campo society",
+        label: "Reservar quadra society",
         message:
-          "Olá, Arena Sul! Gostaria de reservar o campo de futebol society. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar a quadra de futebol society. Poderiam me informar os dias, horários e valores disponíveis?",
       },
     ],
   },
@@ -119,7 +119,7 @@ const modalities: Modality[] = [
       {
         label: "Agendar treino funcional",
         message:
-          "Olá, Arena Sul! Gostaria de agendar um treino funcional. Poderiam me informar as turmas, os dias, os horários e os valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar um treino funcional. Poderiam me informar as turmas, os dias, os horários e os valores disponíveis?",
       },
     ],
   },

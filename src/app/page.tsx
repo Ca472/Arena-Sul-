@@ -13,7 +13,7 @@ import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 
 const stats: Array<{ value: string | null; label: string }> = [
   { value: "13", label: "quadras de areia" },
-  { value: "1", label: "campo society" },
+  { value: "1", label: "quadra society" },
   { value: null, label: "área de churrasqueira" },
   { value: null, label: "bar" },
 ];
@@ -38,7 +38,7 @@ const heroSports = [
 
 const amenities = [
   "13 quadras de areia",
-  "1 campo de futebol society",
+  "1 quadra de futebol society",
   "3 churrasqueiras para aniversários e confraternizações",
   "Bar e cozinha",
   "Vestiários",
@@ -115,10 +115,13 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Falar com a Arena
+                  Fale conosco
+                </a>
+                <a className="button button-ghost" href="#modalidades">
+                  Esporte de areia
                 </a>
                 <a className="button button-ghost" href="#estrutura">
-                  Conhecer a estrutura
+                  Conheça a estrutura
                 </a>
               </div>
             </div>
