@@ -6,6 +6,7 @@ import type {
   InstagramMediaItem,
   InstagramMediaKind,
 } from "./types";
+import { getStoredInstagramCredentials } from "./token-store";
 
 const DEFAULT_GRAPH_VERSION = "v26.0";
 const INSTAGRAM_PROFILE_URL =
@@ -168,8 +169,9 @@ async function fetchInstagramEdge({
  * refreshed independently through the Next.js data cache.
  */
 export async function getInstagramFeed(): Promise<InstagramFeed> {
-  const userId = process.env.INSTAGRAM_USER_ID?.trim();
-  const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN?.trim();
+  const storedCredentials = await getStoredInstagramCredentials();
+  const userId = storedCredentials?.userId;
+  const accessToken = storedCredentials?.accessToken;
   const requestedGraphVersion = process.env.INSTAGRAM_GRAPH_VERSION?.trim();
   const graphVersion =
     requestedGraphVersion && /^v\d+\.\d+$/.test(requestedGraphVersion)

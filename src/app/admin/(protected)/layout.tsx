@@ -47,6 +47,10 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
               <span className={styles.desktopNavLabel}>Novo evento</span>
               <span className={styles.mobileNavLabel}>Novo</span>
             </Link>
+            <Link className={styles.navLink} href="/admin/integracoes/instagram">
+              <span className={styles.desktopNavLabel}>Instagram</span>
+              <span className={styles.mobileNavLabel}>Insta</span>
+            </Link>
             <Link className={styles.navLink} href="/">
               <span className={styles.desktopNavLabel}>Ver o portal</span>
               <span className={styles.mobileNavLabel}>Site</span>

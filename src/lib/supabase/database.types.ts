@@ -115,9 +115,104 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
         Relationships: [];
       };
+      instagram_oauth_invites: {
+        Row: {
+          id: string;
+          token_hash: string;
+          expires_at: string;
+          consumed_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          token_hash: string;
+          expires_at: string;
+          consumed_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["instagram_oauth_invites"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      instagram_oauth_states: {
+        Row: {
+          id: string;
+          invite_id: string;
+          state_hash: string;
+          expires_at: string;
+          consumed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          invite_id: string;
+          state_hash: string;
+          expires_at: string;
+          consumed_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["instagram_oauth_states"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      instagram_connections: {
+        Row: {
+          id: string;
+          instagram_user_id: string;
+          username: string;
+          token_ciphertext: string;
+          token_iv: string;
+          token_auth_tag: string;
+          token_key_version: number;
+          scopes: string[];
+          expires_at: string;
+          connected_at: string;
+          last_refreshed_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          instagram_user_id: string;
+          username: string;
+          token_ciphertext: string;
+          token_iv: string;
+          token_auth_tag: string;
+          token_key_version?: number;
+          scopes?: string[];
+          expires_at: string;
+          connected_at?: string;
+          last_refreshed_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["instagram_connections"]["Insert"]
+        >;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      create_instagram_oauth_invite: {
+        Args: {
+          p_token_hash: string;
+          p_expires_at: string;
+          p_created_by: string;
+        };
+        Returns: string;
+      };
+      consume_instagram_oauth_invite: {
+        Args: {
+          p_invite_hash: string;
+          p_state_hash: string;
+          p_state_expires_at: string;
+        };
+        Returns: string;
+      };
+    };
     Enums: {
       event_status: EventStatus;
     };

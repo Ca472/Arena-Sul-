@@ -640,6 +640,62 @@
   overflow-wrap: anywhere;
 }
 
+.integrationGrid,
+.inviteForm,
+.inviteOutput,
+.integrationStatus {
+  display: grid;
+  gap: 16px;
+}
+
+.integrationStatus {
+  align-items: start;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.integrationStatus p,
+.inviteOutput p {
+  margin: 0;
+  color: var(--admin-muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.inviteForm form {
+  display: flex;
+}
+
+.inviteOutput {
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  background: #f7f8f3;
+}
+
+.inviteOutput label {
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.inviteUrl {
+  min-width: 0;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 11px;
+  background: white;
+  color: var(--admin-ink);
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  resize: vertical;
+}
+
+.inviteOutput .secondaryButton {
+  width: fit-content;
+}
+
 .notice {
   border: 1px solid #d9ddaf;
   background: #f8fadf;
