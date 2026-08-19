@@ -1096,7 +1096,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 .public-site .modality-card-body {
   display: flex;
   min-width: 0;
-  min-height: 272px;
+  min-height: 210px;
   flex: 1;
   flex-direction: column;
   padding: clamp(20px, 2vw, 27px) clamp(18px, 1.8vw, 24px) 22px;
@@ -1119,14 +1119,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   font-weight: 400;
   line-height: 0.95;
   text-transform: uppercase;
-}
-
-.public-site .modality-content p {
-  margin: 13px 0 0;
-  color: var(--muted);
-  font-size: 0.86rem;
-  line-height: 1.65;
-  overflow-wrap: anywhere;
 }
 
 .public-site .modality-menu-trigger {
@@ -2536,10 +2528,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     font-size: 0.84rem;
   }
 
-  .public-site .modality-content p {
-    min-height: auto;
-  }
-
   .public-site .events {
     min-height: 0;
     padding-block: 74px;
@@ -2747,11 +2735,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .modality-content h3 {
     font-size: clamp(1.65rem, 10vw, 2.25rem);
-  }
-
-  .public-site .modality-content p {
-    min-height: 0;
-    font-size: 0.78rem;
   }
 
   .public-site .events-copy,

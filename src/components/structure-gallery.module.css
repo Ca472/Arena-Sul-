@@ -168,12 +168,23 @@
 .controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  justify-content: center;
   margin-top: 18px;
 }
 
-.arrowControls,
+.arrowControls {
+  position: absolute;
+  z-index: 7;
+  top: 50%;
+  right: clamp(12px, 2vw, 24px);
+  left: clamp(12px, 2vw, 24px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
 .pagination {
   display: flex;
   align-items: center;
@@ -202,6 +213,16 @@
     transform 180ms ease;
 }
 
+.arrowControls button {
+  pointer-events: auto;
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(2, 31, 78, 0.78);
+  color: white;
+  box-shadow: 0 10px 30px rgba(1, 18, 48, 0.28);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
 .arrowControls button:hover,
 .arrowControls button:focus-visible,
 .dot:hover,
@@ -215,6 +236,11 @@
 .arrowControls button:focus-visible,
 .dot:focus-visible {
   outline: 3px solid #021f4e;
+  outline-offset: 3px;
+}
+
+.arrowControls button:focus-visible {
+  outline-color: white;
   outline-offset: 3px;
 }
 
@@ -271,16 +297,12 @@
 
 @media (max-width: 760px) {
   .controls {
-    align-items: stretch;
-    flex-direction: column;
     margin-top: 14px;
   }
 
   .arrowControls {
-    display: grid;
-    width: 100%;
-    grid-template-columns: repeat(2, 48px);
-    justify-content: space-between;
+    right: 12px;
+    left: 12px;
   }
 
   .pagination {
@@ -366,6 +388,10 @@
     width: min(100%, calc(82svh * 1.7778));
     margin-inline: auto;
     aspect-ratio: 16 / 9;
+  }
+
+  .arrowControls {
+    top: 34%;
   }
 
   .caption {
