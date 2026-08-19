@@ -117,18 +117,18 @@ const modalities: Modality[] = [
     ],
   },
   {
-    title: "Treino Funcional",
+    title: "Aula Funcional",
     image: {
       src: "/images/modality-treino-funcional.png",
       alt: "Turma participa de uma atividade orientada nas quadras de areia da Arena Sul.",
       objectPosition: "52% 48%",
     },
-    menuLabel: "Agendar treino",
+    menuLabel: "Agendar aula",
     actions: [
       {
-        label: "Agendar treino funcional",
+        label: "Agendar aula funcional",
         message:
-          "Olá, Arena Sul! Vim do Site. Gostaria de agendar um treino funcional. Poderiam me informar as turmas, os dias, os horários e os valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula funcional. Poderiam me informar as turmas, os dias, os horários e os valores disponíveis?",
       },
     ],
   },
