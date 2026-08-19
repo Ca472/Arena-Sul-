@@ -441,18 +441,12 @@ export function StructureGallery() {
           {String(slides.length).padStart(2, "0")}
         </span>
 
-        {autoplayEnabled ? (
-          <span className={styles.progressTrack} aria-hidden="true">
-            <span
-              className={styles.progressFill}
-              key={`progress-${activeIndex}`}
-            />
-          </span>
-        ) : null}
-      </div>
-
-      <div className={styles.controls}>
-        <div className={styles.arrowControls}>
+        <div
+          className={styles.arrowControls}
+          onPointerDown={(event) => event.stopPropagation()}
+          onPointerUp={(event) => event.stopPropagation()}
+          onPointerCancel={(event) => event.stopPropagation()}
+        >
           <button
             type="button"
             onClick={showPrevious}
@@ -469,6 +463,17 @@ export function StructureGallery() {
           </button>
         </div>
 
+        {autoplayEnabled ? (
+          <span className={styles.progressTrack} aria-hidden="true">
+            <span
+              className={styles.progressFill}
+              key={`progress-${activeIndex}`}
+            />
+          </span>
+        ) : null}
+      </div>
+
+      <div className={styles.controls}>
         <div
           className={styles.pagination}
           role="group"

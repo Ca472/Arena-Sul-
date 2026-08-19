@@ -12,7 +12,6 @@ type ModalityAction = {
 
 type Modality = {
   title: string;
-  text: string;
   image: {
     src: string;
     alt: string;
@@ -25,13 +24,12 @@ type Modality = {
 const modalities: Modality[] = [
   {
     title: "Beach Tênis",
-    text: "Aulas e jogos para diferentes níveis, com saúde e diversão.",
     image: {
       src: "/images/modality-beach-tennis.png",
       alt: "Jogadora de Beach Tênis prepara uma rebatida na quadra de areia.",
       objectPosition: "50% 42%",
     },
-    menuLabel: "Agendar ou reservar",
+    menuLabel: "Aula, quadra ou Day Use",
     actions: [
       {
         label: "Agendar aula experimental",
@@ -43,17 +41,21 @@ const modalities: Modality[] = [
         message:
           "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
       },
+      {
+        label: "Consultar Day Use",
+        message:
+          "Olá, Arena Sul! Vim do Site. Gostaria de receber informações sobre o Day Use para jogar Beach Tênis. Poderiam me informar os dias disponíveis, os horários, os valores e o que está incluído?",
+      },
     ],
   },
   {
     title: "Futevôlei",
-    text: "Treinos, partidas e uma comunidade que vive o esporte.",
     image: {
       src: "/images/modality-futevolei.png",
       alt: "Atleta de futevôlei domina a bola com o peito durante uma partida.",
       objectPosition: "50% 48%",
     },
-    menuLabel: "Agendar ou reservar",
+    menuLabel: "Aula, quadra ou Day Use",
     actions: [
       {
         label: "Agendar aula experimental",
@@ -65,17 +67,21 @@ const modalities: Modality[] = [
         message:
           "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar futevôlei. Poderiam me informar os dias, horários e valores disponíveis?",
       },
+      {
+        label: "Consultar Day Use",
+        message:
+          "Olá, Arena Sul! Vim do Site. Gostaria de receber informações sobre o Day Use para jogar futevôlei. Poderiam me informar os dias disponíveis, os horários, os valores e o que está incluído?",
+      },
     ],
   },
   {
     title: "Vôlei de Praia",
-    text: "Aulas e jogos para diferentes níveis.",
     image: {
       src: "/images/modality-volei-praia.png",
       alt: "Jogador realiza uma manchete no vôlei de praia.",
       objectPosition: "55% 38%",
     },
-    menuLabel: "Agendar ou reservar",
+    menuLabel: "Aula, quadra ou Day Use",
     actions: [
       {
         label: "Agendar aula experimental",
@@ -87,11 +93,15 @@ const modalities: Modality[] = [
         message:
           "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar vôlei de praia. Poderiam me informar os dias, horários e valores disponíveis?",
       },
+      {
+        label: "Consultar Day Use",
+        message:
+          "Olá, Arena Sul! Vim do Site. Gostaria de receber informações sobre o Day Use para jogar vôlei de praia. Poderiam me informar os dias disponíveis, os horários, os valores e o que está incluído?",
+      },
     ],
   },
   {
     title: "Futebol Society",
-    text: "Partidas, lazer e confraternizações para grupos.",
     image: {
       src: "/images/modality-futebol-society.png",
       alt: "Bola de futebol em primeiro plano na quadra society da Arena Sul.",
@@ -108,7 +118,6 @@ const modalities: Modality[] = [
   },
   {
     title: "Treino Funcional",
-    text: "Treinos coletivos com foco em saúde e bem-estar.",
     image: {
       src: "/images/modality-treino-funcional.png",
       alt: "Turma participa de uma atividade orientada nas quadras de areia da Arena Sul.",
@@ -181,7 +190,6 @@ export function ModalityCards() {
             <div className="modality-card-body">
               <div className="modality-content">
                 <h3>{modality.title}</h3>
-                <p>{modality.text}</p>
               </div>
 
               <button
