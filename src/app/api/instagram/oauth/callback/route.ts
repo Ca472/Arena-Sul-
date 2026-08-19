@@ -7,6 +7,7 @@ import {
   applyInstagramSecurityHeaders,
   exchangeInstagramAuthorizationCode,
   INSTAGRAM_OAUTH_COOKIE,
+  InstagramOAuthError,
 } from "@/lib/instagram/oauth";
 import {
   consumeInstagramOAuthState,
@@ -36,6 +37,21 @@ function resultResponse(request: NextRequest, status: string) {
   return response;
 }
 
+function logOAuthFailure(
+  stage: string,
+  error?: unknown,
+) {
+  const oauthError =
+    error instanceof InstagramOAuthError ? error : undefined;
+
+  console.error("instagram_oauth_callback_failed", {
+    stage: oauthError?.stage ?? stage,
+    upstreamStatus: oauthError?.upstreamStatus ?? null,
+    errorType:
+      error instanceof Error ? error.constructor.name : "UnknownError",
+  });
+}
+
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
@@ -59,15 +75,33 @@ export async function GET(request: NextRequest) {
   }
 
   if (!code || code.length > 4096) {
+    logOAuthFailure("missing_or_invalid_code");
+    return resultResponse(request, "falha");
+  }
+
+  let authorization;
+  try {
+    authorization = await exchangeInstagramAuthorizationCode(code);
+  } catch (error) {
+    logOAuthFailure("exchange", error);
     return resultResponse(request, "falha");
   }
 
   try {
-    const authorization = await exchangeInstagramAuthorizationCode(code);
     await saveInstagramConnection(authorization);
-    revalidatePath("/");
-    return resultResponse(request, "conectado");
-  } catch {
+  } catch (error) {
+    logOAuthFailure("persistence", error);
     return resultResponse(request, "falha");
   }
+
+  try {
+    revalidatePath("/");
+  } catch (error) {
+    console.warn("instagram_oauth_cache_revalidation_failed", {
+      errorType:
+        error instanceof Error ? error.constructor.name : "UnknownError",
+    });
+  }
+
+  return resultResponse(request, "conectado");
 }
