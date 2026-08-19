@@ -1,6 +1,6 @@
 # Área administrativa e Supabase
 
-Este módulo adiciona ao portal da Arena Sul uma área protegida em `/admin`, com autenticação por e-mail e senha, cadastro e publicação de eventos e upload múltiplo de fotos. A aplicação usa somente a chave **anon/publishable** do Supabase; nenhuma chave `service_role` é necessária ou enviada ao navegador.
+Este módulo adiciona ao portal da Arena Sul uma área protegida em `/admin`, com autenticação por e-mail e senha, cadastro e publicação de eventos e upload múltiplo de fotos. Autenticação, eventos e uploads usam somente a chave **anon/publishable** do Supabase. A integração opcional do Instagram usa uma `service_role` exclusivamente em um módulo `server-only`; essa chave nunca é enviada ao navegador.
 
 ## 1. Testar a interface sem Supabase
 
@@ -80,6 +80,9 @@ A migração cria:
 - `events`: conteúdo, datas e estado de publicação;
 - `event_photos`: metadados e ordem das fotos;
 - `site_settings`: configurações públicas, incluindo a referência do Instagram;
+- `instagram_oauth_invites`, `instagram_oauth_states` e
+  `instagram_connections`: autorização oficial do Instagram, sem políticas de
+  acesso pelo navegador e com token cifrado;
 - bucket privado `event-photos`, limitado a JPG, PNG e WebP de até 10 MB;
 - políticas RLS para leitura pública apenas de eventos publicados e controle total apenas por administradores.
 
@@ -117,7 +120,12 @@ Use os mesmos nomes em **Vercel → Project → Settings → Environment Variabl
 
 `NEXT_PUBLIC_SITE_URL` controla canonical, sitemap e metadados sociais. A origem de imagens remotas permitida pelo Next.js é derivada de `NEXT_PUBLIC_SUPABASE_URL` no build, portanto alterações nessa URL também exigem um novo deploy.
 
-> Nunca configure `SUPABASE_SERVICE_ROLE_KEY` com prefixo `NEXT_PUBLIC_`. Este projeto não usa essa chave.
+Se a integração oficial do Instagram for ativada, configure
+`SUPABASE_SERVICE_ROLE_KEY` somente como variável **Sensitive** de Production e
+somente no servidor. Nunca use o prefixo `NEXT_PUBLIC_` e nunca copie a chave de
+produção para previews gerais de pull requests. O uso é isolado em
+`src/lib/supabase/service-role.ts`; nenhum outro fluxo administrativo depende
+dela.
 
 ## 4. Fluxo de upload
 

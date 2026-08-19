@@ -54,11 +54,19 @@ digitados somente pela própria responsável na tela oficial da Meta/Instagram.
 
 1. Acessar [Meus aplicativos da Meta](https://developers.facebook.com/apps/)
    com a conta responsável pelo projeto.
-2. Criar um app com o caso de uso **Outro** e o tipo **Empresa**.
-3. Adicionar o produto **Instagram** e escolher
-   **Configuração da API com o Login do Instagram**.
-4. Em **Instagram > Configuração da API com o Login do Instagram**, adicionar
-   `@arenasulsports` e solicitar que a responsável conclua a autorização.
+2. No fluxo atual da Meta, escolher o caso de uso
+   **Gerenciar mensagens e conteúdo no Instagram**. O painel configura o produto
+   Instagram e a área **Configuração da API com o Login do Instagram**.
+3. Em **Configurar o login da empresa no Instagram**, cadastrar exatamente:
+
+   ```text
+   https://arena-sul-portal.vercel.app/api/instagram/oauth/callback
+   ```
+
+   O valor deve ser idêntico no painel e em `INSTAGRAM_OAUTH_REDIRECT_URI`, sem
+   diferença de protocolo, caminho ou barra final.
+4. Confirmar o campo **ID do app do Instagram**. Ele não é necessariamente o
+   mesmo ID geral exibido na URL do painel da Meta.
 5. Solicitar somente `instagram_business_basic`. Reels fazem parte da mídia da
    conta e não exigem permissão separada. Não solicitar publicação, mensagens,
    comentários ou insights para este portal.
@@ -68,14 +76,19 @@ como conta de teste ou vinculada a um papel do app. Advanced Access e App Review
 passam a ser necessários para conectar contas profissionais fora dos papéis de
 teste e administração do aplicativo.
 
-### 2. Obter o ID e o token sem expor segredos
+### 2. Gerar o convite seguro
 
-1. No painel do app, usar **Gerar token** para a conta autorizada e fazer as
-   primeiras chamadas de teste.
-2. Verificar a validade retornada para o token. Se for um token curto, trocá-lo
-   no servidor por um token longo usando o endpoint oficial `access_token`, com
-   `grant_type=ig_exchange_token`. Essa troca usa o segredo do app e nunca deve
-   ser feita no navegador ou registrada em logs.
+1. Configurar as variáveis server-only listadas na próxima seção e publicar o
+   callback antes de salvar o redirect no painel da Meta.
+2. Entrar em `/admin/integracoes/instagram` e clicar em
+   **Gerar link de autorização**.
+3. Enviar somente o link gerado pelo portal à responsável. Ele é temporário e
+   funciona uma vez.
+4. A responsável abre a página da Arena Sul e clica em
+   **Continuar no Instagram**. O `state` e o cookie de segurança são criados no
+   navegador dela; não abrir o fluxo em um computador e copiar a URL final para
+   outro.
+5. A callback troca o código por token curto e, no servidor, por token longo:
 
    ```text
    GET https://graph.instagram.com/access_token
@@ -84,12 +97,9 @@ teste e administração do aplicativo.
    access_token=<token curto>
    ```
 
-3. Guardar o token longo apenas durante a transferência segura para o ambiente
-   do servidor. Não colar o valor em issue, commit, documentação ou mensagem.
-4. Consultar `GET /v26.0/me?fields=user_id,username` com o token no cabeçalho
-   `Authorization: Bearer ...`.
-5. Usar o campo `user_id` retornado como `INSTAGRAM_USER_ID`. Não usar um ID
-   copiado manualmente de outra tela.
+6. O portal consulta `GET /v26.0/me?fields=id,user_id,username`, aceita somente
+   `@arenasulsports`, cifra o token com AES-256-GCM e salva apenas o valor cifrado
+   no banco. App Secret, código e tokens não aparecem em página ou log.
 
 Um token longo normalmente vale cerca de 60 dias. Registrar a data de emissão,
 confirmar a validade antes de ativar a produção e planejar a renovação antes da
@@ -97,28 +107,37 @@ expiração.
 
 ### 3. Configurar a Vercel
 
-Cadastrar como valores **Sensitive**, somente no servidor, primeiro no Preview
-e depois em Production:
+Cadastrar como valores **Sensitive** e somente no servidor em **Production**.
+Não copiar a service-role, o App Secret ou a chave AES de produção para previews
+gerais de pull requests. Um Preview que precise testar o OAuth deve usar projeto
+Supabase e aplicativo Meta separados, com credenciais próprias. Somente o
+redirect e o username não são secretos:
 
 ```text
-INSTAGRAM_USER_ID=<user_id retornado pela API>
-INSTAGRAM_ACCESS_TOKEN=<token da conta profissional>
+SUPABASE_SERVICE_ROLE_KEY=<chave server-only do projeto>
+INSTAGRAM_APP_ID=<ID do app do Instagram>
+INSTAGRAM_APP_SECRET=<segredo do app do Instagram>
+INSTAGRAM_OAUTH_REDIRECT_URI=https://arena-sul-portal.vercel.app/api/instagram/oauth/callback
+INSTAGRAM_EXPECTED_USERNAME=arenasulsports
+INSTAGRAM_TOKEN_ENCRYPTION_KEY=<32 bytes aleatórios em base64>
 INSTAGRAM_GRAPH_VERSION=v26.0
 ```
 
-Nunca usar o prefixo `NEXT_PUBLIC_` no token. Depois de salvar as variáveis,
-fazer um novo deployment para que a aplicação receba os valores.
+Nunca usar o prefixo `NEXT_PUBLIC_` nessas credenciais. A service-role ignora
+RLS e, por isso, fica isolada no módulo server-only da integração. Depois de
+salvar as variáveis, fazer um novo deployment para que a aplicação receba os
+valores.
 
 ### 4. Validar antes de ativar em produção
 
-1. Confirmar o perfil com `GET /v26.0/me?fields=user_id,username`.
+1. Confirmar o perfil com `GET /v26.0/me?fields=id,user_id,username`.
 2. Consultar `/v26.0/{user_id}/media` e confirmar que os Reels chegam com
    `media_product_type=REELS`.
 3. Publicar ou manter um Story ativo e consultar
    `/v26.0/{user_id}/stories`.
-4. Validar no Preview que as miniaturas, os links e o vídeo abrem o perfil
-   oficial correto.
-5. Somente depois repetir as variáveis em Production e fazer redeploy.
+4. Validar em um ambiente isolado ou, após o primeiro deploy controlado em
+   Production, que as miniaturas, os links e o vídeo abrem o perfil oficial
+   correto.
 
 A documentação pública da Meta ainda apresenta a referência de Stories com
 ênfase no fluxo antigo de Facebook Login. Por isso, o teste real do endpoint de
@@ -137,10 +156,13 @@ adicionais. Não usar scraping.
 - Se a API estiver indisponível ou o token expirar, o portal volta aos cards
   institucionais e aos links oficiais, sem expor erro técnico ao visitante.
 - As URLs temporárias de mídia retornadas pela Meta não são gravadas no banco.
-- Programar a primeira revisão do token por volta do 45º dia. Um token longo,
-  ainda válido e emitido há pelo menos 24 horas, pode ser renovado pelo endpoint
-  oficial `refresh_access_token`; o novo valor deve substituir o segredo na
-  Vercel.
+- Revisar mensalmente o estado da conexão no painel administrativo e programar
+  a reautorização antes do prazo informado pela Meta para o token longo. Esta
+  primeira versão não renova tokens no caminho público para evitar corridas e
+  gravações concorrentes.
+- Se a Meta revogar a autorização ou o token expirar, gerar um novo convite e
+  pedir uma nova autorização à responsável pela conta. A nova credencial
+  substitui a anterior de forma cifrada, sem mudar a identidade vinculada.
 - A responsável pode revogar o acesso depois em **Instagram > Permissões de
   sites > Aplicativos e sites > Ativos**.
 
