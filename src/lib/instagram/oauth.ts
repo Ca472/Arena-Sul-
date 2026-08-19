@@ -12,6 +12,29 @@ export const INSTAGRAM_OAUTH_SCOPE = "instagram_business_basic";
 export const INVITE_TTL_MS = 24 * 60 * 60 * 1000;
 export const STATE_TTL_MS = 20 * 60 * 1000;
 
+export type InstagramOAuthStage =
+  | "configuration"
+  | "short_token_request"
+  | "short_token_response"
+  | "permission_validation"
+  | "long_token_request"
+  | "long_token_response"
+  | "profile_request"
+  | "profile_response"
+  | "account_validation";
+
+export class InstagramOAuthError extends Error {
+  readonly stage: InstagramOAuthStage;
+  readonly upstreamStatus?: number;
+
+  constructor(stage: InstagramOAuthStage, upstreamStatus?: number) {
+    super(`Instagram OAuth failed at ${stage}`);
+    this.name = "InstagramOAuthError";
+    this.stage = stage;
+    this.upstreamStatus = upstreamStatus;
+  }
+}
+
 const oauthTokenItemSchema = z.object({
   access_token: z.string().min(20),
   user_id: z.union([z.string(), z.number()]).transform(String),
@@ -81,7 +104,7 @@ export async function exchangeInstagramAuthorizationCode(
 ): Promise<InstagramAuthorization> {
   const config = getInstagramOAuthSecretConfig();
   if (!config) {
-    throw new Error("Instagram OAuth secrets are not configured");
+    throw new InstagramOAuthError("configuration");
   }
 
   const body = new FormData();
@@ -91,26 +114,39 @@ export async function exchangeInstagramAuthorizationCode(
   body.set("redirect_uri", config.redirectUri);
   body.set("code", code);
 
-  const shortResponse = await fetch(
-    "https://api.instagram.com/oauth/access_token",
-    {
-      method: "POST",
-      body,
-      cache: "no-store",
-      signal: AbortSignal.timeout(8000),
-    },
-  );
-
-  if (!shortResponse.ok) {
-    throw new Error("Instagram authorization code exchange failed");
+  let shortResponse: Response;
+  try {
+    shortResponse = await fetch(
+      "https://api.instagram.com/oauth/access_token",
+      {
+        method: "POST",
+        body,
+        cache: "no-store",
+        signal: AbortSignal.timeout(8000),
+      },
+    );
+  } catch {
+    throw new InstagramOAuthError("short_token_request");
   }
 
-  const parsedShort = oauthTokenResponseSchema.parse(await shortResponse.json());
+  if (!shortResponse.ok) {
+    throw new InstagramOAuthError(
+      "short_token_request",
+      shortResponse.status,
+    );
+  }
+
+  let parsedShort: z.infer<typeof oauthTokenResponseSchema>;
+  try {
+    parsedShort = oauthTokenResponseSchema.parse(await shortResponse.json());
+  } catch {
+    throw new InstagramOAuthError("short_token_response");
+  }
   const shortToken = "data" in parsedShort ? parsedShort.data[0] : parsedShort;
   const scopes = normalizePermissions(shortToken.permissions);
 
   if (!scopes.includes(INSTAGRAM_OAUTH_SCOPE)) {
-    throw new Error("Instagram basic permission was not granted");
+    throw new InstagramOAuthError("permission_validation");
   }
 
   const longEndpoint = new URL("https://graph.instagram.com/access_token");
@@ -118,34 +154,52 @@ export async function exchangeInstagramAuthorizationCode(
   longEndpoint.searchParams.set("client_secret", config.appSecret);
   longEndpoint.searchParams.set("access_token", shortToken.access_token);
 
-  const longResponse = await fetch(longEndpoint, {
-    cache: "no-store",
-    signal: AbortSignal.timeout(8000),
-  });
-
-  if (!longResponse.ok) {
-    throw new Error("Instagram long-lived token exchange failed");
+  let longResponse: Response;
+  try {
+    longResponse = await fetch(longEndpoint, {
+      cache: "no-store",
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    throw new InstagramOAuthError("long_token_request");
   }
 
-  const longToken = longLivedTokenSchema.parse(await longResponse.json());
+  if (!longResponse.ok) {
+    throw new InstagramOAuthError("long_token_request", longResponse.status);
+  }
+
+  let longToken: z.infer<typeof longLivedTokenSchema>;
+  try {
+    longToken = longLivedTokenSchema.parse(await longResponse.json());
+  } catch {
+    throw new InstagramOAuthError("long_token_response");
+  }
   const profileEndpoint = new URL(
     `https://graph.instagram.com/${config.graphVersion}/me`,
   );
   profileEndpoint.searchParams.set("fields", "id,user_id,username");
 
-  const profileResponse = await fetch(profileEndpoint, {
-    cache: "no-store",
-    headers: { Authorization: `Bearer ${longToken.access_token}` },
-    signal: AbortSignal.timeout(8000),
-  });
-
-  if (!profileResponse.ok) {
-    throw new Error("Instagram account verification failed");
+  let profileResponse: Response;
+  try {
+    profileResponse = await fetch(profileEndpoint, {
+      cache: "no-store",
+      headers: { Authorization: `Bearer ${longToken.access_token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch {
+    throw new InstagramOAuthError("profile_request");
   }
 
-  const parsedProfile = profileResponseSchema.parse(
-    await profileResponse.json(),
-  );
+  if (!profileResponse.ok) {
+    throw new InstagramOAuthError("profile_request", profileResponse.status);
+  }
+
+  let parsedProfile: z.infer<typeof profileResponseSchema>;
+  try {
+    parsedProfile = profileResponseSchema.parse(await profileResponse.json());
+  } catch {
+    throw new InstagramOAuthError("profile_response");
+  }
   const profile =
     "data" in parsedProfile ? parsedProfile.data[0] : parsedProfile;
   const username = profile.username.trim().toLowerCase();
@@ -154,7 +208,7 @@ export async function exchangeInstagramAuthorizationCode(
     username !== config.expectedUsername ||
     profile.id !== shortToken.user_id
   ) {
-    throw new Error("The authorized Instagram account is not the expected account");
+    throw new InstagramOAuthError("account_validation");
   }
 
   return {
