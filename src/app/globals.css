@@ -1940,6 +1940,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
 .public-site .footer-bottom {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
@@ -1953,6 +1954,18 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
+}
+
+.public-site .footer-bottom .footer-top-link {
+  gap: 8px;
+  padding-inline: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .public-site .footer-bottom p {
