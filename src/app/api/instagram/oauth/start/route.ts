@@ -8,6 +8,7 @@ import {
   STATE_TTL_MS,
 } from "@/lib/instagram/oauth";
 import { consumeInviteAndCreateState } from "@/lib/instagram/oauth-store";
+import { isTrustedInstagramOAuthStartRequest } from "@/lib/instagram/request-origin";
 
 export const runtime = "nodejs";
 
@@ -23,9 +24,8 @@ function cleanRedirect(path: string) {
 
 export async function POST(request: NextRequest) {
   const portalOrigin = getInstagramPortalOrigin();
-  const requestOrigin = request.headers.get("origin");
 
-  if (!portalOrigin || requestOrigin !== portalOrigin) {
+  if (!isTrustedInstagramOAuthStartRequest(request, portalOrigin)) {
     return cleanRedirect("/integracoes/instagram/resultado?status=configuracao");
   }
 
