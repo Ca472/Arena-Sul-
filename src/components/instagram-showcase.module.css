@@ -30,6 +30,18 @@
   margin-bottom: 20px;
 }
 
+.panelHeading > div {
+  min-width: 0;
+}
+
+.panelDescription {
+  max-width: 460px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
 .panelHeading h3,
 .storyFallback h3 {
   margin: 7px 0 0;

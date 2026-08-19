@@ -2,13 +2,15 @@
   position: fixed;
   z-index: 5000;
   inset: 0;
-  animation: overlayFailsafe 1ms step-end 10s forwards;
+  animation:
+    overlayFailsafe 1ms step-end var(--arena-failsafe-delay, 10s) forwards;
 }
 
 .overlay[data-intro-ready="true"] {
   animation:
-    overlayExit 600ms ease-in-out 7s both,
-    overlayFailsafe 1ms step-end 10s forwards;
+    overlayExit var(--arena-exit-duration, 600ms) ease-in-out
+      var(--arena-exit-delay, 6s) both,
+    overlayFailsafe 1ms step-end var(--arena-failsafe-delay, 10s) forwards;
 }
 
 @keyframes overlayFailsafe {

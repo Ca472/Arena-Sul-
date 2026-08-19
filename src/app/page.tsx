@@ -96,7 +96,7 @@ export default function Home() {
             __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
           }}
         />
-        <section className="hero" id="inicio">
+        <section className="hero" id="inicio" tabIndex={-1}>
           <SiteHeader />
 
           <div className="hero-grid shell">
@@ -356,6 +356,9 @@ export default function Home() {
               © {new Date().getFullYear()} Arena Sul Sports. Todos os direitos
               reservados.
             </p>
+            <a className="footer-top-link" href="#inicio">
+              Voltar ao topo <span aria-hidden="true">↑</span>
+            </a>
             <a href="/admin">Área administrativa</a>
           </div>
         </footer>

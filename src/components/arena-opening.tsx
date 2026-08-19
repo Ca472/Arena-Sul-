@@ -1,17 +1,26 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  ASSET_WAIT_LIMIT_MS,
+  LOGO_REVEAL_DURATION_MS,
+  OPENING_DURATION_MS,
+  OVERLAY_EXIT_DELAY_MS,
+  OVERLAY_EXIT_DURATION_MS,
+  OVERLAY_FAILSAFE_MS,
+  RACKET_PHASE_DURATION_MS,
+} from "@/lib/arena-opening-timeline";
 import styles from "./arena-opening.module.css";
 
-const INTRO_ANIMATION_DURATION_MS = 5000;
-const LOGO_HOLD_DURATION_MS = 2000;
-const OVERLAY_EXIT_DURATION_MS = 600;
-const OPENING_DURATION_MS =
-  INTRO_ANIMATION_DURATION_MS +
-  LOGO_HOLD_DURATION_MS +
-  OVERLAY_EXIT_DURATION_MS;
-const ASSET_WAIT_LIMIT_MS = 1800;
+const timelineStyle = {
+  "--arena-motion-duration": `${RACKET_PHASE_DURATION_MS}ms`,
+  "--arena-logo-delay": `${RACKET_PHASE_DURATION_MS}ms`,
+  "--arena-logo-reveal-duration": `${LOGO_REVEAL_DURATION_MS}ms`,
+  "--arena-exit-delay": `${OVERLAY_EXIT_DELAY_MS}ms`,
+  "--arena-exit-duration": `${OVERLAY_EXIT_DURATION_MS}ms`,
+  "--arena-failsafe-delay": `${OVERLAY_FAILSAFE_MS}ms`,
+} as CSSProperties;
 
 type ArenaOpeningProps = {
   children: ReactNode;
@@ -197,6 +206,7 @@ export function ArenaOpening({ children }: ArenaOpeningProps) {
       className={styles.overlay}
       data-arena-opening
       aria-hidden="true"
+      style={timelineStyle}
     >
       <noscript>
         <style>{"[data-arena-opening] { display: none !important; }"}</style>

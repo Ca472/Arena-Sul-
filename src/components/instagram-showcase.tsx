@@ -120,12 +120,9 @@ function InstagramProfileFallback() {
           width={118}
           height={118}
         />
-        <p className={styles.eyebrow}>Direto da Arena</p>
-        <h3>@arenasulsports</h3>
-        <p>
-          Veja os Reels, treinos, encontros em família e bastidores publicados
-          no perfil oficial da Arena Sul.
-        </p>
+        <p className={styles.eyebrow}>Conteúdo da Arena</p>
+        <h3>Reels da Arena</h3>
+        <p>Veja os Reels com os treinos, eventos e bastidores da Arena.</p>
         <a
           className={styles.storyLink}
           href={INSTAGRAM_PROFILE_URL}
@@ -138,11 +135,11 @@ function InstagramProfileFallback() {
 
       <div className={styles.storyFallback}>
         <ArenaStoryBadge />
-        <p className={styles.eyebrow}>Stories da Arena</p>
-        <h3>Veja o que está acontecendo agora.</h3>
+        <p className={styles.eyebrow}>Em tempo real</p>
+        <h3>Stories da Arena</h3>
         <p>
-          Acompanhe os Stories ativos e abra os Reels mais recentes direto no
-          perfil oficial.
+          Acompanhe os Stories da Arena e fique por dentro do que está
+          ocorrendo em tempo real.
         </p>
         <a
           className={styles.storyLink}
@@ -263,8 +260,12 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       <div className={styles.storyColumn}>
         <div className={styles.panelHeading}>
           <div>
-            <p className={styles.eyebrow}>Stories ativos</p>
-            <h3>Agora na Arena</h3>
+            <p className={styles.eyebrow}>Em tempo real</p>
+            <h3>Stories da Arena</h3>
+            <p className={styles.panelDescription}>
+              Acompanhe os Stories da Arena e fique por dentro do que está
+              ocorrendo em tempo real.
+            </p>
           </div>
           {stories.length > 1 ? (
             <div className={styles.storyStatus}>
@@ -335,8 +336,11 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       <div className={styles.reelsColumn}>
         <div className={styles.panelHeading}>
           <div>
-            <p className={styles.eyebrow}>Reels recentes</p>
-            <h3>Movimento que inspira</h3>
+            <p className={styles.eyebrow}>Treinos e bastidores</p>
+            <h3>Reels da Arena</h3>
+            <p className={styles.panelDescription}>
+              Veja os Reels com os treinos, eventos e bastidores da Arena.
+            </p>
           </div>
           <a href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
             Ver perfil <span aria-hidden="true">↗</span>
