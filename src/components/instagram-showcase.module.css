@@ -1,3 +1,7 @@
+.syncBoundary {
+  min-width: 0;
+}
+
 .showcase,
 .fallbackGrid {
   display: grid;
@@ -120,7 +124,11 @@
   overflow: hidden;
   border-radius: 28px;
   background:
-    radial-gradient(circle at 70% 18%, rgba(255, 145, 77, 0.34), transparent 26%),
+    radial-gradient(
+      circle at 70% 18%,
+      rgba(255, 145, 77, 0.34),
+      transparent 26%
+    ),
     var(--navy-deep);
 }
 
@@ -174,7 +182,9 @@
   height: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.32);
-  transition: width 180ms ease, background 180ms ease;
+  transition:
+    width 180ms ease,
+    background 180ms ease;
 }
 
 .storyControls button[aria-current="true"] span {
@@ -193,7 +203,9 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
-  transition: transform 200ms ease, border-color 200ms ease;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease;
 }
 
 .reelCard:hover,
@@ -298,7 +310,11 @@
   padding: clamp(30px, 5vw, 58px);
   border-radius: 28px;
   background:
-    radial-gradient(circle at 18% 16%, rgba(255, 145, 77, 0.3), transparent 30%),
+    radial-gradient(
+      circle at 18% 16%,
+      rgba(255, 145, 77, 0.3),
+      transparent 30%
+    ),
     linear-gradient(145deg, rgba(1, 22, 52, 0.76), rgba(58, 95, 154, 0.7));
 }
 
@@ -337,7 +353,11 @@
   overflow: hidden;
   padding: clamp(30px, 5vw, 58px);
   background:
-    radial-gradient(circle at 72% 22%, rgba(255, 145, 77, 0.42), transparent 24%),
+    radial-gradient(
+      circle at 72% 22%,
+      rgba(255, 145, 77, 0.42),
+      transparent 24%
+    ),
     linear-gradient(145deg, rgba(58, 95, 154, 0.8), rgba(1, 22, 52, 0.96));
 }
 

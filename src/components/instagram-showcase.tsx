@@ -1,18 +1,89 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import {
+  areInstagramStoriesEqual,
+  findStoryIndexAfterRefresh,
+  getInstagramStoriesRefreshDelay,
+  getInstagramStoriesSnapshotTimestamp,
+  INSTAGRAM_STORIES_MIN_REFRESH_MS,
+  INSTAGRAM_STORIES_REFRESH_MS,
+  isInstagramStoriesSnapshot,
+} from "@/lib/instagram/live-sync";
 import type {
   InstagramFeed,
+  InstagramFeedStatus,
   InstagramMediaItem,
+  InstagramStoriesSnapshot,
 } from "@/lib/instagram/types";
 import styles from "./instagram-showcase.module.css";
 
-const INSTAGRAM_PROFILE_URL =
-  "https://www.instagram.com/arenasulsports/";
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/arenasulsports/";
 const INSTAGRAM_STORIES_URL =
   "https://www.instagram.com/stories/arenasulsports/";
 const STORY_ROTATION_MS = 7000;
+
+type LiveStoriesState = {
+  status: InstagramFeedStatus;
+  stories: InstagramMediaItem[];
+  fetchedAt: string | null;
+  activeStoryId: string | null;
+};
+
+type LiveStoriesAction =
+  | { type: "replace"; snapshot: InstagramStoriesSnapshot }
+  | { type: "select"; storyId: string }
+  | { type: "advance"; stories: InstagramMediaItem[] };
+
+function createLiveStoriesState(feed: InstagramFeed): LiveStoriesState {
+  return {
+    status: feed.status,
+    stories: feed.stories,
+    fetchedAt: feed.storiesFetchedAt,
+    activeStoryId: feed.stories[0]?.id ?? null,
+  };
+}
+
+function liveStoriesReducer(
+  state: LiveStoriesState,
+  action: LiveStoriesAction,
+): LiveStoriesState {
+  if (action.type === "select") {
+    return { ...state, activeStoryId: action.storyId };
+  }
+
+  if (action.type === "advance") {
+    if (action.stories.length < 2) {
+      return state;
+    }
+    const currentIndex = findStoryIndexAfterRefresh(
+      state.activeStoryId,
+      action.stories,
+    );
+    const nextStory =
+      action.stories[(currentIndex + 1) % action.stories.length];
+    return nextStory ? { ...state, activeStoryId: nextStory.id } : state;
+  }
+
+  if (
+    state.status === "connected" &&
+    areInstagramStoriesEqual(state.stories, action.snapshot.stories)
+  ) {
+    return { ...state, fetchedAt: action.snapshot.fetchedAt };
+  }
+
+  const nextActiveIndex = findStoryIndexAfterRefresh(
+    state.activeStoryId,
+    action.snapshot.stories,
+  );
+  return {
+    status: action.snapshot.status,
+    stories: action.snapshot.stories,
+    fetchedAt: action.snapshot.fetchedAt,
+    activeStoryId: action.snapshot.stories[nextActiveIndex]?.id ?? null,
+  };
+}
 
 const instagramDateFormatter = new Intl.DateTimeFormat("pt-BR", {
   day: "2-digit",
@@ -59,7 +130,7 @@ function ControlledStoryVideo({
     void video.play().catch(() => {
       // Browser autoplay policies may still require an explicit user gesture.
     });
-  }, [item.id, shouldPlay]);
+  }, [item.id, item.mediaUrl, shouldPlay]);
 
   return (
     <video
@@ -99,15 +170,7 @@ function MediaVisual({
 
   const previewUrl = item.thumbnailUrl ?? item.mediaUrl;
 
-  return (
-    <Image
-      src={previewUrl}
-      alt=""
-      fill
-      sizes={sizes}
-      unoptimized
-    />
-  );
+  return <Image src={previewUrl} alt="" fill sizes={sizes} unoptimized />;
 }
 
 function InstagramProfileFallback() {
@@ -138,8 +201,8 @@ function InstagramProfileFallback() {
         <p className={styles.eyebrow}>Em tempo real</p>
         <h3>Stories da Arena</h3>
         <p>
-          Acompanhe os Stories da Arena e fique por dentro do que está
-          ocorrendo em tempo real.
+          Acompanhe os Stories da Arena e fique por dentro do que está ocorrendo
+          em tempo real.
         </p>
         <a
           className={styles.storyLink}
@@ -156,21 +219,113 @@ function InstagramProfileFallback() {
 
 export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [activeStoryIndex, setActiveStoryIndex] = useState(0);
+  const refreshControllerRef = useRef<AbortController | null>(null);
+  const refreshInFlightRef = useRef(false);
+  const lastStoriesRefreshStartedAtRef = useRef(0);
+  const latestStoriesFetchedAtRef = useRef(
+    getInstagramStoriesSnapshotTimestamp(feed.storiesFetchedAt),
+  );
+  const [liveStories, dispatchLiveStories] = useReducer(
+    liveStoriesReducer,
+    feed,
+    createLiveStoriesState,
+  );
   const [interactionPaused, setInteractionPaused] = useState(false);
   const [manualPaused, setManualPaused] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [motionAllowed, setMotionAllowed] = useState(false);
 
-  const stories = feed.stories;
   const reels = feed.reels;
-  const normalizedStoryIndex =
-    stories.length > 0 ? activeStoryIndex % stories.length : 0;
+  const feedStoriesFetchedAt = getInstagramStoriesSnapshotTimestamp(
+    feed.storiesFetchedAt,
+  );
+  const liveStoriesFetchedAt = getInstagramStoriesSnapshotTimestamp(
+    liveStories.fetchedAt,
+  );
+  const shouldUseFeedStories = feedStoriesFetchedAt > liveStoriesFetchedAt;
+  const stories = shouldUseFeedStories ? feed.stories : liveStories.stories;
+  const storiesStatus = shouldUseFeedStories ? feed.status : liveStories.status;
+  const selectedStoryIndex = stories.findIndex(
+    (story) => story.id === liveStories.activeStoryId,
+  );
+  const normalizedStoryIndex = selectedStoryIndex >= 0 ? selectedStoryIndex : 0;
   const activeStory = stories[normalizedStoryIndex] ?? null;
   const hasLiveMedia =
-    feed.status === "connected" &&
-    (stories.length > 0 || reels.length > 0);
+    storiesStatus === "connected" && (stories.length > 0 || reels.length > 0);
+
+  useEffect(() => {
+    lastStoriesRefreshStartedAtRef.current =
+      feed.status === "connected" ? Date.now() : 0;
+    latestStoriesFetchedAtRef.current = Math.max(
+      latestStoriesFetchedAtRef.current,
+      getInstagramStoriesSnapshotTimestamp(feed.storiesFetchedAt),
+    );
+  }, [feed.status, feed.storiesFetchedAt]);
+
+  const refreshStories = useCallback(async () => {
+    const now = Date.now();
+    if (
+      refreshInFlightRef.current ||
+      now - lastStoriesRefreshStartedAtRef.current <
+        INSTAGRAM_STORIES_MIN_REFRESH_MS
+    ) {
+      return;
+    }
+
+    const controller = new AbortController();
+    refreshControllerRef.current = controller;
+    refreshInFlightRef.current = true;
+    lastStoriesRefreshStartedAtRef.current = now;
+    const timeout = window.setTimeout(() => controller.abort(), 12_000);
+
+    try {
+      const response = await fetch("/api/instagram/stories", {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const snapshot: unknown = await response.json();
+      if (
+        !isInstagramStoriesSnapshot(snapshot) ||
+        snapshot.status !== "connected"
+      ) {
+        return;
+      }
+
+      const snapshotFetchedAt = getInstagramStoriesSnapshotTimestamp(
+        snapshot.fetchedAt,
+      );
+      if (
+        snapshotFetchedAt <= 0 ||
+        snapshotFetchedAt <= latestStoriesFetchedAtRef.current
+      ) {
+        return;
+      }
+
+      latestStoriesFetchedAtRef.current = snapshotFetchedAt;
+      dispatchLiveStories({ type: "replace", snapshot });
+    } catch {
+      if (
+        controller.signal.aborted &&
+        refreshControllerRef.current === controller
+      ) {
+        lastStoriesRefreshStartedAtRef.current = 0;
+      }
+      // Keep the last valid Stories visible after a transient failure.
+    } finally {
+      window.clearTimeout(timeout);
+      if (refreshControllerRef.current === controller) {
+        refreshControllerRef.current = null;
+        refreshInFlightRef.current = false;
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -178,7 +333,8 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
 
     updateMotionPreference();
     mediaQuery.addEventListener("change", updateMotionPreference);
-    return () => mediaQuery.removeEventListener("change", updateMotionPreference);
+    return () =>
+      mediaQuery.removeEventListener("change", updateMotionPreference);
   }, []);
 
   useEffect(() => {
@@ -207,6 +363,44 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   }, []);
 
   useEffect(() => {
+    if (!isVisible || !pageVisible) {
+      const controller = refreshControllerRef.current;
+      controller?.abort();
+      if (refreshControllerRef.current === controller) {
+        refreshControllerRef.current = null;
+        refreshInFlightRef.current = false;
+      }
+      return;
+    }
+
+    let interval: number | null = null;
+    const kickoffDelay = getInstagramStoriesRefreshDelay(
+      lastStoriesRefreshStartedAtRef.current,
+      Date.now(),
+    );
+    const kickoff = window.setTimeout(() => {
+      void refreshStories();
+      interval = window.setInterval(
+        () => void refreshStories(),
+        INSTAGRAM_STORIES_REFRESH_MS,
+      );
+    }, kickoffDelay);
+
+    return () => {
+      window.clearTimeout(kickoff);
+      if (interval !== null) {
+        window.clearInterval(interval);
+      }
+      const controller = refreshControllerRef.current;
+      controller?.abort();
+      if (refreshControllerRef.current === controller) {
+        refreshControllerRef.current = null;
+        refreshInFlightRef.current = false;
+      }
+    };
+  }, [isVisible, pageVisible, refreshStories]);
+
+  useEffect(() => {
     if (
       stories.length < 2 ||
       interactionPaused ||
@@ -219,7 +413,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     }
 
     const interval = window.setInterval(() => {
-      setActiveStoryIndex((index) => (index + 1) % stories.length);
+      dispatchLiveStories({ type: "advance", stories });
     }, STORY_ROTATION_MS);
 
     return () => window.clearInterval(interval);
@@ -229,6 +423,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     manualPaused,
     motionAllowed,
     pageVisible,
+    stories,
     stories.length,
   ]);
 
@@ -240,146 +435,179 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     !interactionPaused &&
     !manualPaused;
 
-  if (!hasLiveMedia) {
-    return <InstagramProfileFallback />;
-  }
-
   return (
-    <div
-      ref={rootRef}
-      className={styles.showcase}
-      onPointerEnter={() => setInteractionPaused(true)}
-      onPointerLeave={() => setInteractionPaused(false)}
-      onFocus={() => setInteractionPaused(true)}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) {
-          setInteractionPaused(false);
-        }
-      }}
-    >
-      <div className={styles.storyColumn}>
-        <div className={styles.panelHeading}>
-          <div>
-            <p className={styles.eyebrow}>Em tempo real</p>
-            <h3>Stories da Arena</h3>
-            <p className={styles.panelDescription}>
-              Acompanhe os Stories da Arena e fique por dentro do que está
-              ocorrendo em tempo real.
-            </p>
-          </div>
-          {stories.length > 1 ? (
-            <div className={styles.storyStatus}>
-              <span>
-                {String(normalizedStoryIndex + 1).padStart(2, "0")} /{" "}
-                {String(stories.length).padStart(2, "0")}
-              </span>
-              {motionAllowed ? (
-                <button
-                  type="button"
-                  aria-pressed={manualPaused}
-                  onClick={() => setManualPaused((paused) => !paused)}
-                >
-                  {manualPaused ? "Retomar" : "Pausar"}
-                </button>
+    <div ref={rootRef} className={styles.syncBoundary}>
+      {!hasLiveMedia ? (
+        <InstagramProfileFallback />
+      ) : (
+        <div
+          className={styles.showcase}
+          onPointerEnter={() => setInteractionPaused(true)}
+          onPointerLeave={() => setInteractionPaused(false)}
+          onFocus={() => setInteractionPaused(true)}
+          onBlur={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+              setInteractionPaused(false);
+            }
+          }}
+        >
+          <div className={styles.storyColumn}>
+            <div className={styles.panelHeading}>
+              <div>
+                <p className={styles.eyebrow}>Em tempo real</p>
+                <h3>Stories da Arena</h3>
+                <p className={styles.panelDescription}>
+                  Acompanhe os Stories da Arena e fique por dentro do que está
+                  ocorrendo em tempo real.
+                </p>
+              </div>
+              {stories.length > 1 ? (
+                <div className={styles.storyStatus}>
+                  <span>
+                    {String(normalizedStoryIndex + 1).padStart(2, "0")} /{" "}
+                    {String(stories.length).padStart(2, "0")}
+                  </span>
+                  {motionAllowed ? (
+                    <button
+                      type="button"
+                      aria-pressed={manualPaused}
+                      onClick={() => setManualPaused((paused) => !paused)}
+                    >
+                      {manualPaused ? "Retomar" : "Pausar"}
+                    </button>
+                  ) : null}
+                </div>
               ) : null}
             </div>
-          ) : null}
-        </div>
 
-        {activeStory ? (
-          <>
-            <div className={styles.storyStage}>
-              <MediaVisual
-                item={activeStory}
-                sizes="(max-width: 760px) 88vw, 360px"
-                shouldAutoPlay={shouldPlayActiveStory}
-                videoControls
-              />
+            {activeStory ? (
+              <>
+                <div className={styles.storyStage}>
+                  <MediaVisual
+                    item={activeStory}
+                    sizes="(max-width: 760px) 88vw, 360px"
+                    shouldAutoPlay={shouldPlayActiveStory}
+                    videoControls
+                  />
+                  <a
+                    className={styles.mediaExternalLink}
+                    href={activeStory.permalink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Abrir este Story no Instagram"
+                  >
+                    Ver no Instagram <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+
+                {stories.length > 1 ? (
+                  <div
+                    className={styles.storyControls}
+                    aria-label="Escolher Story"
+                  >
+                    {stories.map((story, index) => (
+                      <button
+                        key={story.id}
+                        type="button"
+                        aria-label={`Mostrar Story ${index + 1}`}
+                        aria-current={
+                          index === normalizedStoryIndex ? "true" : undefined
+                        }
+                        onClick={() =>
+                          dispatchLiveStories({
+                            type: "select",
+                            storyId: story.id,
+                          })
+                        }
+                      >
+                        <span />
+                      </button>
+                    ))}
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <div className={styles.noStory}>
+                <ArenaStoryBadge />
+                <p>Nenhum Story ativo neste momento.</p>
+                <a
+                  href={INSTAGRAM_STORIES_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir Stories <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.reelsColumn}>
+            <div className={styles.panelHeading}>
+              <div>
+                <p className={styles.eyebrow}>Treinos e bastidores</p>
+                <h3>Reels da Arena</h3>
+                <p className={styles.panelDescription}>
+                  Veja os Reels com os treinos, eventos e bastidores da Arena.
+                </p>
+              </div>
               <a
-                className={styles.mediaExternalLink}
-                href={activeStory.permalink}
+                href={INSTAGRAM_PROFILE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Abrir este Story no Instagram"
               >
-                Ver no Instagram <span aria-hidden="true">↗</span>
+                Ver perfil <span aria-hidden="true">↗</span>
               </a>
             </div>
 
-            {stories.length > 1 ? (
-              <div className={styles.storyControls} aria-label="Escolher Story">
-                {stories.map((story, index) => (
-                  <button
-                    key={story.id}
-                    type="button"
-                    aria-label={`Mostrar Story ${index + 1}`}
-                    aria-current={index === normalizedStoryIndex ? "true" : undefined}
-                    onClick={() => setActiveStoryIndex(index)}
+            {visibleReels.length > 0 ? (
+              <div className={styles.reelRail}>
+                {visibleReels.map((reel) => (
+                  <a
+                    className={styles.reelCard}
+                    href={reel.permalink}
+                    key={reel.id}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <span />
-                  </button>
+                    <span className={styles.reelMedia}>
+                      <MediaVisual
+                        item={reel}
+                        sizes="(max-width: 600px) 72vw, (max-width: 1000px) 36vw, 220px"
+                      />
+                      <span className={styles.playIcon} aria-hidden="true">
+                        ▶
+                      </span>
+                    </span>
+                    <span className={styles.reelMeta}>
+                      <span>
+                        {instagramDateFormatter.format(
+                          new Date(reel.timestamp),
+                        )}
+                      </span>
+                      <strong>
+                        {reel.caption || "Novo Reel da Arena Sul"}
+                      </strong>
+                    </span>
+                  </a>
                 ))}
               </div>
-            ) : null}
-          </>
-        ) : (
-          <div className={styles.noStory}>
-            <ArenaStoryBadge />
-            <p>Nenhum Story ativo neste momento.</p>
-            <a href={INSTAGRAM_STORIES_URL} target="_blank" rel="noopener noreferrer">
-              Abrir Stories <span aria-hidden="true">↗</span>
-            </a>
+            ) : (
+              <div className={styles.noReels}>
+                <p>
+                  Os próximos Reels publicados aparecerão aqui automaticamente.
+                </p>
+                <a
+                  href={INSTAGRAM_PROFILE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir @arenasulsports <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-
-      <div className={styles.reelsColumn}>
-        <div className={styles.panelHeading}>
-          <div>
-            <p className={styles.eyebrow}>Treinos e bastidores</p>
-            <h3>Reels da Arena</h3>
-            <p className={styles.panelDescription}>
-              Veja os Reels com os treinos, eventos e bastidores da Arena.
-            </p>
-          </div>
-          <a href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
-            Ver perfil <span aria-hidden="true">↗</span>
-          </a>
         </div>
-
-        {visibleReels.length > 0 ? (
-          <div className={styles.reelRail}>
-            {visibleReels.map((reel) => (
-              <a
-                className={styles.reelCard}
-                href={reel.permalink}
-                key={reel.id}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className={styles.reelMedia}>
-                  <MediaVisual
-                    item={reel}
-                    sizes="(max-width: 600px) 72vw, (max-width: 1000px) 36vw, 220px"
-                  />
-                  <span className={styles.playIcon} aria-hidden="true">▶</span>
-                </span>
-                <span className={styles.reelMeta}>
-                  <span>{instagramDateFormatter.format(new Date(reel.timestamp))}</span>
-                  <strong>{reel.caption || "Novo Reel da Arena Sul"}</strong>
-                </span>
-              </a>
-            ))}
-          </div>
-        ) : (
-          <div className={styles.noReels}>
-            <p>Os próximos Reels publicados aparecerão aqui automaticamente.</p>
-            <a href={INSTAGRAM_PROFILE_URL} target="_blank" rel="noopener noreferrer">
-              Abrir @arenasulsports <span aria-hidden="true">↗</span>
-            </a>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }

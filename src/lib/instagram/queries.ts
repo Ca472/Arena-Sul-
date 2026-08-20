@@ -9,12 +9,12 @@ import type {
   InstagramFeed,
   InstagramMediaItem,
   InstagramMediaKind,
+  InstagramStoriesSnapshot,
 } from "./types";
 import { getStoredInstagramCredentials } from "./token-store";
 
 const DEFAULT_GRAPH_VERSION = "v26.0";
-const INSTAGRAM_PROFILE_URL =
-  "https://www.instagram.com/arenasulsports/";
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/arenasulsports/";
 const STORY_MAX_AGE_MS = 25 * 60 * 60 * 1000;
 
 const graphMediaSchema = z
@@ -37,7 +37,13 @@ const graphResponseSchema = z.object({
 type GraphMedia = z.infer<typeof graphMediaSchema>;
 
 function emptyFeed(status: InstagramFeed["status"]): InstagramFeed {
-  return { status, stories: [], reels: [] };
+  return { status, stories: [], storiesFetchedAt: null, reels: [] };
+}
+
+function emptyStoriesSnapshot(
+  status: InstagramStoriesSnapshot["status"],
+): InstagramStoriesSnapshot {
+  return { status, stories: [], fetchedAt: null };
 }
 
 function isAllowedMediaUrl(value: string | undefined): value is string {
@@ -95,9 +101,7 @@ function normalizeMedia(
     return null;
   }
 
-  const mediaUrl = isAllowedMediaUrl(media.media_url)
-    ? media.media_url
-    : null;
+  const mediaUrl = isAllowedMediaUrl(media.media_url) ? media.media_url : null;
 
   if (!mediaUrl) {
     return null;
@@ -153,10 +157,58 @@ async function fetchInstagramEdge({
   });
 
   if (!response.ok) {
-    throw new Error(`Instagram API request failed with status ${response.status}`);
+    throw new Error(
+      `Instagram API request failed with status ${response.status}`,
+    );
   }
 
   return graphResponseSchema.parse(await response.json()).data;
+}
+
+function getInstagramGraphVersion() {
+  const requestedGraphVersion = process.env.INSTAGRAM_GRAPH_VERSION?.trim();
+  return requestedGraphVersion && /^v\d+\.\d+$/.test(requestedGraphVersion)
+    ? requestedGraphVersion
+    : DEFAULT_GRAPH_VERSION;
+}
+
+function normalizeStories(stories: GraphMedia[]) {
+  const now = Date.now();
+  return stories
+    .filter(
+      (story) => now - new Date(story.timestamp).getTime() < STORY_MAX_AGE_MS,
+    )
+    .map((story) => normalizeMedia(story, "story"))
+    .filter((story): story is InstagramMediaItem => story !== null)
+    .slice(0, 8);
+}
+
+export async function getInstagramStoriesSnapshot(): Promise<InstagramStoriesSnapshot> {
+  const storedCredentials = await getStoredInstagramCredentials();
+  const userId = storedCredentials?.userId;
+  const accessToken = storedCredentials?.accessToken;
+
+  if (!userId || !accessToken) {
+    return emptyStoriesSnapshot("unconfigured");
+  }
+
+  try {
+    const stories = await fetchInstagramEdge({
+      edge: "stories",
+      fields: "id,media_type,media_url,thumbnail_url,permalink,timestamp",
+      userId,
+      accessToken,
+      graphVersion: getInstagramGraphVersion(),
+    });
+
+    return {
+      status: "connected",
+      stories: normalizeStories(stories),
+      fetchedAt: new Date().toISOString(),
+    };
+  } catch {
+    return emptyStoriesSnapshot("unavailable");
+  }
 }
 
 /**
@@ -168,11 +220,7 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
   const storedCredentials = await getStoredInstagramCredentials();
   const userId = storedCredentials?.userId;
   const accessToken = storedCredentials?.accessToken;
-  const requestedGraphVersion = process.env.INSTAGRAM_GRAPH_VERSION?.trim();
-  const graphVersion =
-    requestedGraphVersion && /^v\d+\.\d+$/.test(requestedGraphVersion)
-      ? requestedGraphVersion
-      : DEFAULT_GRAPH_VERSION;
+  const graphVersion = getInstagramGraphVersion();
 
   if (!userId || !accessToken) {
     return emptyFeed("unconfigured");
@@ -194,7 +242,10 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
         userId,
         accessToken,
         graphVersion,
-      }),
+      }).then((stories) => ({
+        stories,
+        fetchedAt: new Date().toISOString(),
+      })),
     ]);
 
     if (
@@ -204,19 +255,12 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
       return emptyFeed("unavailable");
     }
 
-    const media =
-      mediaResult.status === "fulfilled" ? mediaResult.value : [];
-    const stories =
-      storiesResult.status === "fulfilled" ? storiesResult.value : [];
+    const media = mediaResult.status === "fulfilled" ? mediaResult.value : [];
+    const storiesSnapshot =
+      storiesResult.status === "fulfilled" ? storiesResult.value : null;
+    const stories = storiesSnapshot?.stories ?? [];
 
-    const now = Date.now();
-    const normalizedStories = stories
-      .filter(
-        (story) => now - new Date(story.timestamp).getTime() < STORY_MAX_AGE_MS,
-      )
-      .map((story) => normalizeMedia(story, "story"))
-      .filter((story): story is InstagramMediaItem => story !== null)
-      .slice(0, 8);
+    const normalizedStories = normalizeStories(stories);
 
     const normalizedReels = media
       .filter(
@@ -231,6 +275,7 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
     return {
       status: "connected",
       stories: normalizedStories,
+      storiesFetchedAt: storiesSnapshot?.fetchedAt ?? null,
       reels: normalizedReels,
     };
   } catch {

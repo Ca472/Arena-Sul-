@@ -3,18 +3,22 @@ import { InstagramShowcase } from "@/components/instagram-showcase";
 import { getInstagramFeed } from "@/lib/instagram/queries";
 import type { InstagramFeed } from "@/lib/instagram/types";
 
-const INSTAGRAM_PROFILE_URL =
-  "https://www.instagram.com/arenasulsports/";
+const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/arenasulsports/";
 
 const fallbackFeed: InstagramFeed = {
   status: "unconfigured",
   stories: [],
+  storiesFetchedAt: null,
   reels: [],
 };
 
 function InstagramSectionContent({ feed }: { feed: InstagramFeed }) {
   return (
-    <section className="instagram section" id="instagram" aria-labelledby="instagram-title">
+    <section
+      className="instagram section"
+      id="instagram"
+      aria-labelledby="instagram-title"
+    >
       <span className="anchor-alias" id="eventos" aria-hidden="true" />
       <div className="instagram-heading shell">
         <div>
