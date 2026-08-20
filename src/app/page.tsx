@@ -131,8 +131,8 @@ export default function Home() {
             <div className="hero-copy">
               <p className="eyebrow">Esporte · Família · Saúde</p>
               <h1 className="hero-title">
-                Esporte é saúde.
-                <span>Maior Complexo Esportivo do Vale do Paraíba.</span>
+                Esporte é saúde
+                <span>Maior Complexo Esportivo do Vale do Paraíba</span>
               </h1>
               <p className="hero-lead">
                 Um ambiente acolhedor para praticar esporte, cuidar da saúde e
