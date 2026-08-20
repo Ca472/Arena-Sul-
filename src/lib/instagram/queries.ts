@@ -1,6 +1,10 @@
 import "server-only";
 
 import { z } from "zod";
+import {
+  getInstagramFetchCachePolicy,
+  type InstagramFeedEdge,
+} from "./cache-policy";
 import type {
   InstagramFeed,
   InstagramMediaItem,
@@ -124,16 +128,12 @@ function normalizeMedia(
 async function fetchInstagramEdge({
   edge,
   fields,
-  revalidate,
-  tag,
   userId,
   accessToken,
   graphVersion,
 }: {
-  edge: "media" | "stories";
+  edge: InstagramFeedEdge;
   fields: string;
-  revalidate: number;
-  tag: string;
   userId: string;
   accessToken: string;
   graphVersion: string;
@@ -145,13 +145,9 @@ async function fetchInstagramEdge({
   endpoint.searchParams.set("limit", edge === "media" ? "25" : "20");
 
   const response = await fetch(endpoint, {
-    cache: "force-cache",
+    ...getInstagramFetchCachePolicy(edge),
     headers: {
       Authorization: `Bearer ${accessToken}`,
-    },
-    next: {
-      revalidate,
-      tags: [tag],
     },
     signal: AbortSignal.timeout(6500),
   });
@@ -188,8 +184,6 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
         edge: "media",
         fields:
           "id,caption,media_type,media_product_type,media_url,thumbnail_url,permalink,timestamp",
-        revalidate: 900,
-        tag: "instagram-reels",
         userId,
         accessToken,
         graphVersion,
@@ -197,8 +191,6 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
       fetchInstagramEdge({
         edge: "stories",
         fields: "id,media_type,media_url,thumbnail_url,permalink,timestamp",
-        revalidate: 300,
-        tag: "instagram-stories",
         userId,
         accessToken,
         graphVersion,
