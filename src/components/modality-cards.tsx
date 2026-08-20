@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from "react";
 
 import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 
@@ -16,6 +22,8 @@ type Modality = {
     src: string;
     alt: string;
     objectPosition: string;
+    objectPositionMobile?: string;
+    preservePortraitOnMobile?: boolean;
   };
   menuLabel: string;
   actions: ModalityAction[];
@@ -25,9 +33,10 @@ const modalities: Modality[] = [
   {
     title: "Beach Tênis",
     image: {
-      src: "/images/modality-beach-tennis.png",
-      alt: "Jogadora de Beach Tênis prepara uma rebatida na quadra de areia.",
-      objectPosition: "50% 42%",
+      src: "/images/hero-beach-tennis.jpg",
+      alt: "Homem segura uma bola ao lado de um cesto com bolas de Beach Tênis na quadra de areia.",
+      objectPosition: "50% 38%",
+      objectPositionMobile: "50% 31%",
     },
     menuLabel: "Aula, quadra ou Day Use",
     actions: [
@@ -51,9 +60,10 @@ const modalities: Modality[] = [
   {
     title: "Futevôlei",
     image: {
-      src: "/images/modality-futevolei.png",
-      alt: "Atleta de futevôlei domina a bola com o peito durante uma partida.",
-      objectPosition: "50% 48%",
+      src: "/images/modality-futevolei-arena.jpg",
+      alt: "Jogador de futevôlei controla a bola com o pé diante da rede na quadra de areia.",
+      objectPosition: "50% 56%",
+      objectPositionMobile: "50% 61%",
     },
     menuLabel: "Aula, quadra ou Day Use",
     actions: [
@@ -77,9 +87,11 @@ const modalities: Modality[] = [
   {
     title: "Vôlei de Praia",
     image: {
-      src: "/images/modality-volei-praia.png",
-      alt: "Jogador realiza uma manchete no vôlei de praia.",
-      objectPosition: "55% 38%",
+      src: "/images/hero-volei-praia-atleta.jpg",
+      alt: "Homem posa segurando uma bola de vôlei.",
+      objectPosition: "50% 15%",
+      objectPositionMobile: "50% 15%",
+      preservePortraitOnMobile: true,
     },
     menuLabel: "Aula, quadra ou Day Use",
     actions: [
@@ -173,14 +185,28 @@ export function ModalityCards() {
             data-menu-open={isOpen ? "true" : undefined}
             key={modality.title}
           >
-            <div className="modality-media">
+            <div
+              className={`modality-media${
+                modality.image.preservePortraitOnMobile
+                  ? " modality-media-portrait"
+                  : ""
+              }`}
+            >
               <Image
                 className="modality-image"
                 src={modality.image.src}
                 alt={modality.image.alt}
                 fill
                 sizes="(max-width: 600px) calc(100vw - 28px), (max-width: 850px) calc((100vw - 54px) / 2), (max-width: 1100px) calc((100vw - 68px) / 3), (max-width: 1599px) 225px, 260px"
-                style={{ objectPosition: modality.image.objectPosition }}
+                style={
+                  {
+                    "--modality-object-position":
+                      modality.image.objectPosition,
+                    "--modality-object-position-mobile":
+                      modality.image.objectPositionMobile ??
+                      modality.image.objectPosition,
+                  } as CSSProperties
+                }
               />
               <span className="modality-number" aria-hidden="true">
                 {String(index + 1).padStart(2, "0")}

@@ -16,6 +16,7 @@ type StructureSlide = {
   description: string;
   fit: "cover" | "contain";
   position: string;
+  compactCaption?: boolean;
   mobileSrc?: string;
   mobileAlt?: string;
   mobilePosition?: string;
@@ -25,20 +26,17 @@ type ImageVariant = "desktop" | "mobile";
 
 const slides: readonly StructureSlide[] = [
   {
-    src: "/images/arena-courts.webp",
-    alt: "Quadras de areia da Arena Sul preparadas para jogos e treinos",
+    src: "/images/estrutura-quadras-areia.jpg",
+    alt: "Quadras de areia da Arena Sul com redes sob o céu azul",
     eyebrow: "Estrutura esportiva",
     title: "13 quadras de areia",
     description: "Espaço para Beach Tênis, Futevôlei e Vôlei de Praia.",
-    fit: "contain",
-    position: "center 58%",
-    mobileSrc: "/images/arena-drone-2.jpg",
-    mobileAlt: "Vista aérea das quadras e da estrutura da Arena Sul Sports",
-    mobilePosition: "center 48%",
+    fit: "cover",
+    position: "center 57%",
   },
   {
-    src: "/images/courts-aerial.webp",
-    alt: "Vista aérea das quadras da Arena Sul cercadas pela área verde",
+    src: "/images/estrutura-vista-aerea.jpg",
+    alt: "Vista aérea das quadras e da estrutura da Arena Sul cercadas pela área verde",
     eyebrow: "Vista da Arena",
     title: "Estrutura esportiva completa",
     description:
@@ -61,8 +59,7 @@ const slides: readonly StructureSlide[] = [
     alt: "Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras",
     eyebrow: "Celebre na Arena",
     title: "3 churrasqueiras",
-    description:
-      "Para aniversários, confraternizações e bons momentos em família.",
+    description: "Bons momentos em família e amigos",
     fit: "contain",
     position: "center 58%",
   },
@@ -71,8 +68,7 @@ const slides: readonly StructureSlide[] = [
     alt: "Área coberta do bar da Arena Sul com mesas e cadeiras",
     eyebrow: "Comodidade",
     title: "Bar e cozinha",
-    description:
-      "Apoio para quem pratica esporte e conforto para quem acompanha.",
+    description: "Bateu aquela fome, Bar e Cozinha Completos.",
     fit: "contain",
     position: "center 62%",
   },
@@ -80,21 +76,20 @@ const slides: readonly StructureSlide[] = [
     src: "/images/estrutura-bar-convivencia.jpg",
     alt: "Área externa de convivência do bar com vista para as quadras de areia",
     eyebrow: "Convivência",
-    title: "Espaço para reunir pessoas",
-    description:
-      "Um ambiente acolhedor para famílias, amigos, escolas e equipes.",
+    title: "Diversos espaços de lazer",
+    description: "Com 10.000 m², a Arena comporta 500 pessoas.",
     fit: "cover",
     position: "center",
   },
   {
-    src: "/images/event-lounge.webp",
-    alt: "Área de convivência da Arena Sul preparada para um evento",
-    eyebrow: "Encontros e celebrações",
-    title: "Estrutura para grupos e eventos",
-    description:
-      "Receba encontros corporativos, eventos escolares e confraternizações.",
-    fit: "cover",
+    src: "/images/estrutura-eventos-torneios.jpg",
+    alt: "Vista aérea das quadras de areia da Arena Sul em uso, com áreas de apoio ao lado",
+    eyebrow: "Estrutura completa",
+    title: "Para torneios, eventos corporativos e escolares",
+    description: "Conte conosco para auxiliar na organização do seu evento.",
+    fit: "contain",
     position: "center",
+    compactCaption: true,
   },
 ];
 
@@ -392,6 +387,7 @@ export function StructureGallery() {
               className={styles.slide}
               data-active={isActive}
               data-fit={slide.fit}
+              data-compact-caption={slide.compactCaption || undefined}
               data-mobile-image={Boolean(slide.mobileSrc)}
               role="group"
               aria-roledescription="slide"
