@@ -136,7 +136,7 @@ export default function Home() {
               </h1>
               <p className="hero-lead">
                 Um ambiente acolhedor para praticar esporte, cuidar da saúde e
-                viver bons momentos em família.
+                viver bons momentos em família e amigos.
               </p>
               <div className="hero-actions">
                 <a
