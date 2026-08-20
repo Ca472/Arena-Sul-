@@ -13,13 +13,17 @@ export type InstagramMediaItem = {
   timestamp: string;
 };
 
-export type InstagramFeedStatus =
-  | "connected"
-  | "unconfigured"
-  | "unavailable";
+export type InstagramFeedStatus = "connected" | "unconfigured" | "unavailable";
 
 export type InstagramFeed = {
   status: InstagramFeedStatus;
   stories: InstagramMediaItem[];
+  storiesFetchedAt: string | null;
   reels: InstagramMediaItem[];
+};
+
+export type InstagramStoriesSnapshot = {
+  status: InstagramFeedStatus;
+  stories: InstagramMediaItem[];
+  fetchedAt: string | null;
 };

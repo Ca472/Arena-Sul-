@@ -65,6 +65,7 @@ digitados somente pela própria responsável na tela oficial da Meta/Instagram.
 
    O valor deve ser idêntico no painel e em `INSTAGRAM_OAUTH_REDIRECT_URI`, sem
    diferença de protocolo, caminho ou barra final.
+
 4. Confirmar o campo **ID do app do Instagram**. Ele não é necessariamente o
    mesmo ID geral exibido na URL do painel da Meta.
 5. Solicitar somente `instagram_business_basic`. Reels fazem parte da mídia da
@@ -148,9 +149,12 @@ adicionais. Não usar scraping.
 
 ## Atualização e manutenção
 
-- Stories ativos são consultados novamente a cada carregamento da página.
-  Stories expirados, arquivados e Destaques não são tratados como Stories
-  ativos pela integração.
+- Stories ativos são consultados novamente a cada carregamento da página. Com
+  a seção do Instagram visível, o portal também sincroniza silenciosamente a
+  cada 30 segundos e consulta novamente ao retornar para a aba. As consultas
+  automáticas compartilham uma proteção de 25 segundos no servidor para evitar
+  excesso de chamadas à Meta. Stories expirados, arquivados e Destaques não são
+  tratados como Stories ativos pela integração.
 - Reels são consultados com cache de 15 minutos.
 - A integração consulta a API no servidor e não precisa de webhook para este
   portal.
