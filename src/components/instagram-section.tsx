@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { InstagramShowcase } from "@/components/instagram-showcase";
 import { getInstagramFeed } from "@/lib/instagram/queries";
 import type { InstagramFeed } from "@/lib/instagram/types";
@@ -48,6 +49,7 @@ export function InstagramSectionFallback() {
 }
 
 export async function InstagramSection() {
+  await connection();
   const feed = await getInstagramFeed();
   return <InstagramSectionContent feed={feed} />;
 }

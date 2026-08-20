@@ -148,10 +148,12 @@ adicionais. Não usar scraping.
 
 ## Atualização e manutenção
 
-- Stories ativos são consultados com cache de 5 minutos. Stories expirados,
-  arquivados e Destaques não são tratados como Stories ativos pela integração.
+- Stories ativos são consultados novamente a cada carregamento da página.
+  Stories expirados, arquivados e Destaques não são tratados como Stories
+  ativos pela integração.
 - Reels são consultados com cache de 15 minutos.
-- A integração usa polling/cache; não precisa de webhook para este portal.
+- A integração consulta a API no servidor e não precisa de webhook para este
+  portal.
 - Se não houver Story ativo, o site mostra um estado neutro e mantém os Reels.
 - Se a API estiver indisponível ou o token expirar, o portal volta aos cards
   institucionais e aos links oficiais, sem expor erro técnico ao visitante.
