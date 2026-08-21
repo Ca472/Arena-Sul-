@@ -33,10 +33,11 @@ const modalities: Modality[] = [
   {
     title: "Beach Tennis",
     image: {
-      src: "/images/hero-beach-tennis.jpg",
-      alt: "Homem segura uma bola ao lado de um cesto com bolas de Beach Tennis na quadra de areia.",
-      objectPosition: "50% 38%",
-      objectPositionMobile: "50% 31%",
+      src: "/images/modality-beach-tennis-turma.jpg",
+      alt: "Turma posa com raquetes na quadra de areia da Arena Sul.",
+      objectPosition: "50% 72%",
+      objectPositionMobile: "50% 72%",
+      preservePortraitOnMobile: true,
     },
     menuLabel: "Aula, quadra ou Day Use",
     actions: [
@@ -114,9 +115,11 @@ const modalities: Modality[] = [
   {
     title: "Aula Funcional",
     image: {
-      src: "/images/modality-treino-funcional.png",
-      alt: "Turma participa de uma atividade orientada nas quadras de areia da Arena Sul.",
-      objectPosition: "52% 48%",
+      src: "/images/modality-aula-funcional-arena.jpg",
+      alt: "Participantes realizam uma aula funcional na quadra de areia da Arena Sul.",
+      objectPosition: "50% 75%",
+      objectPositionMobile: "50% 75%",
+      preservePortraitOnMobile: true,
     },
     menuLabel: "Agendar aula",
     actions: [
