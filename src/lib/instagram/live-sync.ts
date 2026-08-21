@@ -112,3 +112,25 @@ export function findStoryIndexAfterRefresh(
   );
   return preservedIndex >= 0 ? preservedIndex : 0;
 }
+
+export function getAdjacentStoryIndex(
+  activeStoryId: string | null,
+  stories: InstagramMediaItem[],
+  direction: "previous" | "next",
+) {
+  if (stories.length === 0) {
+    return 0;
+  }
+
+  const currentIndex = findStoryIndexAfterRefresh(activeStoryId, stories);
+  const offset = direction === "previous" ? -1 : 1;
+  return (currentIndex + offset + stories.length) % stories.length;
+}
+
+export function getStorySwipeDirection(distanceX: number, distanceY: number) {
+  if (Math.abs(distanceX) < 48 || Math.abs(distanceX) <= Math.abs(distanceY) * 1.2) {
+    return null;
+  }
+
+  return distanceX < 0 ? ("next" as const) : ("previous" as const);
+}

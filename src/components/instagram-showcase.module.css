@@ -132,6 +132,12 @@
     var(--navy-deep);
 }
 
+.storyStage[data-swipeable="true"] {
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 .storyStage > img,
 .storyStage > video {
   width: 100%;
@@ -164,6 +170,24 @@
   justify-content: center;
   gap: 8px;
   margin-top: 16px;
+}
+
+.storySwipeHint {
+  display: none;
+  margin: 12px 0 0;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.storySwipeHint span {
+  color: var(--orange);
+  font-size: 0.9rem;
 }
 
 .storyControls button {
@@ -456,6 +480,12 @@
     width: min(42vw, 270px);
     flex: 0 0 auto;
     scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 900px) and (pointer: coarse) {
+  .storySwipeHint {
+    display: flex;
   }
 }
 

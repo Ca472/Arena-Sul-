@@ -22,6 +22,11 @@ type Amenity = {
   whatsappMessage?: string;
 };
 
+type GoogleTestimonial = {
+  author: string;
+  excerpt: string;
+};
+
 const stats: ArenaStat[] = [
   { value: "13", label: "quadras de areia" },
   { value: "1", label: "quadra society" },
@@ -75,6 +80,21 @@ const amenities: Amenity[] = [
   { label: "Estrutura para grupos e eventos" },
 ];
 
+const googleTestimonials: GoogleTestimonial[] = [
+  {
+    author: "Robson O.",
+    excerpt: "Excelente lugar para prática de esportes com amigos",
+  },
+  {
+    author: "Victor R.",
+    excerpt: "Lugar bom pra um tempo com a familia",
+  },
+  {
+    author: "Gabriel V.",
+    excerpt: "Espaço grande pra brincar com meus amiguinhos",
+  },
+];
+
 const contactUrl = buildWhatsAppUrl();
 
 const arenaLocation =
@@ -86,6 +106,8 @@ const wazeDirectionsUrl =
   "https://www.waze.com/ul?ll=-23.2513669%2C-45.8921909&navigate=yes&utm_source=arena_sul_portal";
 const mapsEmbedUrl =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3665.7724281961564!2d-45.892190899999996!3d-23.251366899999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cc4ab32a7f6091%3A0xf73e48fd7a3102fb!2sArena%20Sul%20Sports!5e0!3m2!1spt-BR!2sbr!4v1787057333290!5m2!1spt-BR!2sbr";
+const virtualTourUrl =
+  "https://boradronar.com.br/tour/arenasulsports/output/";
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -294,6 +316,55 @@ export default function Home() {
           <StructureGallery />
         </section>
 
+        <section
+          className="virtual-tour section"
+          id="tour-360"
+          aria-labelledby="virtual-tour-title"
+        >
+          <div className="virtual-tour-grid shell">
+            <div className="virtual-tour-copy">
+              <p className="section-kicker light">Tour virtual 360º</p>
+              <h2 id="virtual-tour-title">Explore a Arena por todos os lados.</h2>
+              <p>
+                Navegue pelos pontos do complexo em imagens panorâmicas e
+                conheça a estrutura antes mesmo da sua visita.
+              </p>
+              <a
+                className="button button-tour"
+                href={virtualTourUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Abrir o Tour Virtual 360 graus da Arena Sul em uma nova aba"
+              >
+                Iniciar Tour 360º <span aria-hidden="true">↗</span>
+              </a>
+              <small>Experiência interativa aberta em uma nova aba.</small>
+            </div>
+
+            <a
+              className="virtual-tour-preview"
+              href={virtualTourUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Abrir vista panorâmica da Arena Sul no Tour Virtual 360 graus"
+            >
+              <Image
+                src="/images/arena-drone-2.jpg"
+                alt="Vista aérea da estrutura esportiva da Arena Sul"
+                fill
+                sizes="(max-width: 850px) calc(100vw - 28px), 56vw"
+              />
+              <span className="virtual-tour-shade" aria-hidden="true" />
+              <span className="virtual-tour-badge" aria-hidden="true">
+                360º
+              </span>
+              <span className="virtual-tour-action">
+                Clique e explore <span aria-hidden="true">→</span>
+              </span>
+            </a>
+          </div>
+        </section>
+
         <section className="modalities section" id="modalidades">
           <div className="section-heading shell">
             <div>
@@ -319,97 +390,161 @@ export default function Home() {
           <ModalityCards />
         </section>
 
+        <section
+          className="testimonials section"
+          id="depoimentos"
+          aria-labelledby="testimonials-title"
+        >
+          <div className="testimonials-heading shell">
+            <div>
+              <p className="section-kicker">Depoimentos reais</p>
+              <h2 id="testimonials-title">Quem conhece a Arena, recomenda.</h2>
+            </div>
+            <a
+              className="google-rating"
+              href={mapsPlaceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Ver todas as avaliações da Arena Sul no Google Maps"
+            >
+              <strong>4,5</strong>
+              <span className="google-rating-stars" aria-hidden="true">
+                ★★★★★
+              </span>
+              <span>Mais de 600 avaliações no Google</span>
+            </a>
+          </div>
+
+          <div className="testimonials-grid shell">
+            {googleTestimonials.map((testimonial) => (
+              <article className="testimonial-card" key={testimonial.author}>
+                <span className="testimonial-source">Avaliação do Google</span>
+                <blockquote>
+                  <p>“{testimonial.excerpt}”</p>
+                </blockquote>
+                <footer>
+                  <strong>{testimonial.author}</strong>
+                  <span aria-hidden="true">G</span>
+                </footer>
+              </article>
+            ))}
+          </div>
+
+          <div className="testimonials-action shell">
+            <a
+              className="text-link"
+              href={mapsPlaceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Ver todas as avaliações no Google <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </section>
+
         <Suspense fallback={<InstagramSectionFallback />}>
           <InstagramSection />
         </Suspense>
 
         <footer className="footer" id="contato">
-          <section
-            className="footer-location shell"
-            aria-labelledby="arena-location-title"
-          >
-            <div className="footer-location-copy">
-              <p className="section-kicker light">Onde estamos</p>
-              <h2 id="arena-location-title">Venha para a Arena Sul.</h2>
-              <address>
-                Rua Maurício Cardoso, 220 — Jardim Sul
-                <br />
-                São José dos Campos — SP · 12236-495
-              </address>
-              <div className="footer-location-actions">
-                <a
-                  className="button button-location"
-                  href={mapsDirectionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Traçar rota para a Arena Sul Sports no Google Maps (abre em uma nova aba)"
-                >
-                  Traçar rota no Google Maps <span aria-hidden="true">↗</span>
+          <div className="footer-shell shell">
+            <section
+              className="footer-location"
+              aria-labelledby="arena-location-title"
+            >
+              <div className="footer-location-copy">
+                <p className="section-kicker light">Onde estamos</p>
+                <h2 id="arena-location-title">Venha para a Arena Sul.</h2>
+                <address>
+                  Rua Maurício Cardoso, 220 — Jardim Sul
+                  <br />
+                  São José dos Campos — SP · 12236-495
+                </address>
+                <div className="footer-location-actions">
+                  <a
+                    className="button button-location"
+                    href={mapsDirectionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Traçar rota para a Arena Sul Sports no Google Maps (abre em uma nova aba)"
+                  >
+                    Traçar rota no Google Maps <span aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    className="button button-location button-location-waze"
+                    href={wazeDirectionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Traçar rota para a Arena Sul Sports no Waze (abre em uma nova aba)"
+                  >
+                    Traçar rota no Waze <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+              <div className="footer-map-frame">
+                <iframe
+                  src={mapsEmbedUrl}
+                  title="Mapa da Arena Sul Sports em São José dos Campos"
+                  width="600"
+                  height="450"
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+              </div>
+            </section>
+
+            <div className="footer-grid">
+              <div className="footer-brand">
+                <Image
+                  src="/images/arena-sul-logo-white.png"
+                  alt="Arena Sul Sports"
+                  width={225}
+                  height={225}
+                />
+                <p>Esporte. Família. Saúde.</p>
+              </div>
+              <div>
+                <h2>Fale com a gente</h2>
+                <a href="tel:+551233071093">(12) 3307-1093</a>
+                <a href={contactUrl} target="_blank" rel="noreferrer">
+                  WhatsApp
                 </a>
                 <a
-                  className="button button-location button-location-waze"
-                  href={wazeDirectionsUrl}
+                  href="https://www.instagram.com/arenasulsports/"
                   target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Traçar rota para a Arena Sul Sports no Waze (abre em uma nova aba)"
+                  rel="noreferrer"
                 >
-                  Traçar rota no Waze <span aria-hidden="true">↗</span>
+                  Instagram
                 </a>
               </div>
+              <div>
+                <h2>Explore</h2>
+                <a href="#arena">A Arena</a>
+                <a href="#estrutura">Estrutura</a>
+                <a href="#modalidades">Esportes</a>
+                <a href="#depoimentos">Avaliações</a>
+                <a
+                  href={virtualTourUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Tour 360º <span aria-hidden="true">↗</span>
+                </a>
+                <a href="#instagram">Instagram</a>
+              </div>
             </div>
-            <div className="footer-map-frame">
-              <iframe
-                src={mapsEmbedUrl}
-                title="Mapa da Arena Sul Sports em São José dos Campos"
-                width="600"
-                height="450"
-                loading="lazy"
-                allowFullScreen
-                referrerPolicy="strict-origin-when-cross-origin"
-              />
-            </div>
-          </section>
-          <div className="footer-grid shell">
-            <div className="footer-brand">
-              <Image
-                src="/images/arena-sul-logo-white.png"
-                alt="Arena Sul Sports"
-                width={225}
-                height={225}
-              />
-              <p>Esporte. Família. Saúde.</p>
-            </div>
-            <div>
-              <h2>Fale com a gente</h2>
-              <a href="tel:+551233071093">(12) 3307-1093</a>
-              <a href={contactUrl} target="_blank" rel="noreferrer">
-                WhatsApp
+
+            <div className="footer-bottom">
+              <p>
+                © {new Date().getFullYear()} Arena Sul Sports. Todos os direitos
+                reservados.
+              </p>
+              <a className="footer-top-link" href="#inicio">
+                Voltar ao topo <span aria-hidden="true">↑</span>
               </a>
-              <a
-                href="https://www.instagram.com/arenasulsports/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Instagram
-              </a>
+              <a href="/admin">Área administrativa</a>
             </div>
-            <div>
-              <h2>Navegue</h2>
-              <a href="#arena">A Arena</a>
-              <a href="#estrutura">Estrutura</a>
-              <a href="#modalidades">Esportes</a>
-              <a href="#instagram">Instagram</a>
-            </div>
-          </div>
-          <div className="footer-bottom shell">
-            <p>
-              © {new Date().getFullYear()} Arena Sul Sports. Todos os direitos
-              reservados.
-            </p>
-            <a className="footer-top-link" href="#inicio">
-              Voltar ao topo <span aria-hidden="true">↑</span>
-            </a>
-            <a href="/admin">Área administrativa</a>
           </div>
         </footer>
       </main>
