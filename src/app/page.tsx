@@ -324,7 +324,7 @@ export default function Home() {
           <div className="virtual-tour-grid shell">
             <div className="virtual-tour-copy">
               <p className="section-kicker light">Tour virtual 360º</p>
-              <h2 id="virtual-tour-title">Explore a Arena por todos os lados.</h2>
+              <h2 id="virtual-tour-title">Explore a Arena por todos os ângulos.</h2>
               <p>
                 Navegue pelos pontos do complexo em imagens panorâmicas e
                 conheça a estrutura antes mesmo da sua visita.
