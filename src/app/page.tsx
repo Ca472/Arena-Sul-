@@ -19,7 +19,6 @@ type ArenaStat = {
 
 type Amenity = {
   label: string;
-  whatsappMessage?: string;
 };
 
 type GoogleTestimonial = {
@@ -43,37 +42,44 @@ const heroSports = [
   {
     id: "volei-praia",
     name: "Vôlei de Praia",
+    professor: "Profº Julio Neti",
     image: "/images/hero-volei-praia.jpg",
     className: "hero-sport-slide hero-sport-slide-volleyball",
   },
   {
     id: "futevolei",
     name: "Futevôlei",
+    professor: "Profº Gett Lima",
     image: "/images/hero-futevolei.jpg",
     className: "hero-sport-slide hero-sport-slide-futevolei",
   },
   {
-    id: "volei-praia-atleta",
+    id: "volei-praia-edson",
     name: "Vôlei de Praia",
-    image: "/images/hero-volei-praia-atleta.jpg",
+    professor: "Profº Edson Junior",
+    image: "/images/hero-volei-praia-time-arena.jpg",
     className: "hero-sport-slide hero-sport-slide-volleyball-athlete",
   },
   {
     id: "beach-tennis",
     name: "Beach Tennis",
+    professor: "Profº Vinicius Alves",
     image: "/images/hero-beach-tennis.jpg",
     className: "hero-sport-slide hero-sport-slide-beach-tennis",
+  },
+  {
+    id: "futevolei-wallacy",
+    name: "Futevôlei",
+    professor: "Profº Wallacy",
+    image: "/images/hero-futevolei-wallacy.jpg",
+    className: "hero-sport-slide hero-sport-slide-futevolei-wallacy",
   },
 ];
 
 const amenities: Amenity[] = [
   { label: "13 quadras de areia" },
   { label: "1 quadra de futebol society" },
-  {
-    label: "3 churrasqueiras para aniversários e confraternizações",
-    whatsappMessage:
-      "Olá, Arena Sul! Vim do Site. Gostaria de saber mais sobre a locação do espaço para aniversários e confraternizações.",
-  },
+  { label: "3 churrasqueiras para aniversários e confraternizações" },
   { label: "Bar e cozinha" },
   { label: "Vestiários" },
   { label: "Aulas de esportes de areia" },
@@ -82,16 +88,25 @@ const amenities: Amenity[] = [
 
 const googleTestimonials: GoogleTestimonial[] = [
   {
-    author: "Robson O.",
-    excerpt: "Excelente lugar para prática de esportes com amigos",
+    author: "Eduardo Barreto",
+    excerpt: "Muito bom.",
   },
   {
-    author: "Victor R.",
-    excerpt: "Lugar bom pra um tempo com a familia",
+    author: "Yorbi Calzadilla",
+    excerpt: "Ambiente excelente",
   },
   {
-    author: "Gabriel V.",
-    excerpt: "Espaço grande pra brincar com meus amiguinhos",
+    author: "Glaucia Kajiyama",
+    excerpt: "Excelente local para praticar esportes em família e com amigos.",
+  },
+  {
+    author: "Ubiratan Oliveira",
+    excerpt:
+      "Lugar ótimo pra se divertir com amigos e familiares. Só precisa dar uma arrumadinha no estacionamento.",
+  },
+  {
+    author: "Agnaldo Tinho",
+    excerpt: "Bom",
   },
 ];
 
@@ -181,7 +196,7 @@ export default function Home() {
             <div
               className="hero-visual"
               role="img"
-              aria-label="Modalidades em destaque: Vôlei de Praia, Futevôlei e Beach Tennis"
+              aria-label="Time Arena Sul: professores Julio Neti, Gett Lima, Edson Junior, Vinicius Alves e Wallacy"
             >
               <div className="hero-sun" aria-hidden="true" />
               <div className="hero-slash hero-slash-one" aria-hidden="true" />
@@ -200,8 +215,9 @@ export default function Home() {
                       fetchPriority={index === 0 ? "high" : "auto"}
                     />
                     <figcaption className="hero-sport-caption">
-                      <span>Modalidade em destaque</span>
-                      <strong>{sport.name}</strong>
+                      <span>Time Arena Sul</span>
+                      <strong>{sport.professor}</strong>
+                      <small>{sport.name}</small>
                     </figcaption>
                   </figure>
                 ))}
@@ -213,7 +229,7 @@ export default function Home() {
                 </div>
 
                 <p className="hero-sports-static-label">
-                  Vôlei de Praia · Futevôlei · Beach Tennis
+                  Time Arena Sul · Profº Julio Neti · Vôlei de Praia
                 </p>
               </div>
 
@@ -288,26 +304,7 @@ export default function Home() {
                     <span className="amenity-check" aria-hidden="true">
                       ✓
                     </span>
-                    <div className="amenity-content">
-                      {item.label}
-                      {item.whatsappMessage ? (
-                        <a
-                          className="amenity-whatsapp-link"
-                          href={buildWhatsAppUrl(item.whatsappMessage)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label="Saiba mais sobre a locação das churrasqueiras no WhatsApp (abre em uma nova aba)"
-                        >
-                          <Image
-                            src="/icons/whatsapp.svg"
-                            alt=""
-                            width={20}
-                            height={20}
-                          />
-                          Saiba mais no WhatsApp
-                        </a>
-                      ) : null}
-                    </div>
+                    <span className="amenity-content">{item.label}</span>
                   </li>
                 ))}
               </ul>
@@ -396,9 +393,12 @@ export default function Home() {
           aria-labelledby="testimonials-title"
         >
           <div className="testimonials-heading shell">
-            <div>
+            <div className="testimonials-heading-copy">
               <p className="section-kicker">Depoimentos reais</p>
               <h2 id="testimonials-title">Quem conhece a Arena, recomenda.</h2>
+              <p className="testimonials-recency">
+                Últimas 5 avaliações recebidas
+              </p>
             </div>
             <a
               className="google-rating"
@@ -418,7 +418,15 @@ export default function Home() {
           <div className="testimonials-grid shell">
             {googleTestimonials.map((testimonial) => (
               <article className="testimonial-card" key={testimonial.author}>
-                <span className="testimonial-source">Avaliação do Google</span>
+                <div className="testimonial-meta">
+                  <span className="testimonial-source">Avaliação do Google</span>
+                  <span
+                    className="testimonial-stars"
+                    aria-label="5 de 5 estrelas"
+                  >
+                    ★★★★★
+                  </span>
+                </div>
                 <blockquote>
                   <p>“{testimonial.excerpt}”</p>
                 </blockquote>
@@ -504,35 +512,39 @@ export default function Home() {
                 />
                 <p>Esporte. Família. Saúde.</p>
               </div>
-              <div>
+              <div className="footer-group">
                 <h2>Fale com a gente</h2>
-                <a href="tel:+551233071093">(12) 3307-1093</a>
-                <a href={contactUrl} target="_blank" rel="noreferrer">
-                  WhatsApp
-                </a>
-                <a
-                  href="https://www.instagram.com/arenasulsports/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Instagram
-                </a>
+                <div className="footer-link-row">
+                  <a href="tel:+551233071093">(12) 3307-1093</a>
+                  <a href={contactUrl} target="_blank" rel="noreferrer">
+                    WhatsApp
+                  </a>
+                  <a
+                    href="https://www.instagram.com/arenasulsports/"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Instagram
+                  </a>
+                </div>
               </div>
-              <div>
+              <nav className="footer-group" aria-label="Explore o site">
                 <h2>Explore</h2>
-                <a href="#arena">A Arena</a>
-                <a href="#estrutura">Estrutura</a>
-                <a href="#modalidades">Esportes</a>
-                <a href="#depoimentos">Avaliações</a>
-                <a
-                  href={virtualTourUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Tour 360º <span aria-hidden="true">↗</span>
-                </a>
-                <a href="#instagram">Instagram</a>
-              </div>
+                <div className="footer-link-row">
+                  <a href="#arena">A Arena</a>
+                  <a href="#estrutura">Estrutura</a>
+                  <a href="#modalidades">Esportes</a>
+                  <a href="#depoimentos">Avaliações</a>
+                  <a
+                    href={virtualTourUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Tour 360º <span aria-hidden="true">↗</span>
+                  </a>
+                  <a href="#instagram">Instagram</a>
+                </div>
+              </nav>
             </div>
 
             <div className="footer-bottom">

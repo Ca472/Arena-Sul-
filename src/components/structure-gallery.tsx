@@ -30,7 +30,7 @@ const slides: readonly StructureSlide[] = [
     alt: "Quadras de areia da Arena Sul com redes sob o céu azul",
     eyebrow: "Estrutura esportiva",
     title: "13 quadras de areia",
-    description: "Espaço para Beach Tênis, Futevôlei e Vôlei de Praia.",
+    description: "Espaço para Beach Tennis, Futevôlei e Vôlei de Praia.",
     fit: "cover",
     position: "center 57%",
   },
