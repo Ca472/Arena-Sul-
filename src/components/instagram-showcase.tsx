@@ -1,12 +1,21 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import {
+  type PointerEvent as ReactPointerEvent,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import {
   areInstagramStoriesEqual,
   findStoryIndexAfterRefresh,
+  getAdjacentStoryIndex,
   getInstagramStoriesRefreshDelay,
   getInstagramStoriesSnapshotTimestamp,
+  getStorySwipeDirection,
   INSTAGRAM_STORIES_MIN_REFRESH_MS,
   INSTAGRAM_STORIES_REFRESH_MS,
   isInstagramStoriesSnapshot,
@@ -34,6 +43,11 @@ type LiveStoriesState = {
 type LiveStoriesAction =
   | { type: "replace"; snapshot: InstagramStoriesSnapshot }
   | { type: "select"; storyId: string }
+  | {
+      type: "navigate";
+      direction: "previous" | "next";
+      stories: InstagramMediaItem[];
+    }
   | { type: "advance"; stories: InstagramMediaItem[] };
 
 function createLiveStoriesState(feed: InstagramFeed): LiveStoriesState {
@@ -63,6 +77,19 @@ function liveStoriesReducer(
     );
     const nextStory =
       action.stories[(currentIndex + 1) % action.stories.length];
+    return nextStory ? { ...state, activeStoryId: nextStory.id } : state;
+  }
+
+  if (action.type === "navigate") {
+    if (action.stories.length < 2) {
+      return state;
+    }
+    const nextIndex = getAdjacentStoryIndex(
+      state.activeStoryId,
+      action.stories,
+      action.direction,
+    );
+    const nextStory = action.stories[nextIndex];
     return nextStory ? { ...state, activeStoryId: nextStory.id } : state;
   }
 
@@ -219,6 +246,13 @@ function InstagramProfileFallback() {
 
 export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const storySwipeRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+  } | null>(null);
+  const suppressStoryClickRef = useRef(false);
+  const suppressStoryClickTimerRef = useRef<number | null>(null);
   const refreshControllerRef = useRef<AbortController | null>(null);
   const refreshInFlightRef = useRef(false);
   const lastStoriesRefreshStartedAtRef = useRef(0);
@@ -326,6 +360,15 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       }
     }
   }, []);
+
+  useEffect(
+    () => () => {
+      if (suppressStoryClickTimerRef.current !== null) {
+        window.clearTimeout(suppressStoryClickTimerRef.current);
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -435,6 +478,77 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     !interactionPaused &&
     !manualPaused;
 
+  const handleStoryPointerDown = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    if (event.pointerType === "mouse" || !event.isPrimary || stories.length < 2) {
+      return;
+    }
+
+    storySwipeRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+    };
+    setInteractionPaused(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleStoryPointerMove = (
+    event: ReactPointerEvent<HTMLDivElement>,
+  ) => {
+    const swipe = storySwipeRef.current;
+    if (!swipe || swipe.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const distanceX = event.clientX - swipe.startX;
+    const distanceY = event.clientY - swipe.startY;
+    if (Math.abs(distanceX) > 10 && Math.abs(distanceX) > Math.abs(distanceY)) {
+      event.preventDefault();
+    }
+  };
+
+  const finishStorySwipe = (
+    event: ReactPointerEvent<HTMLDivElement>,
+    cancelled = false,
+  ) => {
+    const swipe = storySwipeRef.current;
+    if (!swipe || swipe.pointerId !== event.pointerId) {
+      return;
+    }
+
+    storySwipeRef.current = null;
+    setInteractionPaused(false);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+    if (cancelled) {
+      return;
+    }
+
+    const distanceX = event.clientX - swipe.startX;
+    const distanceY = event.clientY - swipe.startY;
+    const direction = getStorySwipeDirection(distanceX, distanceY);
+    if (!direction) {
+      return;
+    }
+
+    suppressStoryClickRef.current = true;
+    if (suppressStoryClickTimerRef.current !== null) {
+      window.clearTimeout(suppressStoryClickTimerRef.current);
+    }
+    suppressStoryClickTimerRef.current = window.setTimeout(() => {
+      suppressStoryClickRef.current = false;
+      suppressStoryClickTimerRef.current = null;
+    }, 300);
+    dispatchLiveStories({
+      type: "navigate",
+      direction,
+      stories,
+    });
+  };
+
   return (
     <div ref={rootRef} className={styles.syncBoundary}>
       {!hasLiveMedia ? (
@@ -482,7 +596,25 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
 
             {activeStory ? (
               <>
-                <div className={styles.storyStage}>
+                <div
+                  className={styles.storyStage}
+                  role="group"
+                  aria-roledescription="carrossel"
+                  aria-label={`Story ${normalizedStoryIndex + 1} de ${stories.length}. Arraste para os lados para navegar.`}
+                  data-swipeable={stories.length > 1 ? "true" : undefined}
+                  onPointerDown={handleStoryPointerDown}
+                  onPointerMove={handleStoryPointerMove}
+                  onPointerUp={(event) => finishStorySwipe(event)}
+                  onPointerCancel={(event) => finishStorySwipe(event, true)}
+                  onClickCapture={(event) => {
+                    if (suppressStoryClickRef.current) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      suppressStoryClickRef.current = false;
+                    }
+                  }}
+                  onDragStart={(event) => event.preventDefault()}
+                >
                   <MediaVisual
                     item={activeStory}
                     sizes="(max-width: 760px) 88vw, 360px"
@@ -499,6 +631,12 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
                     Ver no Instagram <span aria-hidden="true">↗</span>
                   </a>
                 </div>
+
+                {stories.length > 1 ? (
+                  <p className={styles.storySwipeHint} aria-hidden="true">
+                    <span>←</span> Arraste para os lados <span>→</span>
+                  </p>
+                ) : null}
 
                 {stories.length > 1 ? (
                   <div

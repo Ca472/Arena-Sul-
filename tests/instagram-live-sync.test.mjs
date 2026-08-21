@@ -4,8 +4,10 @@ import test from "node:test";
 import {
   areInstagramStoriesEqual,
   findStoryIndexAfterRefresh,
+  getAdjacentStoryIndex,
   getInstagramStoriesRefreshDelay,
   getInstagramStoriesSnapshotTimestamp,
+  getStorySwipeDirection,
   INSTAGRAM_STORIES_MIN_REFRESH_MS,
   INSTAGRAM_STORIES_REFRESH_MS,
   INSTAGRAM_STORIES_SHARED_CACHE_SECONDS,
@@ -114,4 +116,22 @@ test("keeps the active Story by id and falls back to the first available one", (
   assert.equal(findStoryIndexAfterRefresh("expired", refreshed), 0);
   assert.equal(findStoryIndexAfterRefresh(null, refreshed), 0);
   assert.equal(findStoryIndexAfterRefresh("1002", []), 0);
+});
+
+test("navigates Stories in both directions with circular wrapping", () => {
+  const stories = [story("1001"), story("1002"), story("1003")];
+  assert.equal(getAdjacentStoryIndex("1002", stories, "next"), 2);
+  assert.equal(getAdjacentStoryIndex("1002", stories, "previous"), 0);
+  assert.equal(getAdjacentStoryIndex("1003", stories, "next"), 0);
+  assert.equal(getAdjacentStoryIndex("1001", stories, "previous"), 2);
+  assert.equal(getAdjacentStoryIndex("expired", stories, "next"), 1);
+  assert.equal(getAdjacentStoryIndex(null, [], "next"), 0);
+});
+
+test("recognizes deliberate horizontal swipes without blocking vertical scroll", () => {
+  assert.equal(getStorySwipeDirection(-80, 12), "next");
+  assert.equal(getStorySwipeDirection(80, 12), "previous");
+  assert.equal(getStorySwipeDirection(40, 2), null);
+  assert.equal(getStorySwipeDirection(-80, 72), null);
+  assert.equal(getStorySwipeDirection(10, 90), null);
 });
