@@ -42,7 +42,7 @@ const heroSports = [
   {
     id: "volei-praia",
     name: "Vôlei de Praia",
-    professor: "Profº Julio Neti",
+    professor: "Profº Julio Neto",
     image: "/images/hero-volei-praia.jpg",
     className: "hero-sport-slide hero-sport-slide-volleyball",
   },
