@@ -60,7 +60,7 @@ const heroSports = [
   },
   {
     id: "beach-tennis",
-    name: "Beach Tênis",
+    name: "Beach Tennis",
     image: "/images/hero-beach-tennis.jpg",
     className: "hero-sport-slide hero-sport-slide-beach-tennis",
   },
@@ -153,12 +153,12 @@ export default function Home() {
             <div className="hero-copy">
               <p className="eyebrow">Esporte · Família · Saúde</p>
               <h1 className="hero-title">
-                Esporte é saúde.
-                <span>Maior Complexo Esportivo do Vale do Paraíba.</span>
+                Esporte é saúde
+                <span>Maior Complexo Esportivo do Vale do Paraíba</span>
               </h1>
               <p className="hero-lead">
                 Um ambiente acolhedor para praticar esporte, cuidar da saúde e
-                viver bons momentos em família.
+                viver bons momentos em família e amigos.
               </p>
               <div className="hero-actions">
                 <a
@@ -170,7 +170,7 @@ export default function Home() {
                   Fale conosco
                 </a>
                 <a className="button button-ghost" href="#modalidades">
-                  Esporte de areia
+                  Esportes de areia
                 </a>
                 <a className="button button-ghost" href="#estrutura">
                   Conheça a estrutura
@@ -181,7 +181,7 @@ export default function Home() {
             <div
               className="hero-visual"
               role="img"
-              aria-label="Modalidades em destaque: Vôlei de Praia, Futevôlei e Beach Tênis"
+              aria-label="Modalidades em destaque: Vôlei de Praia, Futevôlei e Beach Tennis"
             >
               <div className="hero-sun" aria-hidden="true" />
               <div className="hero-slash hero-slash-one" aria-hidden="true" />
@@ -213,7 +213,7 @@ export default function Home() {
                 </div>
 
                 <p className="hero-sports-static-label">
-                  Vôlei de Praia · Futevôlei · Beach Tênis
+                  Vôlei de Praia · Futevôlei · Beach Tennis
                 </p>
               </div>
 
@@ -551,3 +551,4 @@ export default function Home() {
     </>
   );
 }
+
