@@ -488,7 +488,7 @@ img {
   box-shadow: 0 30px 70px rgba(0, 10, 30, 0.38);
   opacity: 0;
   transform: translate3d(24px, 16px, 0) scale(0.97);
-  animation: heroSportSlide 16s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: heroSportSlide 20s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   animation-delay: var(--sport-delay);
   will-change: transform, opacity;
 }
@@ -504,6 +504,10 @@ img {
 
 .public-site .hero-sport-slide-beach-tennis {
   --sport-delay: 11.55s;
+}
+
+.public-site .hero-sport-slide-futevolei-wallacy {
+  --sport-delay: 15.55s;
 }
 
 .public-site .hero-sport-photo {
@@ -523,11 +527,15 @@ img {
 }
 
 .public-site .hero-sport-slide-volleyball-athlete .hero-sport-photo {
-  object-position: 50% 12%;
+  object-position: 50% 24%;
 }
 
 .public-site .hero-sport-slide-beach-tennis .hero-sport-photo {
   object-position: 48% 54%;
+}
+
+.public-site .hero-sport-slide-futevolei-wallacy .hero-sport-photo {
+  object-position: 50% 50%;
 }
 
 .public-site .hero-sport-slide::after {
@@ -550,7 +558,7 @@ img {
   color: white;
   opacity: 0;
   transform: translate3d(0, 16px, 0);
-  animation: heroSportCaption 16s ease-in-out infinite;
+  animation: heroSportCaption 20s ease-in-out infinite;
   animation-delay: var(--sport-delay);
 }
 
@@ -564,12 +572,21 @@ img {
 
 .public-site .hero-sport-caption strong {
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: clamp(2.15rem, 3.3vw, 3.4rem);
+  font-size: clamp(1.75rem, 2.65vw, 2.8rem);
   font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.02em;
   text-transform: uppercase;
   text-wrap: balance;
+}
+
+.public-site .hero-sport-caption small {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.09em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .public-site .hero-sport-indicators {
@@ -588,7 +605,7 @@ img {
   height: 4px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.3);
-  animation: heroSportIndicator 16s ease-in-out infinite;
+  animation: heroSportIndicator 20s ease-in-out infinite;
   animation-delay: var(--sport-delay);
 }
 
@@ -608,6 +625,10 @@ img {
   --sport-delay: 11.55s;
 }
 
+.public-site .hero-sport-indicators span:nth-child(5) {
+  --sport-delay: 15.55s;
+}
+
 .public-site .hero-sports-static-label {
   display: none;
 }
@@ -618,13 +639,13 @@ img {
     transform: translate3d(24px, 16px, 0) scale(0.97);
   }
 
-  2.8%,
-  21.9% {
+  2.2%,
+  17.5% {
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
 
-  27.5%,
+  22%,
   100% {
     opacity: 0;
     transform: translate3d(-20px, -8px, 0) scale(1.025);
@@ -637,13 +658,13 @@ img {
     transform: translate3d(0, 16px, 0);
   }
 
-  4.7%,
-  20.9% {
+  3.8%,
+  16.7% {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
 
-  25.6%,
+  20.5%,
   100% {
     opacity: 0;
     transform: translate3d(0, -8px, 0);
@@ -652,13 +673,13 @@ img {
 
 @keyframes heroSportIndicator {
   0%,
-  21.9% {
+  17.5% {
     width: 28px;
     background: var(--orange);
     opacity: 1;
   }
 
-  27.5%,
+  22%,
   100% {
     width: 18px;
     background: rgba(255, 255, 255, 0.3);
@@ -1028,44 +1049,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .amenity-content {
-  display: flex;
   min-width: 0;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.public-site .amenity-whatsapp-link {
-  display: inline-flex;
-  min-height: 44px;
-  max-width: 100%;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 13px 8px 9px;
-  border: 1px solid rgba(4, 39, 83, 0.12);
-  border-radius: 999px;
-  background: var(--navy);
-  color: white;
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1.25;
-  text-decoration: none;
-  touch-action: manipulation;
-  transition:
-    transform 180ms ease,
-    background-color 180ms ease;
-}
-
-.public-site .amenity-whatsapp-link:hover,
-.public-site .amenity-whatsapp-link:focus-visible {
-  background: var(--blue);
-  transform: translateY(-1px);
-}
-
-.public-site .amenity-whatsapp-link img {
-  width: 20px;
-  height: 20px;
-  flex: 0 0 20px;
 }
 
 /* Modalities */
@@ -1486,6 +1470,18 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   text-wrap: balance;
 }
 
+.public-site .testimonials-heading-copy {
+  min-width: 0;
+}
+
+.public-site .testimonials-recency {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: clamp(0.78rem, 1vw, 0.92rem);
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
 .public-site .google-rating {
   display: grid;
   min-width: min(100%, 270px);
@@ -1536,20 +1532,28 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
 .public-site .testimonials-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(14px, 2vw, 24px);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(12px, 1.4vw, 18px);
 }
 
 .public-site .testimonial-card {
   display: flex;
   min-width: 0;
-  min-height: 270px;
+  min-height: 220px;
   flex-direction: column;
-  padding: clamp(26px, 3vw, 38px);
+  padding: clamp(20px, 2vw, 26px);
   border: 1px solid rgba(2, 31, 78, 0.12);
   border-top: 4px solid var(--orange);
   background: white;
   box-shadow: 0 20px 52px rgba(2, 31, 78, 0.07);
+}
+
+.public-site .testimonial-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .public-site .testimonial-source {
@@ -1560,6 +1564,13 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   text-transform: uppercase;
 }
 
+.public-site .testimonial-stars {
+  color: #f7a600;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 .public-site .testimonial-card blockquote {
   display: flex;
   flex: 1;
@@ -1568,10 +1579,10 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .testimonial-card blockquote p {
-  margin: 28px 0;
+  margin: 22px 0;
   color: var(--navy);
   font-family: var(--font-display), Impact, sans-serif;
-  font-size: clamp(2rem, 3.1vw, 3rem);
+  font-size: clamp(1.35rem, 1.75vw, 1.9rem);
   font-weight: 400;
   line-height: 1;
   letter-spacing: -0.01em;
@@ -1626,6 +1637,30 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   .public-site .google-rating {
     width: min(100%, 310px);
   }
+
+  .public-site .testimonials-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .public-site .testimonial-card:last-child {
+    width: calc((100% - clamp(12px, 1.4vw, 18px)) / 2);
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+@media (min-width: 851px) and (max-width: 1100px) {
+  .public-site .testimonials-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .public-site .testimonial-card {
+    grid-column: span 2;
+  }
+
+  .public-site .testimonial-card:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1649,7 +1684,13 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .testimonial-card {
-    min-height: 230px;
+    min-height: 200px;
+  }
+
+  .public-site .testimonial-card:last-child {
+    width: auto;
+    grid-column: auto;
+    justify-self: stretch;
   }
 
   .public-site .testimonials-action {
@@ -2296,9 +2337,10 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
 .public-site .footer-grid {
   display: grid;
-  grid-template-columns: 1.3fr 0.9fr 0.7fr;
-  gap: 52px;
-  padding: clamp(42px, 5vw, 64px);
+  grid-template-columns: 190px 280px minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 3vw, 40px);
+  padding: clamp(28px, 3.5vw, 42px) clamp(28px, 5vw, 64px);
 }
 
 .public-site .footer-brand img {
@@ -2315,8 +2357,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   font-weight: 700;
 }
 
+.public-site .footer-group {
+  min-width: 0;
+}
+
 .public-site .footer h2 {
-  margin: 0 0 20px;
+  margin: 0 0 12px;
   color: var(--orange);
   font-size: 0.7rem;
   letter-spacing: 0.12em;
@@ -2331,7 +2377,14 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   line-height: 1.7;
 }
 
-.public-site .footer-grid > div:not(.footer-brand) > a {
+.public-site .footer-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px clamp(16px, 2vw, 28px);
+}
+
+.public-site .footer-link-row > a {
   display: flex;
   width: max-content;
   max-width: 100%;
@@ -2355,7 +2408,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   justify-content: space-between;
   gap: 24px;
   margin-inline: clamp(24px, 5vw, 64px);
-  padding-block: 24px;
+  padding-block: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.48);
   font-size: 0.68rem;
@@ -2455,7 +2508,8 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .footer-grid {
-    grid-template-columns: 1.2fr 0.9fr 0.7fr;
+    grid-template-columns: 160px 260px minmax(0, 1fr);
+    gap: 24px;
   }
 }
 
@@ -2757,8 +2811,26 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     height: 340px;
   }
 
-  .public-site .footer-grid > div:last-child {
-    grid-column: 1 / -1;
+  .public-site .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px 24px;
+  }
+
+  .public-site .footer-brand {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .public-site .footer-brand img {
+    width: 92px;
+    height: 92px;
+  }
+
+  .public-site .footer-brand p {
+    margin: 0;
   }
 
   .public-site .footer-instagram {
@@ -3072,23 +3144,25 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .footer-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 38px 24px;
-    padding: 40px 20px;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 20px;
   }
 
   .public-site .footer-brand {
-    grid-column: 1 / -1;
-  }
-
-  .public-site .footer-grid > div:last-child {
     grid-column: auto;
   }
 
   .public-site .footer-bottom {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px 16px;
     margin-inline: 20px;
+  }
+
+  .public-site .footer-bottom p {
+    flex: 1 0 100%;
   }
 
   .public-site .footer {

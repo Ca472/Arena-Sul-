@@ -31,10 +31,10 @@ type Modality = {
 
 const modalities: Modality[] = [
   {
-    title: "Beach Tênis",
+    title: "Beach Tennis",
     image: {
       src: "/images/hero-beach-tennis.jpg",
-      alt: "Homem segura uma bola ao lado de um cesto com bolas de Beach Tênis na quadra de areia.",
+      alt: "Homem segura uma bola ao lado de um cesto com bolas de Beach Tennis na quadra de areia.",
       objectPosition: "50% 38%",
       objectPositionMobile: "50% 31%",
     },
@@ -43,17 +43,17 @@ const modalities: Modality[] = [
       {
         label: "Agendar aula experimental",
         message:
-          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula experimental de Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula experimental de Beach Tennis. Poderiam me informar os dias, horários e valores disponíveis?",
       },
       {
         label: "Reservar quadra de areia",
         message:
-          "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar Beach Tênis. Poderiam me informar os dias, horários e valores disponíveis?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar uma quadra de areia para jogar Beach Tennis. Poderiam me informar os dias, horários e valores disponíveis?",
       },
       {
         label: "Consultar Day Use",
         message:
-          "Olá, Arena Sul! Vim do Site. Gostaria de receber informações sobre o Day Use para jogar Beach Tênis. Poderiam me informar os dias disponíveis, os horários, os valores e o que está incluído?",
+          "Olá, Arena Sul! Vim do Site. Gostaria de receber informações sobre o Day Use para jogar Beach Tennis. Poderiam me informar os dias disponíveis, os horários, os valores e o que está incluído?",
       },
     ],
   },
@@ -87,11 +87,10 @@ const modalities: Modality[] = [
   {
     title: "Vôlei de Praia",
     image: {
-      src: "/images/hero-volei-praia-atleta.jpg",
-      alt: "Homem posa segurando uma bola de vôlei.",
-      objectPosition: "50% 15%",
-      objectPositionMobile: "50% 15%",
-      preservePortraitOnMobile: true,
+      src: "/images/modality-volei-praia-mergulho.jpg",
+      alt: "Jogador mergulha para alcançar a bola durante uma partida de vôlei de praia.",
+      objectPosition: "50% 45%",
+      objectPositionMobile: "50% 48%",
     },
     menuLabel: "Aula, quadra ou Day Use",
     actions: [
@@ -113,22 +112,6 @@ const modalities: Modality[] = [
     ],
   },
   {
-    title: "Futebol Society",
-    image: {
-      src: "/images/modality-futebol-society.png",
-      alt: "Bola de futebol em primeiro plano na quadra society da Arena Sul.",
-      objectPosition: "50% 68%",
-    },
-    menuLabel: "Reservar quadra",
-    actions: [
-      {
-        label: "Reservar quadra society",
-        message:
-          "Olá, Arena Sul! Vim do Site. Gostaria de reservar a quadra de futebol society. Poderiam me informar os dias, horários e valores disponíveis?",
-      },
-    ],
-  },
-  {
     title: "Aula Funcional",
     image: {
       src: "/images/modality-treino-funcional.png",
@@ -141,6 +124,22 @@ const modalities: Modality[] = [
         label: "Agendar aula funcional",
         message:
           "Olá, Arena Sul! Vim do Site. Gostaria de agendar uma aula funcional. Poderiam me informar as turmas, os dias, os horários e os valores disponíveis?",
+      },
+    ],
+  },
+  {
+    title: "Futebol Society",
+    image: {
+      src: "/images/modality-futebol-society.png",
+      alt: "Bola de futebol em primeiro plano na quadra society da Arena Sul.",
+      objectPosition: "50% 68%",
+    },
+    menuLabel: "Reservar quadra",
+    actions: [
+      {
+        label: "Reservar quadra society",
+        message:
+          "Olá, Arena Sul! Vim do Site. Gostaria de reservar a quadra de futebol society. Poderiam me informar os dias, horários e valores disponíveis?",
       },
     ],
   },
