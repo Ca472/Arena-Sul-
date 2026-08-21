@@ -100,11 +100,6 @@ const googleTestimonials: GoogleTestimonial[] = [
     excerpt: "Excelente local para praticar esportes em família e com amigos.",
   },
   {
-    author: "Ubiratan Oliveira",
-    excerpt:
-      "Lugar ótimo pra se divertir com amigos e familiares. Só precisa dar uma arrumadinha no estacionamento.",
-  },
-  {
     author: "Agnaldo Tinho",
     excerpt: "Bom",
   },
@@ -397,7 +392,7 @@ export default function Home() {
               <p className="section-kicker">Depoimentos reais</p>
               <h2 id="testimonials-title">Quem conhece a Arena, recomenda.</h2>
               <p className="testimonials-recency">
-                Últimas 5 avaliações recebidas
+                Últimas 4 avaliações recebidas
               </p>
             </div>
             <a
