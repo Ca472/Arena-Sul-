@@ -105,7 +105,7 @@ const slides: readonly StructureSlide[] = [
     src: "/images/estrutura-13-quadras-panorama.png",
     alt: "Vista panorâmica das quadras de areia e da área de convivência da Arena Sul",
     eyebrow: "Estrutura esportiva",
-    title: "13 quadras de areia te esperando.",
+    title: "Ambiente acolhedor para todas as idades",
     fit: "cover",
     position: "center",
     compactCaption: true,

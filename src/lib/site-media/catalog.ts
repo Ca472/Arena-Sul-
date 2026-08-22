@@ -200,7 +200,7 @@ export const SITE_MEDIA_DEFINITIONS = [
   {
     key: "structure-sand-courts-invitation",
     section: "Estrutura",
-    label: "13 quadras de areia te esperando",
+    label: "Ambiente acolhedor para todas as idades",
     description: "Oitava foto do carrossel Estrutura.",
     defaultSrc: "/images/estrutura-13-quadras-panorama.png",
     alt: "Vista panorâmica das quadras de areia e da área de convivência da Arena Sul.",

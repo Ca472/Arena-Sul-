@@ -575,6 +575,8 @@
   }
 
   .storyColumn {
+    /* Size containment removes intrinsic width; keep the centered card from collapsing. */
+    width: 100%;
     max-width: 520px;
     margin-inline: auto;
   }
