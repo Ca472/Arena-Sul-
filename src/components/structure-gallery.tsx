@@ -82,7 +82,7 @@ const slides: readonly StructureSlide[] = [
     position: "center",
   },
   {
-    src: "/images/estrutura-eventos-area-lazer.jpg",
+    src: "/images/estrutura-eventos-area-lazer-v2.png",
     alt: "Vista superior da área de convivência e das quadras de areia da Arena Sul",
     eyebrow: "Estrutura completa",
     title: "Para torneios, eventos corporativos e escolares",
