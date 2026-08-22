@@ -50,7 +50,7 @@ const heroSports = [
     id: "futevolei",
     name: "Futevôlei",
     professor: "Profº Gett Lima",
-    image: "/images/hero-futevolei.jpg",
+    image: "/images/hero-futevolei-gett-lima.jpg",
     className: "hero-sport-slide hero-sport-slide-futevolei",
   },
   {

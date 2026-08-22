@@ -1,4 +1,5 @@
 import styles from "@/app/admin/admin.module.css";
+import { InstagramExpiryCountdown } from "@/app/admin/(protected)/integracoes/instagram/instagram-expiry-countdown";
 import { InstagramInviteForm } from "@/app/admin/(protected)/integracoes/instagram/instagram-invite-form";
 import { resolveInstagramAdminConnectionStatus } from "@/lib/instagram/admin-status";
 import { getInstagramStoriesSnapshot } from "@/lib/instagram/queries";
@@ -79,7 +80,15 @@ export default async function InstagramIntegrationPage() {
           </div>
         </section>
 
-        <section className={styles.formSection}>
+        <InstagramExpiryCountdown
+          expiresAt={connection?.expiresAt ?? null}
+          referenceTime={liveSnapshot.fetchedAt}
+        />
+
+        <section
+          className={styles.formSection}
+          id="instagram-authorization-invite"
+        >
           <h2>Convite de autorização</h2>
           <p className={styles.subtitle}>
             O responsável abrirá o link, fará login diretamente no Instagram e aprovará somente a leitura de perfil, Reels e Stories ativos.

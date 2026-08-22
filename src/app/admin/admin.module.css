@@ -655,6 +655,133 @@
   grid-template-columns: auto minmax(0, 1fr);
 }
 
+.expiryHeading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.expiryHeading .eyebrow {
+  margin-bottom: 5px;
+}
+
+.expiryHeading .badge {
+  flex: 0 0 auto;
+  background: var(--expiry-background);
+  color: var(--expiry-ink);
+}
+
+.expiryPanel {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--expiry-border);
+  border-radius: 14px;
+  background: var(--expiry-background);
+  color: var(--expiry-ink);
+}
+
+.expiryKicker {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.expiryCountdown {
+  font-size: clamp(1.65rem, 5vw, 2.45rem);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.expiryPanel p,
+.expirySecurityNote {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.expiryPanel p {
+  color: var(--expiry-ink);
+}
+
+.expiryPanel time {
+  font-weight: 750;
+}
+
+.expiryHealthy {
+  --expiry-background: #e9f6ef;
+  --expiry-border: #b7dcc8;
+  --expiry-ink: #14583c;
+}
+
+.expiryAttention {
+  --expiry-background: #fff8dc;
+  --expiry-border: #e8d58b;
+  --expiry-ink: #725514;
+}
+
+.expiryUrgent {
+  --expiry-background: #fff0e6;
+  --expiry-border: #efb485;
+  --expiry-ink: #843b0c;
+}
+
+.expiryExpired {
+  --expiry-background: #fff0ed;
+  --expiry-border: #e8aaa1;
+  --expiry-ink: #8f2c22;
+}
+
+.expiryUnavailable {
+  --expiry-background: #f1f0eb;
+  --expiry-border: #d7d3c9;
+  --expiry-ink: #5b574d;
+}
+
+.renewalGuide {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  background: #f7f8f3;
+}
+
+.renewalGuide h3 {
+  margin: 0;
+  font-size: 0.98rem;
+}
+
+.renewalGuide ol {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding-left: 1.4rem;
+  color: var(--admin-muted);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.renewalGuide li {
+  padding-left: 4px;
+}
+
+.renewalGuide li::marker {
+  color: var(--admin-green);
+  font-weight: 800;
+}
+
+.renewalGuide .secondaryButton {
+  width: fit-content;
+}
+
+.expirySecurityNote {
+  color: var(--admin-muted);
+}
+
 .integrationStatus p,
 .inviteOutput p {
   margin: 0;
@@ -1046,6 +1173,16 @@
   .formSection {
     gap: 16px;
     padding: 20px;
+  }
+
+  .expiryHeading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .expiryHeading .badge,
+  .renewalGuide .secondaryButton {
+    width: 100%;
   }
 
   .panelHeader {
