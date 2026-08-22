@@ -201,6 +201,63 @@ function MediaVisual({
   return <Image src={previewUrl} alt="" fill sizes={sizes} unoptimized />;
 }
 
+function InlineReelVisual({
+  item,
+  titleId,
+  failed,
+  setVideoRef,
+  onPlay,
+  onError,
+  onRetry,
+}: {
+  item: InstagramMediaItem;
+  titleId: string;
+  failed: boolean;
+  setVideoRef: (video: HTMLVideoElement | null) => void;
+  onPlay: () => void;
+  onError: () => void;
+  onRetry: () => void;
+}) {
+  if (item.mediaType === "VIDEO") {
+    if (failed) {
+      return (
+        <span className={styles.reelPlaybackFallback} role="status">
+          <strong>Este Reel não pôde ser reproduzido agora.</strong>
+          <span>Tente novamente ou use o link do Instagram abaixo.</span>
+          <button type="button" onClick={onRetry}>
+            Tentar novamente
+          </button>
+        </span>
+      );
+    }
+
+    return (
+      <video
+        ref={setVideoRef}
+        src={item.mediaUrl}
+        poster={item.thumbnailUrl ?? undefined}
+        aria-label="Reproduzir este Reel da Arena Sul"
+        aria-describedby={titleId}
+        controls
+        playsInline
+        preload="none"
+        onPlay={onPlay}
+        onError={onError}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={item.thumbnailUrl ?? item.mediaUrl}
+      alt={item.caption || "Prévia de Reel da Arena Sul"}
+      fill
+      sizes="(max-width: 600px) 72vw, (max-width: 1000px) 36vw, 220px"
+      unoptimized
+    />
+  );
+}
+
 function InstagramProfileFallback() {
   return (
     <div className={styles.fallbackGrid}>
@@ -255,6 +312,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const suppressStoryClickRef = useRef(false);
   const suppressStoryClickTimerRef = useRef<number | null>(null);
   const refreshControllerRef = useRef<AbortController | null>(null);
+  const reelVideoRefs = useRef(new Map<string, HTMLVideoElement>());
   const refreshInFlightRef = useRef(false);
   const lastStoriesRefreshStartedAtRef = useRef(0);
   const latestStoriesFetchedAtRef = useRef(
@@ -270,6 +328,9 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const [isVisible, setIsVisible] = useState(false);
   const [pageVisible, setPageVisible] = useState(true);
   const [motionAllowed, setMotionAllowed] = useState(false);
+  const [failedReelIds, setFailedReelIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const reels = feed.reels;
   const feedStoriesFetchedAt = getInstagramStoriesSnapshotTimestamp(
@@ -408,6 +469,12 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
 
   useEffect(() => {
     if (!isVisible || !pageVisible) {
+      reelVideoRefs.current.forEach((video) => video.pause());
+    }
+  }, [isVisible, pageVisible]);
+
+  useEffect(() => {
+    if (!isVisible || !pageVisible) {
       const controller = refreshControllerRef.current;
       controller?.abort();
       if (refreshControllerRef.current === controller) {
@@ -478,6 +545,47 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     pageVisible &&
     !interactionPaused &&
     !manualPaused;
+
+  const setReelVideoRef = useCallback(
+    (reelId: string, video: HTMLVideoElement | null) => {
+      if (video) {
+        reelVideoRefs.current.set(reelId, video);
+        return;
+      }
+      reelVideoRefs.current.delete(reelId);
+    },
+    [],
+  );
+
+  const handleReelPlay = useCallback((reelId: string) => {
+    reelVideoRefs.current.forEach((video, currentReelId) => {
+      if (currentReelId !== reelId) {
+        video.pause();
+      }
+    });
+  }, []);
+
+  const handleReelError = useCallback((failureKey: string) => {
+    setFailedReelIds((current) => {
+      if (current.has(failureKey)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.add(failureKey);
+      return next;
+    });
+  }, []);
+
+  const retryReel = useCallback((failureKey: string) => {
+    setFailedReelIds((current) => {
+      if (!current.has(failureKey)) {
+        return current;
+      }
+      const next = new Set(current);
+      next.delete(failureKey);
+      return next;
+    });
+  }, []);
 
   const navigateStory = (direction: "previous" | "next") => {
     dispatchLiveStories({
@@ -775,35 +883,51 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
 
             {visibleReels.length > 0 ? (
               <div className={styles.reelRail}>
-                {visibleReels.map((reel) => (
-                  <a
-                    className={styles.reelCard}
-                    href={reel.permalink}
-                    key={reel.id}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className={styles.reelMedia}>
-                      <MediaVisual
-                        item={reel}
-                        sizes="(max-width: 600px) 72vw, (max-width: 1000px) 36vw, 220px"
-                      />
-                      <span className={styles.playIcon} aria-hidden="true">
-                        ▶
+                {visibleReels.map((reel, index) => {
+                  const title = reel.caption || "Novo Reel da Arena Sul";
+                  const titleId = `arena-reel-${index + 1}-title`;
+                  const failureKey = `${reel.id}:${reel.mediaUrl}`;
+                  return (
+                    <article
+                      className={styles.reelCard}
+                      key={reel.id}
+                      aria-labelledby={titleId}
+                    >
+                      <span className={styles.reelMedia}>
+                        <InlineReelVisual
+                          item={reel}
+                          titleId={titleId}
+                          failed={failedReelIds.has(failureKey)}
+                          setVideoRef={(video) =>
+                            setReelVideoRef(reel.id, video)
+                          }
+                          onPlay={() => handleReelPlay(reel.id)}
+                          onError={() => handleReelError(failureKey)}
+                          onRetry={() => retryReel(failureKey)}
+                        />
                       </span>
-                    </span>
-                    <span className={styles.reelMeta}>
-                      <span>
-                        {instagramDateFormatter.format(
-                          new Date(reel.timestamp),
-                        )}
-                      </span>
-                      <strong>
-                        {reel.caption || "Novo Reel da Arena Sul"}
-                      </strong>
-                    </span>
-                  </a>
-                ))}
+                      <div className={styles.reelMeta}>
+                        <span>
+                          {instagramDateFormatter.format(
+                            new Date(reel.timestamp),
+                          )}
+                        </span>
+                        <h4 className={styles.reelTitle} id={titleId}>
+                          {title}
+                        </h4>
+                        <a
+                          className={styles.reelExternalLink}
+                          href={reel.permalink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Abrir no Instagram: ${title.slice(0, 90)}`}
+                        >
+                          Ver no Instagram <span aria-hidden="true">↗</span>
+                        </a>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             ) : (
               <div className={styles.noReels}>

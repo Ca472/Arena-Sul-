@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
+import type { SiteMediaMap, SiteMediaSlot } from "@/lib/site-media/catalog";
 
 type ModalityAction = {
   label: string;
@@ -19,6 +20,7 @@ type ModalityAction = {
 type Modality = {
   title: string;
   image: {
+    slot: SiteMediaSlot;
     src: string;
     alt: string;
     objectPosition: string;
@@ -33,6 +35,7 @@ const modalities: Modality[] = [
   {
     title: "Beach Tennis",
     image: {
+      slot: "modality-beach-tennis",
       src: "/images/modality-beach-tennis-turma-v2.png",
       alt: "Turma posa com raquetes na quadra de areia da Arena Sul.",
       objectPosition: "50% 72%",
@@ -61,6 +64,7 @@ const modalities: Modality[] = [
   {
     title: "Futevôlei",
     image: {
+      slot: "modality-futevolei",
       src: "/images/modality-futevolei-arena.jpg",
       alt: "Jogador de futevôlei controla a bola com o pé diante da rede na quadra de areia.",
       objectPosition: "50% 56%",
@@ -88,6 +92,7 @@ const modalities: Modality[] = [
   {
     title: "Vôlei de Praia",
     image: {
+      slot: "modality-beach-volleyball",
       src: "/images/modality-volei-praia-mergulho.jpg",
       alt: "Jogador mergulha para alcançar a bola durante uma partida de vôlei de praia.",
       objectPosition: "50% 45%",
@@ -115,6 +120,7 @@ const modalities: Modality[] = [
   {
     title: "Aula Funcional",
     image: {
+      slot: "modality-functional-class",
       src: "/images/modality-aula-funcional-arena-v2.png",
       alt: "Participantes realizam uma aula funcional na quadra de areia da Arena Sul.",
       objectPosition: "50% 75%",
@@ -133,6 +139,7 @@ const modalities: Modality[] = [
   {
     title: "Futebol Society",
     image: {
+      slot: "modality-society-football",
       src: "/images/modality-futebol-society.png",
       alt: "Bola de futebol em primeiro plano na quadra society da Arena Sul.",
       objectPosition: "50% 68%",
@@ -148,7 +155,11 @@ const modalities: Modality[] = [
   },
 ];
 
-export function ModalityCards() {
+export function ModalityCards({
+  media,
+}: {
+  media?: Partial<SiteMediaMap>;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const triggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const idPrefix = useId().replaceAll(":", "");
@@ -196,7 +207,7 @@ export function ModalityCards() {
             >
               <Image
                 className="modality-image"
-                src={modality.image.src}
+                src={media?.[modality.image.slot] ?? modality.image.src}
                 alt={modality.image.alt}
                 fill
                 sizes="(max-width: 600px) calc(100vw - 28px), (max-width: 850px) calc((100vw - 54px) / 2), (max-width: 1100px) calc((100vw - 68px) / 3), (max-width: 1599px) 225px, 260px"

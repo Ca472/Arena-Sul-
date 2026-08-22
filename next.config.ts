@@ -37,6 +37,12 @@ const nextConfig: NextConfig = {
               port: "",
               pathname: "/storage/v1/object/sign/event-photos/**",
             },
+            {
+              protocol: "https" as const,
+              hostname: new URL(supabaseUrl).hostname,
+              port: "",
+              pathname: "/storage/v1/object/public/site-media/**",
+            },
           ]
         : []),
       {

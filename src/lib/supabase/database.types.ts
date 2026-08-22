@@ -115,6 +115,32 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
         Relationships: [];
       };
+      site_media: {
+        Row: {
+          slot: string;
+          storage_path: string;
+          original_name: string;
+          mime_type: "image/jpeg" | "image/png" | "image/webp";
+          size_bytes: number;
+          width: number | null;
+          height: number | null;
+          updated_by: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          slot: string;
+          storage_path: string;
+          original_name: string;
+          mime_type: "image/jpeg" | "image/png" | "image/webp";
+          size_bytes: number;
+          width?: number | null;
+          height?: number | null;
+          updated_by?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_media"]["Insert"]>;
+        Relationships: [];
+      };
       instagram_oauth_invites: {
         Row: {
           id: string;

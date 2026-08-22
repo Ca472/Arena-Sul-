@@ -10,6 +10,7 @@ import { ModalityCards } from "@/components/modality-cards";
 import { SiteHeader } from "@/components/site-header";
 import { StructureGallery } from "@/components/structure-gallery";
 import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
+import { getSiteMediaMap } from "@/lib/site-media/queries";
 
 type ArenaStat = {
   value: string | null;
@@ -42,39 +43,39 @@ const heroSports = [
   {
     id: "volei-praia",
     name: "Vôlei de Praia",
-    professor: "Profº Julio Neto",
-    image: "/images/hero-volei-praia.jpg",
+    professor: "Profº Julio Neti",
+    imageSlot: "team-julio-neto",
     className: "hero-sport-slide hero-sport-slide-volleyball",
   },
   {
     id: "futevolei",
     name: "Futevôlei",
     professor: "Profº Gett Lima",
-    image: "/images/hero-futevolei-gett-lima.jpg",
+    imageSlot: "team-gett-lima",
     className: "hero-sport-slide hero-sport-slide-futevolei",
   },
   {
     id: "volei-praia-edson",
     name: "Vôlei de Praia",
     professor: "Profº Edson Junior",
-    image: "/images/hero-volei-praia-time-arena.jpg",
+    imageSlot: "team-edson-junior",
     className: "hero-sport-slide hero-sport-slide-volleyball-athlete",
   },
   {
     id: "beach-tennis",
     name: "Beach Tennis",
     professor: "Profº Vinicius Alves",
-    image: "/images/hero-beach-tennis.jpg",
+    imageSlot: "team-vinicius-alves",
     className: "hero-sport-slide hero-sport-slide-beach-tennis",
   },
   {
     id: "futevolei-wallacy",
     name: "Futevôlei",
     professor: "Profº Wallacy",
-    image: "/images/hero-futevolei-wallacy.jpg",
+    imageSlot: "team-wallacy",
     className: "hero-sport-slide hero-sport-slide-futevolei-wallacy",
   },
-];
+] as const;
 
 const amenities: Amenity[] = [
   { label: "13 quadras de areia" },
@@ -125,7 +126,6 @@ const structuredData = {
   name: "Arena Sul Sports",
   url: "https://www.arenasulsports.com/",
   telephone: "+55 12 3307-1093",
-  image: "https://www.arenasulsports.com/images/arena-drone-2.jpg",
   description:
     "Arena esportiva em São José dos Campos para saúde, convivência em família e eventos corporativos e escolares.",
   address: {
@@ -143,7 +143,13 @@ const structuredData = {
   hasMap: mapsPlaceUrl,
 };
 
-export default function Home() {
+export default async function Home() {
+  const siteMedia = await getSiteMediaMap();
+  const structuredImage = new URL(
+    siteMedia["home-about-overview"],
+    "https://www.arenasulsports.com",
+  ).href;
+
   return (
     <>
       <ArenaOpening>
@@ -153,7 +159,10 @@ export default function Home() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+            __html: JSON.stringify({
+              ...structuredData,
+              image: structuredImage,
+            }).replace(/</g, "\\u003c"),
           }}
         />
         <section className="hero" id="inicio" tabIndex={-1}>
@@ -202,7 +211,7 @@ export default function Home() {
                   <figure className={sport.className} key={sport.id}>
                     <Image
                       className="hero-sport-photo"
-                      src={sport.image}
+                      src={siteMedia[sport.imageSlot]}
                       alt=""
                       fill
                       sizes="(max-width: 600px) 72vw, (max-width: 900px) 42vw, 390px"
@@ -254,7 +263,7 @@ export default function Home() {
           <div className="about-grid shell">
             <div className="about-media">
               <Image
-                src="/images/arena-drone-2.jpg"
+                src={siteMedia["home-about-overview"]}
                 alt="Vista aérea das quadras e da estrutura da Arena Sul Sports"
                 fill
                 sizes="(max-width: 900px) 100vw, 52vw"
@@ -305,7 +314,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-          <StructureGallery />
+          <StructureGallery media={siteMedia} />
         </section>
 
         <section
@@ -341,7 +350,7 @@ export default function Home() {
               aria-label="Abrir vista panorâmica da Arena Sul no Tour Virtual 360 graus"
             >
               <Image
-                src="/images/arena-drone-2.jpg"
+                src={siteMedia["home-tour-preview"]}
                 alt="Vista aérea da estrutura esportiva da Arena Sul"
                 fill
                 sizes="(max-width: 850px) calc(100vw - 28px), 56vw"
@@ -379,7 +388,7 @@ export default function Home() {
             </div>
           </div>
 
-          <ModalityCards />
+          <ModalityCards media={siteMedia} />
         </section>
 
         <section

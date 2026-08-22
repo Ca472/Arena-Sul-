@@ -285,7 +285,7 @@
 }
 
 .reelCard:hover,
-.reelCard:focus-visible {
+.reelCard:focus-within {
   border-color: rgba(255, 145, 77, 0.76);
   transform: translateY(-4px);
 }
@@ -300,30 +300,24 @@
 
 .reelMedia img,
 .reelMedia video {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   transition: transform 350ms ease;
 }
 
-.reelCard:hover .reelMedia img,
-.reelCard:focus-visible .reelMedia img {
-  transform: scale(1.035);
+.reelMedia img {
+  object-fit: cover;
 }
 
-.playIcon {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  display: grid;
-  width: 44px;
-  height: 44px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--orange);
-  color: var(--navy);
-  font-size: 0.82rem;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22);
+.reelMedia video {
+  object-fit: contain;
+  background: #020817;
+}
+
+.reelCard:hover .reelMedia img,
+.reelCard:focus-within .reelMedia img {
+  transform: scale(1.035);
 }
 
 .reelMeta {
@@ -340,8 +334,9 @@
   text-transform: uppercase;
 }
 
-.reelMeta strong {
+.reelTitle {
   display: -webkit-box;
+  margin: 0;
   overflow: hidden;
   color: white;
   font-size: 0.78rem;
@@ -350,6 +345,64 @@
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+}
+
+.reelPlaybackFallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-content: center;
+  gap: 8px;
+  padding: 22px;
+  background: #020817;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.reelPlaybackFallback strong {
+  color: #fff;
+  font-size: 0.82rem;
+}
+
+.reelPlaybackFallback button {
+  min-height: 42px;
+  margin-top: 4px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.reelPlaybackFallback button:hover,
+.reelPlaybackFallback button:focus-visible {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.reelExternalLink {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.reelExternalLink:hover,
+.reelExternalLink:focus-visible {
+  color: var(--orange);
 }
 
 .noStory,
@@ -640,7 +693,7 @@
   }
 
   .reelCard:hover,
-  .reelCard:focus-visible {
+  .reelCard:focus-within {
     transform: none;
   }
 
