@@ -2175,15 +2175,19 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .footer-shell {
-  max-width: none;
-  margin-inline-start: max(
-    clamp(14px, 2vw, 28px),
+  --footer-shell-start: max(
+    clamp(18px, 2.25vw, 40px),
     env(safe-area-inset-left, 0px)
   );
-  margin-inline-end: max(
-    clamp(14px, 2vw, 28px),
+  --footer-shell-end: max(
+    clamp(18px, 2.25vw, 40px),
     env(safe-area-inset-right, 0px)
   );
+
+  width: calc(100% - var(--footer-shell-start) - var(--footer-shell-end));
+  max-width: none;
+  margin-inline-start: var(--footer-shell-start);
+  margin-inline-end: var(--footer-shell-end);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 32px 32px 0 0;
   background: rgba(255, 255, 255, 0.025);

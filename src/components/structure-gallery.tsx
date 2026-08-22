@@ -82,8 +82,8 @@ const slides: readonly StructureSlide[] = [
     position: "center",
   },
   {
-    src: "/images/estrutura-eventos-torneios.jpg",
-    alt: "Vista aérea das quadras de areia da Arena Sul em uso, com áreas de apoio ao lado",
+    src: "/images/estrutura-eventos-area-lazer.jpg",
+    alt: "Vista superior da área de convivência e das quadras de areia da Arena Sul",
     eyebrow: "Estrutura completa",
     title: "Para torneios, eventos corporativos e escolares",
     description: "Conte conosco para auxiliar na organização do seu evento.",
