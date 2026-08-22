@@ -1,5 +1,7 @@
 import styles from "@/app/admin/admin.module.css";
 import { InstagramInviteForm } from "@/app/admin/(protected)/integracoes/instagram/instagram-invite-form";
+import { resolveInstagramAdminConnectionStatus } from "@/lib/instagram/admin-status";
+import { getInstagramStoriesSnapshot } from "@/lib/instagram/queries";
 import { isInstagramOAuthReady } from "@/lib/instagram/readiness";
 import {
   getInstagramConnectionMetadata,
@@ -10,11 +12,45 @@ export const dynamic = "force-dynamic";
 
 export default async function InstagramIntegrationPage() {
   const ready = isInstagramOAuthReady();
-  const [connection, credentials] = await Promise.all([
+  const [connection, credentials, liveSnapshot] = await Promise.all([
     getInstagramConnectionMetadata(),
     getStoredInstagramCredentials(),
+    getInstagramStoriesSnapshot(),
   ]);
-  const connected = Boolean(connection && credentials && !connection.expired);
+  const connectionStatus = resolveInstagramAdminConnectionStatus({
+    oauthReady: ready,
+    hasConnection: Boolean(connection),
+    expired: connection?.expired ?? false,
+    hasCredentials: Boolean(credentials),
+    liveStatus: liveSnapshot.status,
+  });
+  const connected = connectionStatus === "connected";
+
+  const statusLabel = {
+    connected: "Conectado e validado",
+    expired: "Autorização expirada",
+    "api-unavailable": "API da Meta indisponível",
+    "credentials-unavailable": "Conexão indisponível",
+    "awaiting-authorization": "Aguardando autorização",
+    unconfigured: "Configuração incompleta",
+  }[connectionStatus];
+
+  const statusMessage = (() => {
+    switch (connectionStatus) {
+      case "connected":
+        return `@${connection?.username} está vinculada e a API da Meta confirmou o acesso. O token permanece cifrado e restrito ao servidor.`;
+      case "expired":
+        return "A autorização anterior expirou. Gere um novo convite para reconectar @arenasulsports.";
+      case "api-unavailable":
+        return "A credencial continua armazenada, mas a Meta não confirmou o acesso agora. Verifique a conta de desenvolvedor e as permissões antes de gerar outro convite.";
+      case "credentials-unavailable":
+        return "A conexão existe, mas a credencial cifrada não pôde ser lida. Revise as variáveis seguras antes de gerar outro convite.";
+      case "awaiting-authorization":
+        return "A configuração base está pronta. Gere o convite e envie ao responsável por @arenasulsports.";
+      case "unconfigured":
+        return "As variáveis seguras da integração ainda não foram configuradas.";
+    }
+  })();
 
   return (
     <>
@@ -37,25 +73,9 @@ export default async function InstagramIntegrationPage() {
                 connected ? styles.published : styles.draft
               }`}
             >
-              {connected
-                ? "Conectado"
-                : connection
-                  ? connection.expired
-                    ? "Autorização expirada"
-                    : "Conexão indisponível"
-                  : "Aguardando autorização"}
+              {statusLabel}
             </span>
-            <p>
-              {connected && connection
-                ? `@${connection.username} está vinculada. O token permanece cifrado e restrito ao servidor.`
-                : connection
-                  ? connection.expired
-                    ? "A autorização anterior expirou. Gere um novo convite para reconectar @arenasulsports."
-                    : "A conexão existe, mas a credencial cifrada não pôde ser lida. Revise as variáveis seguras antes de gerar outro convite."
-                : ready
-                  ? "A configuração base está pronta. Gere o convite e envie ao responsável por @arenasulsports."
-                  : "As variáveis seguras da integração ainda não foram configuradas."}
-            </p>
+            <p>{statusMessage}</p>
           </div>
         </section>
 
