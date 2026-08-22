@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 function cleanRedirect(path: string) {
   const origin = getInstagramPortalOrigin();
   const response = NextResponse.redirect(
-    new URL(path, origin ?? "https://arena-sul-portal.vercel.app"),
+    new URL(path, origin ?? "https://www.arenasulsports.com"),
     303,
   );
   applyInstagramSecurityHeaders(response.headers);

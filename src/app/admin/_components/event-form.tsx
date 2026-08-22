@@ -331,7 +331,7 @@ export function EventForm({ eventId, initialEvent, demoMode }: EventFormProps) {
                 pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
                 required
               />
-              <p className={styles.fieldHint}>arenasulsports.com/eventos/{slug || "nome-do-evento"}</p>
+              <p className={styles.fieldHint}>www.arenasulsports.com/eventos/{slug || "nome-do-evento"}</p>
               {state.fieldErrors?.slug?.map((message) => (
                 <p className={styles.fieldError} key={message}>{message}</p>
               ))}
