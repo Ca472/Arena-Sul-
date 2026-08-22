@@ -15,6 +15,7 @@ export async function GET() {
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
       "X-Robots-Tag": "noindex, nofollow",
+      "X-Instagram-Stories-Fetched-At": snapshot.fetchedAt ?? "unavailable",
     },
   });
 }

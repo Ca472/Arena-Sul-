@@ -5,6 +5,7 @@ import {
   areInstagramStoriesEqual,
   findStoryIndexAfterRefresh,
   getAdjacentStoryIndex,
+  getInstagramStoriesCacheBucket,
   getInstagramStoriesRefreshDelay,
   getInstagramStoriesSnapshotTimestamp,
   getStorySwipeDirection,
@@ -30,21 +31,28 @@ function story(id, overrides = {}) {
 
 const fetchedAt = "2026-08-19T15:01:00.000Z";
 
-test("uses a thirty-second visible refresh with shared server protection", () => {
-  assert.equal(INSTAGRAM_STORIES_REFRESH_MS, 30_000);
-  assert.equal(INSTAGRAM_STORIES_MIN_REFRESH_MS, 30_000);
-  assert.equal(INSTAGRAM_STORIES_SHARED_CACHE_SECONDS, 25);
+test("uses a fifteen-second near-live refresh with shared server protection", () => {
+  assert.equal(INSTAGRAM_STORIES_REFRESH_MS, 15_000);
+  assert.equal(INSTAGRAM_STORIES_MIN_REFRESH_MS, 5_000);
+  assert.equal(INSTAGRAM_STORIES_SHARED_CACHE_SECONDS, 15);
   assert.ok(
-    INSTAGRAM_STORIES_MIN_REFRESH_MS >=
-      INSTAGRAM_STORIES_SHARED_CACHE_SECONDS * 1000,
+    INSTAGRAM_STORIES_MIN_REFRESH_MS < INSTAGRAM_STORIES_REFRESH_MS,
   );
+});
+
+test("rotates the shared cache key at every near-live window", () => {
+  assert.equal(getInstagramStoriesCacheBucket(0), 0);
+  assert.equal(getInstagramStoriesCacheBucket(14_999), 0);
+  assert.equal(getInstagramStoriesCacheBucket(15_000), 1);
+  assert.equal(getInstagramStoriesCacheBucket(45_123), 3);
+  assert.equal(getInstagramStoriesCacheBucket(-1), 0);
 });
 
 test("delays a fresh initial snapshot and refreshes when it becomes stale", () => {
   const now = 1_000_000;
-  assert.equal(getInstagramStoriesRefreshDelay(now, now), 30_000);
-  assert.equal(getInstagramStoriesRefreshDelay(now - 29_000, now), 1_000);
-  assert.equal(getInstagramStoriesRefreshDelay(now - 30_000, now), 0);
+  assert.equal(getInstagramStoriesRefreshDelay(now, now), 15_000);
+  assert.equal(getInstagramStoriesRefreshDelay(now - 14_000, now), 1_000);
+  assert.equal(getInstagramStoriesRefreshDelay(now - 15_000, now), 0);
   assert.equal(getInstagramStoriesRefreshDelay(0, now), 0);
 });
 

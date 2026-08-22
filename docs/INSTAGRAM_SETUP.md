@@ -150,11 +150,18 @@ adicionais. Não usar scraping.
 ## Atualização e manutenção
 
 - Stories ativos são consultados novamente a cada carregamento da página. Com
-  a seção do Instagram visível, o portal também sincroniza silenciosamente a
-  cada 30 segundos e consulta novamente ao retornar para a aba. As consultas
-  automáticas compartilham uma proteção de 25 segundos no servidor para evitar
-  excesso de chamadas à Meta. Stories expirados, arquivados e Destaques não são
-  tratados como Stories ativos pela integração.
+  a aba do portal visível, mesmo antes de o visitante chegar à seção do
+  Instagram, o portal sincroniza silenciosamente a cada 15 segundos. O retorno
+  para a aba, o foco da janela e a recuperação da conexão também provocam uma
+  atualização imediata. As consultas compartilham uma janela global de 15
+  segundos no servidor; cada nova janela aguarda uma resposta atual da Meta em
+  vez de servir primeiro um snapshot vencido. Stories expirados, arquivados e
+  Destaques não são tratados como Stories ativos pela integração.
+- O endpoint oficial de Stories retorna a mídia própria disponibilizada pela
+  conta profissional. Stories republicados a partir de perfis de terceiros e
+  marcações recebidas não chegam como mídia própria nesse endpoint e, por isso,
+  continuam acessíveis pelo botão **Ver no Instagram**. Não usar scraping ou
+  APIs não oficiais para contornar essa limitação.
 - Reels são consultados com cache de 15 minutos.
 - A integração consulta a API no servidor e não precisa de webhook para este
   portal.

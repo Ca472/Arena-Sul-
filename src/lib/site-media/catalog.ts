@@ -60,10 +60,10 @@ export const SITE_MEDIA_DEFINITIONS = [
   {
     key: "team-julio-neto",
     section: "Time Arena Sul",
-    label: "Profº Julio Neti — Vôlei de Praia",
+    label: "Profº Júlio Neto — Vôlei de Praia",
     description: "Primeira foto do carrossel de professores.",
     defaultSrc: "/images/hero-volei-praia.jpg",
-    alt: "Professor Julio Neti, do time Arena Sul, com uma bola de vôlei de praia.",
+    alt: "Professor Júlio Neto, do time Arena Sul, com uma bola de vôlei de praia.",
     recommendation: "Foto vertical 3:4 · ideal 1200 × 1600 px",
     previewAspect: "3 / 4",
   },

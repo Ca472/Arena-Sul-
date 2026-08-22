@@ -315,6 +315,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const reelVideoRefs = useRef(new Map<string, HTMLVideoElement>());
   const refreshInFlightRef = useRef(false);
   const lastStoriesRefreshStartedAtRef = useRef(0);
+  const visibilityInitializedRef = useRef(false);
   const latestStoriesFetchedAtRef = useRef(
     getInstagramStoriesSnapshotTimestamp(feed.storiesFetchedAt),
   );
@@ -457,15 +458,39 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   }, []);
 
   useEffect(() => {
+    const requestImmediateRefresh = () => {
+      if (
+        document.visibilityState !== "visible" ||
+        refreshInFlightRef.current
+      ) {
+        return;
+      }
+
+      lastStoriesRefreshStartedAtRef.current = 0;
+      void refreshStories();
+    };
+
     const handleVisibilityChange = () => {
-      setPageVisible(document.visibilityState === "visible");
+      const isPageVisible = document.visibilityState === "visible";
+      setPageVisible(isPageVisible);
+
+      if (visibilityInitializedRef.current && isPageVisible) {
+        requestImmediateRefresh();
+      }
+      visibilityInitializedRef.current = true;
     };
 
     handleVisibilityChange();
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () =>
+    window.addEventListener("focus", requestImmediateRefresh);
+    window.addEventListener("online", requestImmediateRefresh);
+
+    return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, []);
+      window.removeEventListener("focus", requestImmediateRefresh);
+      window.removeEventListener("online", requestImmediateRefresh);
+    };
+  }, [refreshStories]);
 
   useEffect(() => {
     if (!isVisible || !pageVisible) {
@@ -474,7 +499,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   }, [isVisible, pageVisible]);
 
   useEffect(() => {
-    if (!isVisible || !pageVisible) {
+    if (!pageVisible) {
       const controller = refreshControllerRef.current;
       controller?.abort();
       if (refreshControllerRef.current === controller) {
@@ -509,7 +534,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
         refreshInFlightRef.current = false;
       }
     };
-  }, [isVisible, pageVisible, refreshStories]);
+  }, [pageVisible, refreshStories]);
 
   useEffect(() => {
     if (

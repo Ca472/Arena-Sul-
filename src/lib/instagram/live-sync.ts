@@ -1,8 +1,13 @@
 import type { InstagramMediaItem, InstagramStoriesSnapshot } from "./types";
 
-export const INSTAGRAM_STORIES_REFRESH_MS = 30_000;
-export const INSTAGRAM_STORIES_MIN_REFRESH_MS = 30_000;
-export const INSTAGRAM_STORIES_SHARED_CACHE_SECONDS = 25;
+export const INSTAGRAM_STORIES_REFRESH_MS = 15_000;
+export const INSTAGRAM_STORIES_MIN_REFRESH_MS = 5_000;
+export const INSTAGRAM_STORIES_SHARED_CACHE_SECONDS = 15;
+
+export function getInstagramStoriesCacheBucket(now: number) {
+  const bucketSizeMs = INSTAGRAM_STORIES_SHARED_CACHE_SECONDS * 1000;
+  return Math.floor(Math.max(0, now) / bucketSizeMs);
+}
 
 export function getInstagramStoriesRefreshDelay(
   lastRefreshStartedAt: number,
