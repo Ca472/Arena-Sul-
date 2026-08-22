@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
   useCallback,
   useEffect,
@@ -478,10 +479,55 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     !interactionPaused &&
     !manualPaused;
 
+  const navigateStory = (direction: "previous" | "next") => {
+    dispatchLiveStories({
+      type: "navigate",
+      direction,
+      stories,
+    });
+  };
+
+  const handleStoryKeyDown = (
+    event: ReactKeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (event.target !== event.currentTarget || stories.length < 2) {
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      navigateStory("previous");
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      navigateStory("next");
+      return;
+    }
+
+    if (event.key === "Home" || event.key === "End") {
+      event.preventDefault();
+      const story =
+        event.key === "Home" ? stories[0] : stories[stories.length - 1];
+      if (story) {
+        dispatchLiveStories({ type: "select", storyId: story.id });
+      }
+    }
+  };
+
   const handleStoryPointerDown = (
     event: ReactPointerEvent<HTMLDivElement>,
   ) => {
     if (event.pointerType === "mouse" || !event.isPrimary || stories.length < 2) {
+      return;
+    }
+
+    const target = event.target;
+    if (
+      target instanceof Element &&
+      target.closest("a, button, [role='button']")
+    ) {
       return;
     }
 
@@ -491,7 +537,6 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       startY: event.clientY,
     };
     setInteractionPaused(true);
-    event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handleStoryPointerMove = (
@@ -506,6 +551,9 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     const distanceY = event.clientY - swipe.startY;
     if (Math.abs(distanceX) > 10 && Math.abs(distanceX) > Math.abs(distanceY)) {
       event.preventDefault();
+      if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.setPointerCapture(event.pointerId);
+      }
     }
   };
 
@@ -542,11 +590,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       suppressStoryClickRef.current = false;
       suppressStoryClickTimerRef.current = null;
     }, 300);
-    dispatchLiveStories({
-      type: "navigate",
-      direction,
-      stories,
-    });
+    navigateStory(direction);
   };
 
   return (
@@ -577,7 +621,9 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
               </div>
               {stories.length > 1 ? (
                 <div className={styles.storyStatus}>
-                  <span>
+                  <span
+                    aria-label={`Story ${normalizedStoryIndex + 1} de ${stories.length}`}
+                  >
                     {String(normalizedStoryIndex + 1).padStart(2, "0")} /{" "}
                     {String(stories.length).padStart(2, "0")}
                   </span>
@@ -600,8 +646,14 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
                   className={styles.storyStage}
                   role="group"
                   aria-roledescription="carrossel"
-                  aria-label={`Story ${normalizedStoryIndex + 1} de ${stories.length}. Arraste para os lados para navegar.`}
+                  aria-label={
+                    stories.length > 1
+                      ? `Story ${normalizedStoryIndex + 1} de ${stories.length}. Arraste para os lados ou use as setas do teclado para navegar.`
+                      : "Story da Arena Sul"
+                  }
                   data-swipeable={stories.length > 1 ? "true" : undefined}
+                  tabIndex={stories.length > 1 ? 0 : undefined}
+                  onKeyDown={handleStoryKeyDown}
                   onPointerDown={handleStoryPointerDown}
                   onPointerMove={handleStoryPointerMove}
                   onPointerUp={(event) => finishStorySwipe(event)}
@@ -621,6 +673,30 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
                     shouldAutoPlay={shouldPlayActiveStory}
                     videoControls
                   />
+                  {stories.length > 1 ? (
+                    <div
+                      className={styles.storyNavigation}
+                      role="group"
+                      aria-label="Navegação dos Stories"
+                    >
+                      <button
+                        className={styles.storyArrow}
+                        type="button"
+                        aria-label="Ver o Story anterior"
+                        onClick={() => navigateStory("previous")}
+                      >
+                        <span aria-hidden="true">←</span>
+                      </button>
+                      <button
+                        className={styles.storyArrow}
+                        type="button"
+                        aria-label="Ver o próximo Story"
+                        onClick={() => navigateStory("next")}
+                      >
+                        <span aria-hidden="true">→</span>
+                      </button>
+                    </div>
+                  ) : null}
                   <a
                     className={styles.mediaExternalLink}
                     href={activeStory.permalink}
