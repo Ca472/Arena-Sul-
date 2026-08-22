@@ -374,6 +374,12 @@
 }
 
 @media (max-width: 430px) {
+  .pagination {
+    display: grid;
+    grid-template-columns: repeat(4, 44px);
+    gap: 2px;
+  }
+
   .caption p {
     display: none;
   }
@@ -395,13 +401,6 @@
     display: block;
     padding: 0;
     object-fit: cover;
-  }
-}
-
-@media (max-width: 360px) {
-  .pagination {
-    width: 190px;
-    margin-inline: auto;
   }
 }
 

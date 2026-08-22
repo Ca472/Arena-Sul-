@@ -15,7 +15,7 @@ type StructureSlide = {
   alt: string;
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
   fit: "cover" | "contain";
   position: string;
   compactCaption?: boolean;
@@ -61,28 +61,28 @@ const slides: readonly StructureSlide[] = [
   },
   {
     slot: "structure-barbecue",
-    src: "/images/estrutura-churrasqueira.jpg",
-    alt: "Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras",
+    src: "/images/estrutura-churrasqueiras-v2.png",
+    alt: "Área de churrasqueira coberta da Arena Sul com mesas, bancos e cozinha de apoio",
     eyebrow: "Celebre na Arena",
     title: "3 churrasqueiras",
     description: "Bons momentos em família e amigos",
-    fit: "contain",
-    position: "center 58%",
+    fit: "cover",
+    position: "center",
   },
   {
     slot: "structure-bar-kitchen",
-    src: "/images/estrutura-bar-coberto.jpg",
-    alt: "Área coberta do bar da Arena Sul com mesas e cadeiras",
+    src: "/images/estrutura-bar-cozinha-v2.png",
+    alt: "Bar e cozinha da Arena Sul diante da área de convivência",
     eyebrow: "Comodidade",
     title: "Bar e cozinha",
     description: "Bateu aquela fome, Bar e Cozinha Completos.",
-    fit: "contain",
-    position: "center 62%",
+    fit: "cover",
+    position: "center",
   },
   {
     slot: "structure-leisure",
-    src: "/images/estrutura-bar-convivencia.jpg",
-    alt: "Área externa de convivência do bar com vista para as quadras de areia",
+    src: "/images/estrutura-espacos-lazer-v2.png",
+    alt: "Espaço de convivência coberto da Arena Sul com mesas e vista para as quadras",
     eyebrow: "Convivência",
     title: "Diversos espaços de lazer",
     description: "Com 10.000 m², a Arena comporta 500 pessoas.",
@@ -97,6 +97,16 @@ const slides: readonly StructureSlide[] = [
     title: "Para torneios, eventos corporativos e escolares",
     description: "Conte conosco para auxiliar na organização do seu evento.",
     fit: "contain",
+    position: "center",
+    compactCaption: true,
+  },
+  {
+    slot: "structure-sand-courts-invitation",
+    src: "/images/estrutura-13-quadras-panorama.png",
+    alt: "Vista panorâmica das quadras de areia e da área de convivência da Arena Sul",
+    eyebrow: "Estrutura esportiva",
+    title: "13 quadras de areia te esperando.",
+    fit: "cover",
     position: "center",
     compactCaption: true,
   },
@@ -458,7 +468,7 @@ export function StructureGallery({
               <figcaption className={styles.caption}>
                 <span>{slide.eyebrow}</span>
                 <h3>{slide.title}</h3>
-                <p>{slide.description}</p>
+                {slide.description ? <p>{slide.description}</p> : null}
               </figcaption>
             </figure>
           );

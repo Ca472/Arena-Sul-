@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 import {
@@ -15,7 +15,7 @@ import {
 test("registers every editable photo position exactly once", () => {
   const keys = SITE_MEDIA_DEFINITIONS.map(({ key }) => key);
 
-  assert.equal(keys.length, 19);
+  assert.equal(keys.length, 20);
   assert.equal(new Set(keys).size, keys.length);
   assert.deepEqual(
     new Set(SITE_MEDIA_DEFINITIONS.map(({ section }) => section)),
@@ -24,13 +24,20 @@ test("registers every editable photo position exactly once", () => {
 });
 
 test("keeps the database slot constraint synchronized with the catalog", () => {
-  const migration = readFileSync(
-    new URL(
-      "../supabase/migrations/20260822130015_site_media_admin.sql",
-      import.meta.url,
-    ),
-    "utf8",
+  const migrationsDirectory = new URL(
+    "../supabase/migrations/",
+    import.meta.url,
   );
+  const constraintMigrations = readdirSync(migrationsDirectory)
+    .filter((name) => name.endsWith(".sql"))
+    .sort()
+    .map((name) =>
+      readFileSync(new URL(name, migrationsDirectory), "utf8"),
+    )
+    .filter((sql) => sql.includes("site_media_known_slot"));
+  const migration = constraintMigrations.at(-1);
+
+  assert.ok(migration, "expected a site_media_known_slot migration");
   const databaseSlots = [
     ...migration.matchAll(
       /'(team|home|structure|modality)-[a-z0-9-]+'/g,
@@ -41,11 +48,34 @@ test("keeps the database slot constraint synchronized with the catalog", () => {
   assert.deepEqual(databaseSlots.sort(), [...catalogSlots].sort());
 });
 
+test("keeps the Structure gallery synchronized with its editable slots", () => {
+  const gallery = readFileSync(
+    new URL("../src/components/structure-gallery.tsx", import.meta.url),
+    "utf8",
+  );
+  const gallerySlots = [
+    ...gallery.matchAll(/slot: "(structure-[a-z0-9-]+)"/g),
+  ].map(([, slot]) => slot);
+  const catalogSlots = SITE_MEDIA_DEFINITIONS.filter(
+    ({ section }) => section === "Estrutura",
+  ).map(({ key }) => key);
+
+  assert.equal(gallerySlots.length, 8);
+  assert.deepEqual(gallerySlots, catalogSlots);
+});
+
 test("keeps a local fallback for every editable position", () => {
   const defaults = getDefaultSiteMediaMap();
 
   for (const definition of SITE_MEDIA_DEFINITIONS) {
     assert.match(definition.defaultSrc, /^\/images\//);
+    assert.equal(
+      existsSync(
+        new URL(`../public${definition.defaultSrc}`, import.meta.url),
+      ),
+      true,
+      `missing fallback file for ${definition.key}`,
+    );
     assert.equal(defaults[definition.key], definition.defaultSrc);
     assert.ok(definition.alt.length > 10);
     assert.ok(definition.recommendation.length > 10);
@@ -71,6 +101,7 @@ test("accepts known overrides and ignores unknown database rows", () => {
     "/images/hero-futevolei-wallacy.jpg",
   );
   assert.equal(isSiteMediaSlot("team-gett-lima"), true);
+  assert.equal(isSiteMediaSlot("structure-sand-courts-invitation"), true);
   assert.equal(isSiteMediaSlot("not-a-real-slot"), false);
 });
 
