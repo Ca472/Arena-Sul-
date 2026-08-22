@@ -2169,7 +2169,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .footer {
-  padding-block: clamp(34px, 5vw, 64px) 0;
+  padding-block: clamp(34px, 5vw, 64px);
   background: var(--navy-deep);
   color: white;
 }
@@ -2183,13 +2183,18 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     clamp(18px, 2.25vw, 40px),
     env(safe-area-inset-right, 0px)
   );
+  --footer-content-gutter: max(
+    clamp(20px, 5vw, 64px),
+    calc((100% - 1600px) / 2)
+  );
 
-  width: calc(100% - var(--footer-shell-start) - var(--footer-shell-end));
+  width: auto;
   max-width: none;
   margin-inline-start: var(--footer-shell-start);
   margin-inline-end: var(--footer-shell-end);
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 32px 32px 0 0;
+  border-radius: 32px;
   background: rgba(255, 255, 255, 0.025);
   box-shadow: 0 -20px 70px rgba(0, 0, 0, 0.12);
 }
@@ -2236,7 +2241,8 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.75fr);
   align-items: stretch;
   gap: clamp(30px, 4vw, 58px);
-  padding: clamp(42px, 5vw, 70px);
+  padding-block: clamp(42px, 5vw, 70px);
+  padding-inline: var(--footer-content-gutter);
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 
@@ -2277,8 +2283,10 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   display: flex;
   grid-column: 2;
   grid-row: 1;
+  width: min(100%, 460px);
   min-width: 0;
   justify-content: center;
+  justify-self: center;
   flex-direction: column;
 }
 
@@ -2339,7 +2347,8 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   grid-template-columns: 190px 280px minmax(0, 1fr);
   align-items: center;
   gap: clamp(28px, 3vw, 40px);
-  padding: clamp(28px, 3.5vw, 42px) clamp(28px, 5vw, 64px);
+  padding-block: clamp(28px, 3.5vw, 42px);
+  padding-inline: var(--footer-content-gutter);
 }
 
 .public-site .footer-brand img {
@@ -2401,13 +2410,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .footer-bottom {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 24px;
-  margin-inline: clamp(24px, 5vw, 64px);
-  padding-block: 18px;
+  margin-inline: 0;
+  padding: 18px var(--footer-content-gutter);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   color: rgba(255, 255, 255, 0.48);
   font-size: 0.68rem;
@@ -2432,7 +2440,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 }
 
 .public-site .footer-bottom p {
+  justify-self: start;
   margin: 0;
+}
+
+.public-site .footer-bottom > a:last-child {
+  justify-self: end;
 }
 
 .public-site .footer-bottom a:hover,
@@ -2792,10 +2805,6 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
     width: max-content;
   }
 
-  .public-site .footer-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .public-site .footer-location {
     grid-template-columns: 1fr;
   }
@@ -2813,7 +2822,8 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   .public-site .footer-grid {
     grid-template-columns: 1fr;
     gap: 24px;
-    padding: 30px 24px;
+    padding-block: 30px;
+    padding-inline: var(--footer-content-gutter);
   }
 
   .public-site .footer-brand {
@@ -2841,6 +2851,15 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   .public-site .footer-instagram .button-instagram {
     grid-column: auto;
     grid-row: auto;
+  }
+
+  .public-site .footer-bottom {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px 16px;
+  }
+
+  .public-site .footer-bottom p {
+    grid-column: 1 / -1;
   }
 }
 
@@ -3122,11 +3141,12 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 
   .public-site .footer-location {
     gap: 32px;
-    padding: 36px 20px 42px;
+    padding-block: 36px 42px;
+    padding-inline: var(--footer-content-gutter);
   }
 
   .public-site .footer-shell {
-    border-radius: 22px 22px 0 0;
+    border-radius: 22px;
   }
 
   .public-site .footer-map-frame {
@@ -3145,7 +3165,8 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   .public-site .footer-grid {
     grid-template-columns: 1fr;
     gap: 24px;
-    padding: 28px 20px;
+    padding-block: 28px;
+    padding-inline: var(--footer-content-gutter);
   }
 
   .public-site .footer-brand {
@@ -3153,19 +3174,11 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .footer-bottom {
-    align-items: center;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 10px 16px;
-    margin-inline: 20px;
-  }
-
-  .public-site .footer-bottom p {
-    flex: 1 0 100%;
+    padding-inline: var(--footer-content-gutter);
   }
 
   .public-site .footer {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-block: 18px max(18px, env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -3316,7 +3329,20 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   }
 
   .public-site .footer {
-    padding-top: 0;
+    padding-top: 18px;
+  }
+
+  .public-site .footer-bottom {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .public-site .footer-bottom p,
+  .public-site .footer-bottom .footer-top-link,
+  .public-site .footer-bottom > a:last-child {
+    grid-column: 1;
+    justify-self: center;
   }
 }
 

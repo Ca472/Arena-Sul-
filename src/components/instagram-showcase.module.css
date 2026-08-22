@@ -25,6 +25,10 @@
   padding: clamp(18px, 2.5vw, 28px);
 }
 
+.storyColumn {
+  container-type: inline-size;
+}
+
 .panelHeading {
   display: flex;
   min-height: 64px;
@@ -246,6 +250,7 @@
   display: grid;
   width: 44px;
   height: 44px;
+  flex: 0 0 44px;
   padding: 0;
   border: 0;
   place-items: center;
@@ -266,6 +271,13 @@
 .storyControls button[aria-current="true"] span {
   width: 34px;
   background: var(--orange);
+}
+
+@container (max-width: 420px) {
+  .storyControls {
+    display: grid;
+    grid-template-columns: repeat(4, 44px);
+  }
 }
 
 .reelRail {
