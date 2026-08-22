@@ -34,7 +34,43 @@ const graphResponseSchema = z.object({
   data: z.array(graphMediaSchema),
 });
 
+const graphErrorResponseSchema = z
+  .object({
+    error: z
+      .object({
+        message: z.string().optional(),
+        type: z.string().optional(),
+        code: z.number().optional(),
+        error_subcode: z.number().optional(),
+      })
+      .passthrough(),
+  })
+  .passthrough();
+
 type GraphMedia = z.infer<typeof graphMediaSchema>;
+
+function sanitizeGraphErrorMessage(message: string | undefined) {
+  if (!message) {
+    return undefined;
+  }
+
+  return message
+    .replace(/(access[_-]?token|bearer)\s*[=:]?\s*[^\s,;]+/gi, "$1 [redacted]")
+    .slice(0, 320);
+}
+
+function logInstagramGraphFailure(
+  event: "instagram_graph_request_failed" | "instagram_graph_transport_failed",
+  details: Record<string, unknown>,
+) {
+  console.error(
+    JSON.stringify({
+      level: "error",
+      event,
+      ...details,
+    }),
+  );
+}
 
 function emptyFeed(status: InstagramFeed["status"]): InstagramFeed {
   return { status, stories: [], storiesFetchedAt: null, reels: [] };
@@ -148,15 +184,42 @@ async function fetchInstagramEdge({
   endpoint.searchParams.set("fields", fields);
   endpoint.searchParams.set("limit", edge === "media" ? "25" : "20");
 
-  const response = await fetch(endpoint, {
-    ...getInstagramFetchCachePolicy(edge),
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-    signal: AbortSignal.timeout(6500),
-  });
+  let response: Response;
+  try {
+    response = await fetch(endpoint, {
+      ...getInstagramFetchCachePolicy(edge),
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      signal: AbortSignal.timeout(6500),
+    });
+  } catch (error) {
+    logInstagramGraphFailure("instagram_graph_transport_failed", {
+      edge,
+      graphVersion,
+      errorName: error instanceof Error ? error.name : "UnknownError",
+    });
+    throw error;
+  }
 
   if (!response.ok) {
+    const graphErrorResult = graphErrorResponseSchema.safeParse(
+      await response.json().catch(() => null),
+    );
+    const graphError = graphErrorResult.success
+      ? graphErrorResult.data.error
+      : null;
+
+    logInstagramGraphFailure("instagram_graph_request_failed", {
+      edge,
+      graphVersion,
+      status: response.status,
+      errorType: graphError?.type,
+      errorCode: graphError?.code,
+      errorSubcode: graphError?.error_subcode,
+      errorMessage: sanitizeGraphErrorMessage(graphError?.message),
+    });
+
     throw new Error(
       `Instagram API request failed with status ${response.status}`,
     );
