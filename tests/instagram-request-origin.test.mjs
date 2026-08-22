@@ -3,7 +3,9 @@ import test from "node:test";
 
 import { isTrustedInstagramOAuthStartRequest } from "../src/lib/instagram/request-origin.ts";
 
-const PORTAL_ORIGIN = "https://arena-sul-portal.vercel.app";
+const PORTAL_ORIGIN = "https://www.arenasulsports.com";
+const PORTAL_HOST = new URL(PORTAL_ORIGIN).host;
+const LEGACY_PORTAL_ORIGIN = "https://arena-sul-portal.vercel.app";
 
 function request(headers = {}, protocol = "https:") {
   return {
@@ -27,7 +29,7 @@ test("rejects a present mismatched Origin without using fallback signals", () =>
     isTrustedInstagramOAuthStartRequest(
       request({
         origin: "https://attacker.example",
-        host: "arena-sul-portal.vercel.app",
+        host: PORTAL_HOST,
         "sec-fetch-site": "same-origin",
         "x-forwarded-proto": "https",
       }),
@@ -42,7 +44,7 @@ test("accepts an opaque Origin only with complete same-origin navigation metadat
     isTrustedInstagramOAuthStartRequest(
       request({
         origin: "null",
-        host: "arena-sul-portal.vercel.app",
+        host: PORTAL_HOST,
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
@@ -57,7 +59,7 @@ test("accepts an originless same-origin POST for the configured Host", () => {
   assert.equal(
     isTrustedInstagramOAuthStartRequest(
       request({
-        host: "arena-sul-portal.vercel.app",
+        host: PORTAL_HOST,
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
@@ -76,7 +78,7 @@ test("accepts the trusted forwarded host and protocol from a reverse proxy", () 
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
-        "x-forwarded-host": "arena-sul-portal.vercel.app",
+        "x-forwarded-host": PORTAL_HOST,
         "x-forwarded-proto": "https",
       }),
       PORTAL_ORIGIN,
@@ -88,7 +90,7 @@ test("accepts the trusted forwarded host and protocol from a reverse proxy", () 
 for (const fetchSite of [undefined, "same-site", "cross-site", "none"]) {
   test(`rejects an originless POST with Sec-Fetch-Site ${fetchSite ?? "missing"}`, () => {
     const headers = {
-      host: "arena-sul-portal.vercel.app",
+      host: PORTAL_HOST,
       "sec-fetch-dest": "document",
       "sec-fetch-mode": "navigate",
     };
@@ -111,7 +113,7 @@ for (const [header, value] of [
 ]) {
   test(`rejects an originless POST with ${header} ${value ?? "missing"}`, () => {
     const headers = {
-      host: "arena-sul-portal.vercel.app",
+      host: PORTAL_HOST,
       "sec-fetch-dest": "document",
       "sec-fetch-mode": "navigate",
       "sec-fetch-site": "same-origin",
@@ -149,7 +151,7 @@ test("rejects a mismatched forwarded Host even if Host itself matches", () => {
   assert.equal(
     isTrustedInstagramOAuthStartRequest(
       request({
-        host: "arena-sul-portal.vercel.app",
+        host: PORTAL_HOST,
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
@@ -169,8 +171,7 @@ test("rejects ambiguous forwarded Host chains", () => {
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
-        "x-forwarded-host":
-          "arena-sul-portal.vercel.app, attacker.example",
+        "x-forwarded-host": `${PORTAL_HOST}, attacker.example`,
         "x-forwarded-proto": "https",
       }),
       PORTAL_ORIGIN,
@@ -186,7 +187,7 @@ test("rejects an originless POST forwarded over a different protocol", () => {
         "sec-fetch-dest": "document",
         "sec-fetch-mode": "navigate",
         "sec-fetch-site": "same-origin",
-        "x-forwarded-host": "arena-sul-portal.vercel.app",
+        "x-forwarded-host": PORTAL_HOST,
         "x-forwarded-proto": "http",
       }),
       PORTAL_ORIGIN,
@@ -200,6 +201,16 @@ test("rejects the request when the portal origin is not configured", () => {
     isTrustedInstagramOAuthStartRequest(
       request({ origin: PORTAL_ORIGIN }),
       null,
+    ),
+    false,
+  );
+});
+
+test("rejects the former Vercel origin after the custom-domain cutover", () => {
+  assert.equal(
+    isTrustedInstagramOAuthStartRequest(
+      request({ origin: LEGACY_PORTAL_ORIGIN }),
+      PORTAL_ORIGIN,
     ),
     false,
   );

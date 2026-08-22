@@ -60,7 +60,7 @@ digitados somente pela própria responsável na tela oficial da Meta/Instagram.
 3. Em **Configurar o login da empresa no Instagram**, cadastrar exatamente:
 
    ```text
-   https://arena-sul-portal.vercel.app/api/instagram/oauth/callback
+   https://www.arenasulsports.com/api/instagram/oauth/callback
    ```
 
    O valor deve ser idêntico no painel e em `INSTAGRAM_OAUTH_REDIRECT_URI`, sem
@@ -118,7 +118,7 @@ redirect e o username não são secretos:
 SUPABASE_SERVICE_ROLE_KEY=<chave server-only do projeto>
 INSTAGRAM_APP_ID=<ID do app do Instagram>
 INSTAGRAM_APP_SECRET=<segredo do app do Instagram>
-INSTAGRAM_OAUTH_REDIRECT_URI=https://arena-sul-portal.vercel.app/api/instagram/oauth/callback
+INSTAGRAM_OAUTH_REDIRECT_URI=https://www.arenasulsports.com/api/instagram/oauth/callback
 INSTAGRAM_EXPECTED_USERNAME=arenasulsports
 INSTAGRAM_TOKEN_ENCRYPTION_KEY=<32 bytes aleatórios em base64>
 INSTAGRAM_GRAPH_VERSION=v26.0
