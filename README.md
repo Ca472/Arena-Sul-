@@ -11,7 +11,7 @@ Reconstrução completa do site da Arena Sul Sports em Next.js, baseada no mater
 - Listagem pública em `/eventos` e página individual em `/eventos/[slug]`.
 - Área ADMIN em `/admin` para criar, editar, publicar e despublicar eventos.
 - Upload múltiplo de fotos com prévia, validação de formato/tamanho e remoção.
-- Gerenciador de 19 fotos institucionais em `/admin/fotos`, com upload individual e restauração da imagem original.
+- Gerenciador de 20 fotos institucionais em `/admin/fotos`, com upload individual e restauração da imagem original.
 - Supabase Auth, Postgres, Storage privado e Row Level Security (RLS).
 - Modo demonstração seguro e explicitamente não persistente para avaliar o protótipo sem credenciais.
 - SEO local, Open Graph, Twitter Card, JSON-LD, sitemap com eventos e `robots.txt`.
