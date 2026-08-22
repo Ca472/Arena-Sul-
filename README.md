@@ -7,15 +7,16 @@ Reconstrução completa do site da Arena Sul Sports em Next.js, baseada no mater
 - Home responsiva com a identidade azul-marinho e laranja do material institucional.
 - História, estrutura, modalidades, locação para eventos, escolas, empresas, manifesto, contato e localização.
 - CTAs diretos para o WhatsApp oficial.
-- Destaque editorial do Instagram no rodapé, com link para o perfil e para o destaque “Eventos”.
+- Reels reproduzidos dentro do portal e Stories sincronizados pela integração oficial do Instagram.
 - Listagem pública em `/eventos` e página individual em `/eventos/[slug]`.
 - Área ADMIN em `/admin` para criar, editar, publicar e despublicar eventos.
 - Upload múltiplo de fotos com prévia, validação de formato/tamanho e remoção.
+- Gerenciador de 19 fotos institucionais em `/admin/fotos`, com upload individual e restauração da imagem original.
 - Supabase Auth, Postgres, Storage privado e Row Level Security (RLS).
 - Modo demonstração seguro e explicitamente não persistente para avaliar o protótipo sem credenciais.
 - SEO local, Open Graph, Twitter Card, JSON-LD, sitemap com eventos e `robots.txt`.
 
-O bloco do Instagram usa links oficiais estáveis. Ele não tenta copiar um feed ao vivo por scraping: um feed automático exigiria acesso autorizado à API da Meta ou um provedor aprovado.
+O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzidos no navegador com controles nativos; o link externo continua disponível como alternativa. Stories mantêm a sincronização independente já configurada.
 
 ## Rotas
 
@@ -28,6 +29,7 @@ O bloco do Instagram usa links oficiais estáveis. Ele não tenta copiar um feed
 | `/admin` | Dashboard de conteúdo |
 | `/admin/eventos/novo` | Cadastro de evento e upload múltiplo |
 | `/admin/eventos/[id]/editar` | Edição, publicação e remoção de fotos |
+| `/admin/fotos` | Troca das fotos institucionais exibidas na home |
 
 ## Documentação de referência
 
@@ -45,6 +47,8 @@ O bloco do Instagram usa links oficiais estáveis. Ele não tenta copiar um feed
 - Vercel como destino de hospedagem.
 
 No modo real, o navegador autenticado envia as fotos diretamente ao Storage. Uma Server Action revalida os dados, grava os metadados e atualiza o portal. Visitantes consultam somente eventos publicados; as fotos são entregues por URLs assinadas de uma hora geradas no servidor.
+
+As fotos institucionais usam um fluxo mais restrito: uma Server Action confirma o administrador e cria uma autorização temporária para um único arquivo, vinculada ao usuário por uma prova assinada; o navegador envia a imagem diretamente ao bucket `site-media`; outra ação valida tamanho, formato e assinatura binária antes de trocar a referência ativa. Cada atualização recebe um caminho novo para evitar cache desatualizado. Versões anteriores não são removidas durante essa troca, preservando a foto publicada mesmo se houver perda de conexão ou operações concorrentes.
 
 ## Executar localmente
 
@@ -81,7 +85,7 @@ Com `DEMO_MODE=true`, a interface ADMIN pode ser testada, mas nada é salvo. Par
 4. Defina `NEXT_PUBLIC_SITE_URL` com o domínio final, sem barra no fim.
 5. Faça um novo build/deploy, pois a origem permitida das imagens é derivada da URL do Supabase durante o build.
 
-Não é necessária uma `service_role` key. Nunca exponha uma chave privilegiada com prefixo `NEXT_PUBLIC_`.
+Defina também `SUPABASE_SERVICE_ROLE_KEY` exclusivamente no servidor para a integração do Instagram e o gerenciamento das fotos institucionais. Nunca exponha uma chave privilegiada com prefixo `NEXT_PUBLIC_`.
 
 ## Verificação
 

@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { SiteMediaMap, SiteMediaSlot } from "@/lib/site-media/catalog";
 import styles from "./structure-gallery.module.css";
 
 const AUTO_ROTATE_MS = 5_000;
@@ -9,6 +10,7 @@ const SWIPE_THRESHOLD_PX = 48;
 const MOBILE_PORTRAIT_QUERY = "(max-width: 600px) and (orientation: portrait)";
 
 type StructureSlide = {
+  slot: SiteMediaSlot;
   src: string;
   alt: string;
   eyebrow: string;
@@ -26,6 +28,7 @@ type ImageVariant = "desktop" | "mobile";
 
 const slides: readonly StructureSlide[] = [
   {
+    slot: "structure-sand-courts",
     src: "/images/estrutura-quadras-areia.jpg",
     alt: "Quadras de areia da Arena Sul com redes sob o céu azul",
     eyebrow: "Estrutura esportiva",
@@ -35,6 +38,7 @@ const slides: readonly StructureSlide[] = [
     position: "center 57%",
   },
   {
+    slot: "structure-aerial-view",
     src: "/images/estrutura-vista-aerea.jpg",
     alt: "Vista aérea das quadras e da estrutura da Arena Sul cercadas pela área verde",
     eyebrow: "Vista da Arena",
@@ -45,6 +49,7 @@ const slides: readonly StructureSlide[] = [
     position: "center",
   },
   {
+    slot: "structure-sand-classes",
     src: "/images/group-class.webp",
     alt: "Atividade coletiva em uma quadra de areia da Arena Sul",
     eyebrow: "Saúde e movimento",
@@ -55,6 +60,7 @@ const slides: readonly StructureSlide[] = [
     position: "center 42%",
   },
   {
+    slot: "structure-barbecue",
     src: "/images/estrutura-churrasqueira.jpg",
     alt: "Churrasqueira coberta da Arena Sul com pia, mesas e cadeiras",
     eyebrow: "Celebre na Arena",
@@ -64,6 +70,7 @@ const slides: readonly StructureSlide[] = [
     position: "center 58%",
   },
   {
+    slot: "structure-bar-kitchen",
     src: "/images/estrutura-bar-coberto.jpg",
     alt: "Área coberta do bar da Arena Sul com mesas e cadeiras",
     eyebrow: "Comodidade",
@@ -73,6 +80,7 @@ const slides: readonly StructureSlide[] = [
     position: "center 62%",
   },
   {
+    slot: "structure-leisure",
     src: "/images/estrutura-bar-convivencia.jpg",
     alt: "Área externa de convivência do bar com vista para as quadras de areia",
     eyebrow: "Convivência",
@@ -82,6 +90,7 @@ const slides: readonly StructureSlide[] = [
     position: "center",
   },
   {
+    slot: "structure-events",
     src: "/images/estrutura-eventos-area-lazer-v2.png",
     alt: "Vista superior da área de convivência e das quadras de areia da Arena Sul",
     eyebrow: "Estrutura completa",
@@ -101,14 +110,11 @@ function getImageLoadKey(index: number, variant: ImageVariant) {
   return `${index}:${variant}`;
 }
 
-function getVisibleImageVariant(index: number): ImageVariant {
-  return slides[index].mobileSrc &&
-    window.matchMedia(MOBILE_PORTRAIT_QUERY).matches
-    ? "mobile"
-    : "desktop";
-}
-
-export function StructureGallery() {
+export function StructureGallery({
+  media,
+}: {
+  media?: Partial<SiteMediaMap>;
+}) {
   const rootRef = useRef<HTMLElement>(null);
   const transitionTimeoutRef = useRef<number | null>(null);
   const loadedImagesRef = useRef(new Set<string>());
@@ -128,6 +134,24 @@ export function StructureGallery() {
   const pointerStartX = useRef<number | null>(null);
   const pointerStartY = useRef<number | null>(null);
   const interactionPaused = isHovered || isFocusWithin;
+  const resolvedSlides = useMemo(
+    () =>
+      slides.map((slide) => {
+        const resolvedSrc = media?.[slide.slot] ?? slide.src;
+        return resolvedSrc === slide.src
+          ? slide
+          : { ...slide, src: resolvedSrc, mobileSrc: undefined };
+      }),
+    [media],
+  );
+  const getVisibleImageVariant = useCallback(
+    (index: number): ImageVariant =>
+      resolvedSlides[index].mobileSrc &&
+      window.matchMedia(MOBILE_PORTRAIT_QUERY).matches
+        ? "mobile"
+        : "desktop",
+    [resolvedSlides],
+  );
 
   const autoplayEnabled =
     !interactionPaused &&
@@ -253,7 +277,7 @@ export function StructureGallery() {
         setStatusMessage(`Carregando foto ${nextIndex + 1}`);
       }
     },
-    [activeIndex, commitSlide, outgoingIndex],
+    [activeIndex, commitSlide, getVisibleImageVariant, outgoingIndex],
   );
 
   useEffect(() => {
@@ -302,7 +326,7 @@ export function StructureGallery() {
     ) {
       commitSlide(requestedIndex, pendingAnnouncementRef.current);
     }
-  }, [commitSlide, isMobilePortrait]);
+  }, [commitSlide, getVisibleImageVariant, isMobilePortrait]);
 
   const showPrevious = () => requestSlide(activeIndex - 1);
   const showNext = () => requestSlide(activeIndex + 1);
@@ -370,7 +394,7 @@ export function StructureGallery() {
           }
         }}
       >
-        {slides.map((slide, index) => {
+        {resolvedSlides.map((slide, index) => {
           const isActive = index === activeIndex;
           const desktopSizes = slide.mobileSrc
             ? "(max-width: 600px) and (orientation: portrait) 1px, (max-width: 1220px) calc(100vw - 40px), (max-width: 1599px) 1180px, 1320px"
@@ -393,7 +417,7 @@ export function StructureGallery() {
               aria-roledescription="slide"
               aria-label={`Foto ${index + 1} de ${slides.length}: ${slide.title}`}
               aria-hidden={!isActive}
-              key={slide.src}
+              key={slide.slot}
             >
               {shouldRenderImage ? (
                 <>
@@ -483,7 +507,7 @@ export function StructureGallery() {
           role="group"
           aria-label="Escolher uma foto"
         >
-          {slides.map((slide, index) => (
+          {resolvedSlides.map((slide, index) => (
             <button
               type="button"
               className={styles.dot}
@@ -491,7 +515,7 @@ export function StructureGallery() {
               aria-label={`Mostrar foto ${index + 1}: ${slide.title}`}
               aria-current={index === activeIndex ? "true" : undefined}
               onClick={() => requestSlide(index)}
-              key={slide.src}
+              key={slide.slot}
             >
               <span aria-hidden="true" />
             </button>
