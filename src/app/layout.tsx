@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { League_Gothic, Montserrat } from "next/font/google";
+import Script from "next/script";
+
+import { GoogleAdsConsent } from "@/components/google-ads-consent";
+import { buildGoogleConsentBootstrapScript } from "@/lib/google-ads/consent";
+
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -83,7 +88,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${montserrat.variable} ${leagueGothic.variable}`}
       data-scroll-behavior="smooth"
     >
-      <body>{children}</body>
+      <body>
+        <Script
+          id="google-consent-default"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: buildGoogleConsentBootstrapScript(),
+          }}
+        />
+        <GoogleAdsConsent />
+        {children}
+      </body>
     </html>
   );
 }

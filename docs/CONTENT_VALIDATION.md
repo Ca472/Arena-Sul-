@@ -58,7 +58,7 @@ Horários e comodidades apareceram em Waze/Wellhub, mas não foram gravados no p
 - [ ] Logo vetorial recebido e aplicado.
 - [ ] Direitos de todas as imagens confirmados.
 - [ ] Horários e política de atendimento recebidos.
-- [ ] Política de privacidade definida caso sejam adicionados formulários ou analytics.
+- [ ] Página de privacidade e texto de consentimento revisados e aprovados pelo cliente.
 - [ ] Supabase em modo real, migração aplicada e dois administradores testados.
 - [ ] Rascunho não aparece publicamente.
 - [ ] Evento publicado aparece na home, listagem e detalhe.

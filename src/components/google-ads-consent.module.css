@@ -1,0 +1,169 @@
+.banner,
+.settingsButton {
+  position: fixed;
+  z-index: 4400;
+  font-family: var(--font-body), Arial, sans-serif;
+}
+
+.banner {
+  right: max(18px, env(safe-area-inset-right, 0px));
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  left: max(18px, env(safe-area-inset-left, 0px));
+  display: grid;
+  width: min(720px, calc(100% - 36px));
+  max-height: calc(100dvh - 36px);
+  gap: 18px;
+  overflow-y: auto;
+  margin-inline: auto;
+  padding: clamp(22px, 4vw, 30px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 4px solid #ff914d;
+  border-radius: 22px;
+  background: #011634;
+  color: white;
+  box-shadow: 0 24px 80px rgba(0, 12, 34, 0.42);
+}
+
+.copy {
+  display: grid;
+  gap: 9px;
+}
+
+.copy h2,
+.copy p {
+  margin: 0;
+}
+
+.copy h2 {
+  font-size: clamp(1.2rem, 3vw, 1.55rem);
+  line-height: 1.15;
+}
+
+.copy p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.privacyLink {
+  width: fit-content;
+  min-height: 44px;
+  align-content: center;
+  border-bottom: 1px solid #ff914d;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.acceptButton,
+.rejectButton,
+.settingsButton {
+  min-height: 48px;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+
+.acceptButton,
+.rejectButton {
+  padding: 0 20px;
+}
+
+.acceptButton {
+  border: 1px solid #ff914d;
+  background: #ff914d;
+  color: #021f4e;
+}
+
+.rejectButton {
+  border: 1px solid rgba(255, 255, 255, 0.64);
+  background: transparent;
+  color: white;
+}
+
+.acceptButton:hover,
+.acceptButton:focus-visible,
+.rejectButton:hover,
+.rejectButton:focus-visible,
+.settingsButton:hover,
+.settingsButton:focus-visible {
+  transform: translateY(-2px);
+}
+
+.rejectButton:hover,
+.rejectButton:focus-visible {
+  border-color: white;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.acceptButton:focus-visible,
+.rejectButton:focus-visible,
+.settingsButton:focus-visible,
+.privacyLink:focus-visible {
+  outline: 3px solid #ff914d;
+  outline-offset: 3px;
+}
+
+.settingsButton {
+  bottom: max(14px, env(safe-area-inset-bottom, 0px));
+  left: max(14px, env(safe-area-inset-left, 0px));
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(1, 22, 52, 0.94);
+  color: white;
+  box-shadow: 0 10px 34px rgba(0, 12, 34, 0.24);
+  backdrop-filter: blur(10px);
+}
+
+@media (max-width: 560px) {
+  .banner {
+    right: max(10px, env(safe-area-inset-right, 0px));
+    bottom: max(10px, env(safe-area-inset-bottom, 0px));
+    left: max(10px, env(safe-area-inset-left, 0px));
+    width: calc(100% - 20px);
+    max-height: calc(100dvh - 20px);
+    gap: 16px;
+    padding: 22px 18px;
+    border-radius: 18px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .acceptButton,
+  .rejectButton {
+    width: 100%;
+  }
+
+  .settingsButton {
+    max-width: calc(100% - 28px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acceptButton,
+  .rejectButton,
+  .settingsButton {
+    transition: none;
+  }
+}

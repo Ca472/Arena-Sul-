@@ -187,6 +187,7 @@ export default async function EventDetailPage({
             >
               Instagram
             </a>
+            <Link href="/privacidade">Privacidade</Link>
           </div>
         </div>
       </footer>
