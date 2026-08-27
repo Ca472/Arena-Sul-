@@ -15,6 +15,7 @@ Reconstrução completa do site da Arena Sul Sports em Next.js, baseada no mater
 - Supabase Auth, Postgres, Storage privado e Row Level Security (RLS).
 - Modo demonstração seguro e explicitamente não persistente para avaliar o protótipo sem credenciais.
 - SEO local, Open Graph, Twitter Card, JSON-LD, sitemap com eventos e `robots.txt`.
+- Google Ads com Consent Mode v2, preferências revogáveis e página de privacidade.
 
 O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzidos no navegador com controles nativos; o link externo continua disponível como alternativa. Stories mantêm a sincronização independente já configurada.
 
@@ -25,6 +26,7 @@ O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzido
 | `/` | Portal institucional e destaques de eventos |
 | `/eventos` | Galeria pública de todos os eventos publicados |
 | `/eventos/[slug]` | Descrição e álbum público de um evento |
+| `/privacidade` | Explicação da Google tag e das preferências de consentimento |
 | `/admin/login` | Login administrativo no modo Supabase |
 | `/admin` | Dashboard de conteúdo |
 | `/admin/eventos/novo` | Cadastro de evento e upload múltiplo |
@@ -36,6 +38,7 @@ O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzido
 - [Auditoria do site atual](docs/AUDITORIA_SITE_ATUAL.md): inventário permanente de conteúdo, rotas, contatos, ativos, fontes públicas e problemas encontrados na versão Wix.
 - [Validação de conteúdo](docs/CONTENT_VALIDATION.md): itens que exigem confirmação do cliente antes do lançamento.
 - [Configuração do ADMIN e Supabase](docs/ADMIN_SUPABASE_SETUP.md): preparação da autenticação, banco, Storage e operação real.
+- [Google Ads e Consent Mode v2](docs/GOOGLE_ADS_SETUP.md): comportamento, validação e etapa futura de conversões.
 
 ## Stack e arquitetura
 

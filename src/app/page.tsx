@@ -547,6 +547,7 @@ export default async function Home() {
                     Tour 360º <span aria-hidden="true">↗</span>
                   </a>
                   <a href="#instagram">Instagram</a>
+                  <a href="/privacidade">Privacidade</a>
                 </div>
               </nav>
             </div>

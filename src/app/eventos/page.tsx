@@ -118,7 +118,8 @@ export default async function EventsPage() {
             >
               Instagram
             </a>
-            <Link href="/admin">Área administrativa</Link>
+            <Link href="/privacidade">Privacidade</Link>
+            <a href="/admin">Área administrativa</a>
           </div>
         </div>
       </footer>
