@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import styles from "@/components/google-ads-consent.module.css";
+import { GoogleAdsWhatsAppConversion } from "@/components/google-ads-whatsapp-conversion";
 import {
   GOOGLE_ADS_TAG_ID,
   GOOGLE_CONSENT_STORAGE_KEY,
@@ -139,6 +140,7 @@ export function GoogleAdsConsent() {
           window.gtag("config", "${GOOGLE_ADS_TAG_ID}");
         `}
       </Script>
+      <GoogleAdsWhatsAppConversion />
 
       {shouldShowPanel ? (
         <section

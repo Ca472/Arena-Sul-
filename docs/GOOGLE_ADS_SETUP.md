@@ -21,20 +21,31 @@ O site usa o Consent Mode v2 avançado:
 
 A página pública `/privacidade` explica esse funcionamento aos visitantes.
 
-## O que a tag-base faz
+## Conversão de clique no WhatsApp
 
 A tag-base conecta o domínio à conta Google Ads e permite a configuração de
-medição. Ela não transforma automaticamente um clique no WhatsApp em conversão.
-
-Para medir uma conversão específica, conclua a ação de conversão no Google Ads
-e obtenha o identificador completo no formato:
+medição. O evento específico recebido da conta da Arena Sul está configurado
+com o identificador completo:
 
 ```text
-AW-18397690648/CONVERSION_LABEL
+AW-18397690648/Jok9CPrJ6-gcEJj22cRE
 ```
 
-O `CONVERSION_LABEL` deve ser fornecido antes de adicionar qualquer chamada de
-evento. Não invente nem reutilize um label de outra conta.
+Nas páginas públicas, um único listener identifica cliques em links seguros do
+WhatsApp (`wa.me`, `api.whatsapp.com` e `web.whatsapp.com`) destinados ao número
+oficial `551233071093` e envia:
+
+```javascript
+gtag("event", "conversion", {
+  send_to: "AW-18397690648/Jok9CPrJ6-gcEJj22cRE",
+});
+```
+
+O clique continua abrindo o WhatsApp normalmente. O evento não é instalado como
+visualização da página inicial, pois isso contaria uma simples visita como lead.
+No Google Ads, recomenda-se renomear a ação originalmente chamada
+**Page view (1)** para **Clique no WhatsApp - Site Arena Sul** e usar a contagem
+**Uma**, adequada para contatos de lead.
 
 ## Validação depois do deploy
 
@@ -47,7 +58,9 @@ evento. Não invente nem reutilize um label de outra conta.
    novo `update` como `denied`.
 6. Recarregue a página para validar a persistência.
 7. Abra `/admin/login` diretamente e confirme que `gtag/js` não é requisitado.
-8. Confirme que existe somente uma tag `AW-18397690648`.
+8. Clique em um CTA do WhatsApp e confirme o evento `conversion` com o
+   `send_to` `AW-18397690648/Jok9CPrJ6-gcEJj22cRE`.
+9. Confirme que existe somente uma tag `AW-18397690648` e um evento por clique.
 
 O painel do Google Ads pode levar algum tempo para atualizar o diagnóstico,
 mesmo quando a requisição já está correta no navegador.

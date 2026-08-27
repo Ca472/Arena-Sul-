@@ -8,6 +8,10 @@ const consentComponent = readFileSync(
   "utf8",
 );
 const consentModule = readFileSync("src/lib/google-ads/consent.ts", "utf8");
+const whatsappConversionComponent = readFileSync(
+  "src/components/google-ads-whatsapp-conversion.tsx",
+  "utf8",
+);
 
 test("places the synchronous consent default before page content", () => {
   const defaultIndex = rootLayout.indexOf('id="google-consent-default"');
@@ -46,4 +50,26 @@ test("provides equally explicit accept, reject and preference controls", () => {
   assert.match(consentComponent, /role="region"/);
   assert.match(consentComponent, /aria-labelledby="google-consent-title"/);
   assert.match(consentComponent, /aria-describedby="google-consent-description"/);
+});
+
+test("installs one delegated WhatsApp conversion listener on public pages", () => {
+  assert.equal(
+    consentComponent.match(/<GoogleAdsWhatsAppConversion \/>/g)?.length,
+    1,
+  );
+  assert.equal(
+    whatsappConversionComponent.match(
+      /document\.addEventListener\("click", reportWhatsAppClick\)/g,
+    )?.length,
+    1,
+  );
+  assert.match(
+    whatsappConversionComponent,
+    /document\.removeEventListener\("click", reportWhatsAppClick\)/,
+  );
+  assert.match(whatsappConversionComponent, /"event",\s*"conversion"/);
+  assert.match(
+    whatsappConversionComponent,
+    /getGoogleAdsWhatsAppConversionParameters\(\s*link\.href,\s*ARENA_WHATSAPP_NUMBER/,
+  );
 });
