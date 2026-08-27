@@ -8,10 +8,6 @@ const consentComponent = readFileSync(
   "utf8",
 );
 const consentModule = readFileSync("src/lib/google-ads/consent.ts", "utf8");
-const whatsappConversionComponent = readFileSync(
-  "src/components/google-ads-whatsapp-conversion.tsx",
-  "utf8",
-);
 
 test("places the synchronous consent default before page content", () => {
   const defaultIndex = rootLayout.indexOf('id="google-consent-default"');
@@ -52,24 +48,22 @@ test("provides equally explicit accept, reject and preference controls", () => {
   assert.match(consentComponent, /aria-describedby="google-consent-description"/);
 });
 
-test("installs one delegated WhatsApp conversion listener on public pages", () => {
+test("fires the supplied conversion once after configuring a public site visit", () => {
+  const guardIndex = consentComponent.indexOf("if (!isPublicPath)");
+  const configIndex = consentComponent.indexOf('window.gtag("config"');
+  const conversionIndex = consentComponent.indexOf(
+    'window.gtag("event", "conversion"',
+  );
+
+  assert.notEqual(guardIndex, -1);
+  assert.notEqual(configIndex, -1);
+  assert.notEqual(conversionIndex, -1);
+  assert.ok(guardIndex < conversionIndex);
+  assert.ok(configIndex < conversionIndex);
   assert.equal(
-    consentComponent.match(/<GoogleAdsWhatsAppConversion \/>/g)?.length,
+    consentComponent.match(/window\.gtag\("event", "conversion"/g)?.length,
     1,
   );
-  assert.equal(
-    whatsappConversionComponent.match(
-      /document\.addEventListener\("click", reportWhatsAppClick\)/g,
-    )?.length,
-    1,
-  );
-  assert.match(
-    whatsappConversionComponent,
-    /document\.removeEventListener\("click", reportWhatsAppClick\)/,
-  );
-  assert.match(whatsappConversionComponent, /"event",\s*"conversion"/);
-  assert.match(
-    whatsappConversionComponent,
-    /getGoogleAdsWhatsAppConversionParameters\(\s*link\.href,\s*ARENA_WHATSAPP_NUMBER/,
-  );
+  assert.match(consentComponent, /GOOGLE_ADS_SITE_VISIT_CONVERSION_SEND_TO/);
+  assert.doesNotMatch(consentComponent, /addEventListener\("click"/);
 });

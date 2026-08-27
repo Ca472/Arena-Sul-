@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import styles from "@/components/google-ads-consent.module.css";
-import { GoogleAdsWhatsAppConversion } from "@/components/google-ads-whatsapp-conversion";
 import {
   GOOGLE_ADS_TAG_ID,
   GOOGLE_CONSENT_STORAGE_KEY,
@@ -16,6 +15,7 @@ import {
   parseStoredGoogleConsent,
   serializeGoogleConsent,
 } from "@/lib/google-ads/consent";
+import { GOOGLE_ADS_SITE_VISIT_CONVERSION_SEND_TO } from "@/lib/google-ads/conversion";
 
 declare global {
   interface Window {
@@ -138,9 +138,11 @@ export function GoogleAdsConsent() {
         {`
           window.gtag("js", new Date());
           window.gtag("config", "${GOOGLE_ADS_TAG_ID}");
+          window.gtag("event", "conversion", {
+            send_to: "${GOOGLE_ADS_SITE_VISIT_CONVERSION_SEND_TO}"
+          });
         `}
       </Script>
-      <GoogleAdsWhatsAppConversion />
 
       {shouldShowPanel ? (
         <section

@@ -41,6 +41,11 @@ export default function PrivacyPage() {
               Consent Mode v2, que comunica à tag se o armazenamento e o uso de
               dados para publicidade e análise foram aceitos ou recusados.
             </p>
+            <p>
+              O carregamento das páginas públicas envia um evento de visita
+              para a ação configurada no Google Ads. Áreas administrativas, de
+              autenticação e de integração não participam dessa medição.
+            </p>
           </section>
 
           <section>
