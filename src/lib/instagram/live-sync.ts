@@ -58,7 +58,8 @@ function isInstagramMediaItem(
     typeof item.id === "string" &&
     item.kind === expectedKind &&
     (item.mediaType === "IMAGE" || item.mediaType === "VIDEO") &&
-    typeof item.mediaUrl === "string" &&
+    (item.mediaUrl === null || typeof item.mediaUrl === "string") &&
+    (typeof item.mediaUrl === "string" || typeof item.thumbnailUrl === "string") &&
     (item.thumbnailUrl === null || typeof item.thumbnailUrl === "string") &&
     typeof item.permalink === "string" &&
     (item.caption === null || typeof item.caption === "string") &&

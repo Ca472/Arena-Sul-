@@ -84,6 +84,33 @@ test("accepts only a sanitized live snapshot with Stories and Reels", () => {
   assert.equal(
     isInstagramLiveFeedSnapshot({
       status: "connected",
+      storiesStatus: "connected",
+      reelsStatus: "connected",
+      stories: [],
+      reels: [reel("protected-audio", { mediaUrl: null })],
+      fetchedAt,
+    }),
+    true,
+  );
+  assert.equal(
+    isInstagramLiveFeedSnapshot({
+      status: "connected",
+      storiesStatus: "connected",
+      reelsStatus: "connected",
+      stories: [],
+      reels: [
+        reel("missing-preview", {
+          mediaUrl: null,
+          thumbnailUrl: null,
+        }),
+      ],
+      fetchedAt,
+    }),
+    false,
+  );
+  assert.equal(
+    isInstagramLiveFeedSnapshot({
+      status: "connected",
       storiesStatus: "unavailable",
       reelsStatus: "connected",
       stories: [],

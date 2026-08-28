@@ -152,6 +152,7 @@ function ControlledStoryVideo({
   shouldPlay: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaUrl = item.mediaUrl;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -167,12 +168,16 @@ function ControlledStoryVideo({
     void video.play().catch(() => {
       // Browser autoplay policies may still require an explicit user gesture.
     });
-  }, [item.id, item.mediaUrl, shouldPlay]);
+  }, [item.id, mediaUrl, shouldPlay]);
+
+  if (!mediaUrl) {
+    return null;
+  }
 
   return (
     <video
       ref={videoRef}
-      src={item.mediaUrl}
+      src={mediaUrl}
       poster={item.thumbnailUrl ?? undefined}
       autoPlay={shouldPlay}
       controls
@@ -195,7 +200,7 @@ function MediaVisual({
   shouldAutoPlay?: boolean;
   videoControls?: boolean;
 }) {
-  if (item.mediaType === "VIDEO" && videoControls) {
+  if (item.mediaType === "VIDEO" && item.mediaUrl && videoControls) {
     return (
       <ControlledStoryVideo
         key={item.id}
@@ -206,6 +211,10 @@ function MediaVisual({
   }
 
   const previewUrl = item.thumbnailUrl ?? item.mediaUrl;
+
+  if (!previewUrl) {
+    return null;
+  }
 
   return <Image src={previewUrl} alt="" fill sizes={sizes} unoptimized />;
 }
@@ -227,7 +236,7 @@ function InlineReelVisual({
   onError: () => void;
   onRetry: () => void;
 }) {
-  if (item.mediaType === "VIDEO") {
+  if (item.mediaType === "VIDEO" && item.mediaUrl) {
     if (failed) {
       return (
         <span className={styles.reelPlaybackFallback} role="status">
@@ -256,9 +265,15 @@ function InlineReelVisual({
     );
   }
 
+  const previewUrl = item.thumbnailUrl ?? item.mediaUrl;
+
+  if (!previewUrl) {
+    return null;
+  }
+
   return (
     <Image
-      src={item.thumbnailUrl ?? item.mediaUrl}
+      src={previewUrl}
       alt={item.caption || "Prévia de Reel da Arena Sul"}
       fill
       sizes="(max-width: 600px) 72vw, (max-width: 1000px) 36vw, 220px"
@@ -917,7 +932,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
                 {visibleReels.map((reel, index) => {
                   const title = reel.caption || "Novo Reel da Arena Sul";
                   const titleId = `arena-reel-${index + 1}-title`;
-                  const failureKey = `${reel.id}:${reel.mediaUrl}`;
+                  const failureKey = `${reel.id}:${reel.mediaUrl ?? "preview"}`;
                   return (
                     <article
                       className={styles.reelCard}

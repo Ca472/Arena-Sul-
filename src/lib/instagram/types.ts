@@ -6,7 +6,7 @@ export type InstagramMediaItem = {
   id: string;
   kind: InstagramMediaKind;
   mediaType: InstagramMediaType;
-  mediaUrl: string;
+  mediaUrl: string | null;
   thumbnailUrl: string | null;
   permalink: string;
   caption: string | null;

@@ -5,17 +5,17 @@ import {
   getInstagramFetchCachePolicy,
   type InstagramFeedEdge,
 } from "./cache-policy";
+import {
+  normalizeInstagramStories,
+  selectInstagramReels,
+} from "./media-normalization";
 import type {
   InstagramFeed,
-  InstagramMediaItem,
-  InstagramMediaKind,
   InstagramStoriesSnapshot,
 } from "./types";
 import { getStoredInstagramCredentials } from "./token-store";
 
 const DEFAULT_GRAPH_VERSION = "v26.0";
-const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/arenasulsports/";
-const STORY_MAX_AGE_MS = 25 * 60 * 60 * 1000;
 
 const graphMediaSchema = z
   .object({
@@ -89,89 +89,6 @@ function emptyStoriesSnapshot(
   return { status, stories: [], fetchedAt: null };
 }
 
-function isAllowedMediaUrl(value: string | undefined): value is string {
-  if (!value) {
-    return false;
-  }
-
-  try {
-    const url = new URL(value);
-    const hostname = url.hostname.toLowerCase();
-
-    return (
-      url.protocol === "https:" &&
-      (hostname === "cdninstagram.com" ||
-        hostname.endsWith(".cdninstagram.com") ||
-        hostname === "fbcdn.net" ||
-        hostname.endsWith(".fbcdn.net"))
-    );
-  } catch {
-    return false;
-  }
-}
-
-function safePermalink(value: string | undefined, kind: InstagramMediaKind) {
-  if (kind === "story") {
-    return "https://www.instagram.com/stories/arenasulsports/";
-  }
-
-  if (!value) {
-    return INSTAGRAM_PROFILE_URL;
-  }
-
-  try {
-    const url = new URL(value);
-    const hostname = url.hostname.toLowerCase();
-
-    if (
-      url.protocol === "https:" &&
-      (hostname === "instagram.com" || hostname.endsWith(".instagram.com"))
-    ) {
-      return url.toString();
-    }
-  } catch {
-    // The public profile is a safe fallback for malformed API data.
-  }
-
-  return INSTAGRAM_PROFILE_URL;
-}
-
-function normalizeMedia(
-  media: GraphMedia,
-  kind: InstagramMediaKind,
-): InstagramMediaItem | null {
-  if (media.media_type === "CAROUSEL_ALBUM") {
-    return null;
-  }
-
-  const mediaUrl = isAllowedMediaUrl(media.media_url) ? media.media_url : null;
-
-  if (!mediaUrl) {
-    return null;
-  }
-
-  const timestamp = new Date(media.timestamp);
-
-  if (Number.isNaN(timestamp.getTime())) {
-    return null;
-  }
-
-  const thumbnailUrl = isAllowedMediaUrl(media.thumbnail_url)
-    ? media.thumbnail_url
-    : null;
-
-  return {
-    id: media.id,
-    kind,
-    mediaType: media.media_type,
-    mediaUrl,
-    thumbnailUrl,
-    permalink: safePermalink(media.permalink, kind),
-    caption: media.caption?.replace(/\s+/g, " ").trim().slice(0, 220) || null,
-    timestamp: timestamp.toISOString(),
-  };
-}
-
 async function fetchInstagramEdge({
   edge,
   fields,
@@ -243,14 +160,7 @@ function getInstagramGraphVersion() {
 }
 
 function normalizeStories(stories: GraphMedia[]) {
-  const now = Date.now();
-  return stories
-    .filter(
-      (story) => now - new Date(story.timestamp).getTime() < STORY_MAX_AGE_MS,
-    )
-    .map((story) => normalizeMedia(story, "story"))
-    .filter((story): story is InstagramMediaItem => story !== null)
-    .slice(0, 8);
+  return normalizeInstagramStories(stories);
 }
 
 export async function getInstagramStoriesSnapshot(): Promise<InstagramStoriesSnapshot> {
@@ -329,15 +239,7 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
 
     const normalizedStories = normalizeStories(stories);
 
-    const normalizedReels = media
-      .filter(
-        (item) =>
-          item.media_product_type === "REELS" ||
-          item.permalink?.includes("/reel/"),
-      )
-      .map((item) => normalizeMedia(item, "reel"))
-      .filter((reel): reel is InstagramMediaItem => reel !== null)
-      .slice(0, 6);
+    const normalizedReels = selectInstagramReels(media);
 
     return {
       status: "connected",
