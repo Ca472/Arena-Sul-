@@ -73,7 +73,14 @@ function logInstagramGraphFailure(
 }
 
 function emptyFeed(status: InstagramFeed["status"]): InstagramFeed {
-  return { status, stories: [], storiesFetchedAt: null, reels: [] };
+  return {
+    status,
+    storiesStatus: status,
+    reelsStatus: status,
+    stories: [],
+    reels: [],
+    fetchedAt: null,
+  };
 }
 
 function emptyStoriesSnapshot(
@@ -276,8 +283,9 @@ export async function getInstagramStoriesSnapshot(): Promise<InstagramStoriesSna
 
 /**
  * Reads the Arena's own Instagram media without exposing the access token to
- * the browser. New stories are visible for their active lifetime; reels are
- * refreshed independently through the Next.js data cache.
+ * the browser. Stories and Reels are refreshed together by the shared live
+ * cache so every visitor sees a recent snapshot without calling Meta once per
+ * page view.
  */
 export async function getInstagramFeed(): Promise<InstagramFeed> {
   const storedCredentials = await getStoredInstagramCredentials();
@@ -305,10 +313,7 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
         userId,
         accessToken,
         graphVersion,
-      }).then((stories) => ({
-        stories,
-        fetchedAt: new Date().toISOString(),
-      })),
+      }),
     ]);
 
     if (
@@ -319,9 +324,8 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
     }
 
     const media = mediaResult.status === "fulfilled" ? mediaResult.value : [];
-    const storiesSnapshot =
-      storiesResult.status === "fulfilled" ? storiesResult.value : null;
-    const stories = storiesSnapshot?.stories ?? [];
+    const stories =
+      storiesResult.status === "fulfilled" ? storiesResult.value : [];
 
     const normalizedStories = normalizeStories(stories);
 
@@ -337,9 +341,13 @@ export async function getInstagramFeed(): Promise<InstagramFeed> {
 
     return {
       status: "connected",
+      storiesStatus:
+        storiesResult.status === "fulfilled" ? "connected" : "unavailable",
+      reelsStatus:
+        mediaResult.status === "fulfilled" ? "connected" : "unavailable",
       stories: normalizedStories,
-      storiesFetchedAt: storiesSnapshot?.fetchedAt ?? null,
       reels: normalizedReels,
+      fetchedAt: new Date().toISOString(),
     };
   } catch {
     return emptyFeed("unavailable");

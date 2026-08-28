@@ -11,21 +11,21 @@ import {
   useState,
 } from "react";
 import {
-  areInstagramStoriesEqual,
+  areInstagramMediaItemsEqual,
   findStoryIndexAfterRefresh,
   getAdjacentStoryIndex,
-  getInstagramStoriesRefreshDelay,
-  getInstagramStoriesSnapshotTimestamp,
+  getInstagramLiveRefreshDelay,
+  getInstagramLiveSnapshotTimestamp,
   getStorySwipeDirection,
-  INSTAGRAM_STORIES_MIN_REFRESH_MS,
-  INSTAGRAM_STORIES_REFRESH_MS,
-  isInstagramStoriesSnapshot,
+  INSTAGRAM_LIVE_MIN_REFRESH_MS,
+  INSTAGRAM_LIVE_REFRESH_MS,
+  isInstagramLiveFeedSnapshot,
+  mergeInstagramFeedMedia,
 } from "@/lib/instagram/live-sync";
 import type {
   InstagramFeed,
   InstagramFeedStatus,
   InstagramMediaItem,
-  InstagramStoriesSnapshot,
 } from "@/lib/instagram/types";
 import styles from "./instagram-showcase.module.css";
 
@@ -37,12 +37,13 @@ const STORY_ROTATION_MS = 7000;
 type LiveStoriesState = {
   status: InstagramFeedStatus;
   stories: InstagramMediaItem[];
+  reels: InstagramMediaItem[];
   fetchedAt: string | null;
   activeStoryId: string | null;
 };
 
 type LiveStoriesAction =
-  | { type: "replace"; snapshot: InstagramStoriesSnapshot }
+  | { type: "replace"; snapshot: InstagramFeed }
   | { type: "select"; storyId: string }
   | {
       type: "navigate";
@@ -55,7 +56,8 @@ function createLiveStoriesState(feed: InstagramFeed): LiveStoriesState {
   return {
     status: feed.status,
     stories: feed.stories,
-    fetchedAt: feed.storiesFetchedAt,
+    reels: feed.reels,
+    fetchedAt: feed.fetchedAt,
     activeStoryId: feed.stories[0]?.id ?? null,
   };
 }
@@ -94,22 +96,29 @@ function liveStoriesReducer(
     return nextStory ? { ...state, activeStoryId: nextStory.id } : state;
   }
 
+  const { stories: nextStories, reels: nextReels } = mergeInstagramFeedMedia(
+    state,
+    action.snapshot,
+  );
+
   if (
-    state.status === "connected" &&
-    areInstagramStoriesEqual(state.stories, action.snapshot.stories)
+    state.status === action.snapshot.status &&
+    areInstagramMediaItemsEqual(state.stories, nextStories) &&
+    areInstagramMediaItemsEqual(state.reels, nextReels)
   ) {
     return { ...state, fetchedAt: action.snapshot.fetchedAt };
   }
 
   const nextActiveIndex = findStoryIndexAfterRefresh(
     state.activeStoryId,
-    action.snapshot.stories,
+    nextStories,
   );
   return {
     status: action.snapshot.status,
-    stories: action.snapshot.stories,
+    stories: nextStories,
+    reels: nextReels,
     fetchedAt: action.snapshot.fetchedAt,
-    activeStoryId: action.snapshot.stories[nextActiveIndex]?.id ?? null,
+    activeStoryId: nextStories[nextActiveIndex]?.id ?? null,
   };
 }
 
@@ -314,10 +323,10 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
   const refreshControllerRef = useRef<AbortController | null>(null);
   const reelVideoRefs = useRef(new Map<string, HTMLVideoElement>());
   const refreshInFlightRef = useRef(false);
-  const lastStoriesRefreshStartedAtRef = useRef(0);
+  const lastLiveRefreshStartedAtRef = useRef(0);
   const visibilityInitializedRef = useRef(false);
-  const latestStoriesFetchedAtRef = useRef(
-    getInstagramStoriesSnapshotTimestamp(feed.storiesFetchedAt),
+  const latestFeedFetchedAtRef = useRef(
+    getInstagramLiveSnapshotTimestamp(feed.fetchedAt),
   );
   const [liveStories, dispatchLiveStories] = useReducer(
     liveStoriesReducer,
@@ -333,16 +342,14 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     () => new Set(),
   );
 
-  const reels = feed.reels;
-  const feedStoriesFetchedAt = getInstagramStoriesSnapshotTimestamp(
-    feed.storiesFetchedAt,
-  );
-  const liveStoriesFetchedAt = getInstagramStoriesSnapshotTimestamp(
+  const feedFetchedAt = getInstagramLiveSnapshotTimestamp(feed.fetchedAt);
+  const liveFeedFetchedAt = getInstagramLiveSnapshotTimestamp(
     liveStories.fetchedAt,
   );
-  const shouldUseFeedStories = feedStoriesFetchedAt > liveStoriesFetchedAt;
-  const stories = shouldUseFeedStories ? feed.stories : liveStories.stories;
-  const storiesStatus = shouldUseFeedStories ? feed.status : liveStories.status;
+  const shouldUseFeedSnapshot = feedFetchedAt > liveFeedFetchedAt;
+  const stories = shouldUseFeedSnapshot ? feed.stories : liveStories.stories;
+  const reels = shouldUseFeedSnapshot ? feed.reels : liveStories.reels;
+  const storiesStatus = shouldUseFeedSnapshot ? feed.status : liveStories.status;
   const selectedStoryIndex = stories.findIndex(
     (story) => story.id === liveStories.activeStoryId,
   );
@@ -352,20 +359,19 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     storiesStatus === "connected" && (stories.length > 0 || reels.length > 0);
 
   useEffect(() => {
-    lastStoriesRefreshStartedAtRef.current =
+    lastLiveRefreshStartedAtRef.current =
       feed.status === "connected" ? Date.now() : 0;
-    latestStoriesFetchedAtRef.current = Math.max(
-      latestStoriesFetchedAtRef.current,
-      getInstagramStoriesSnapshotTimestamp(feed.storiesFetchedAt),
+    latestFeedFetchedAtRef.current = Math.max(
+      latestFeedFetchedAtRef.current,
+      getInstagramLiveSnapshotTimestamp(feed.fetchedAt),
     );
-  }, [feed.status, feed.storiesFetchedAt]);
+  }, [feed.fetchedAt, feed.status]);
 
-  const refreshStories = useCallback(async () => {
+  const refreshInstagram = useCallback(async () => {
     const now = Date.now();
     if (
       refreshInFlightRef.current ||
-      now - lastStoriesRefreshStartedAtRef.current <
-        INSTAGRAM_STORIES_MIN_REFRESH_MS
+      now - lastLiveRefreshStartedAtRef.current < INSTAGRAM_LIVE_MIN_REFRESH_MS
     ) {
       return;
     }
@@ -373,11 +379,11 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     const controller = new AbortController();
     refreshControllerRef.current = controller;
     refreshInFlightRef.current = true;
-    lastStoriesRefreshStartedAtRef.current = now;
+    lastLiveRefreshStartedAtRef.current = now;
     const timeout = window.setTimeout(() => controller.abort(), 12_000);
 
     try {
-      const response = await fetch("/api/instagram/stories", {
+      const response = await fetch("/api/instagram/feed", {
         cache: "no-store",
         headers: { Accept: "application/json" },
         signal: controller.signal,
@@ -389,32 +395,32 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
 
       const snapshot: unknown = await response.json();
       if (
-        !isInstagramStoriesSnapshot(snapshot) ||
+        !isInstagramLiveFeedSnapshot(snapshot) ||
         snapshot.status !== "connected"
       ) {
         return;
       }
 
-      const snapshotFetchedAt = getInstagramStoriesSnapshotTimestamp(
+      const snapshotFetchedAt = getInstagramLiveSnapshotTimestamp(
         snapshot.fetchedAt,
       );
       if (
         snapshotFetchedAt <= 0 ||
-        snapshotFetchedAt <= latestStoriesFetchedAtRef.current
+        snapshotFetchedAt <= latestFeedFetchedAtRef.current
       ) {
         return;
       }
 
-      latestStoriesFetchedAtRef.current = snapshotFetchedAt;
+      latestFeedFetchedAtRef.current = snapshotFetchedAt;
       dispatchLiveStories({ type: "replace", snapshot });
     } catch {
       if (
         controller.signal.aborted &&
         refreshControllerRef.current === controller
       ) {
-        lastStoriesRefreshStartedAtRef.current = 0;
+        lastLiveRefreshStartedAtRef.current = 0;
       }
-      // Keep the last valid Stories visible after a transient failure.
+      // Keep the last valid Stories and Reels visible after a transient failure.
     } finally {
       window.clearTimeout(timeout);
       if (refreshControllerRef.current === controller) {
@@ -466,8 +472,8 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
         return;
       }
 
-      lastStoriesRefreshStartedAtRef.current = 0;
-      void refreshStories();
+      lastLiveRefreshStartedAtRef.current = 0;
+      void refreshInstagram();
     };
 
     const handleVisibilityChange = () => {
@@ -490,7 +496,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
       window.removeEventListener("focus", requestImmediateRefresh);
       window.removeEventListener("online", requestImmediateRefresh);
     };
-  }, [refreshStories]);
+  }, [refreshInstagram]);
 
   useEffect(() => {
     if (!isVisible || !pageVisible) {
@@ -510,15 +516,15 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
     }
 
     let interval: number | null = null;
-    const kickoffDelay = getInstagramStoriesRefreshDelay(
-      lastStoriesRefreshStartedAtRef.current,
+    const kickoffDelay = getInstagramLiveRefreshDelay(
+      lastLiveRefreshStartedAtRef.current,
       Date.now(),
     );
     const kickoff = window.setTimeout(() => {
-      void refreshStories();
+      void refreshInstagram();
       interval = window.setInterval(
-        () => void refreshStories(),
-        INSTAGRAM_STORIES_REFRESH_MS,
+        () => void refreshInstagram(),
+        INSTAGRAM_LIVE_REFRESH_MS,
       );
     }, kickoffDelay);
 
@@ -534,7 +540,7 @@ export function InstagramShowcase({ feed }: { feed: InstagramFeed }) {
         refreshInFlightRef.current = false;
       }
     };
-  }, [pageVisible, refreshStories]);
+  }, [pageVisible, refreshInstagram]);
 
   useEffect(() => {
     if (

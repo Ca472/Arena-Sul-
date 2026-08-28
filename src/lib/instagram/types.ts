@@ -17,9 +17,11 @@ export type InstagramFeedStatus = "connected" | "unconfigured" | "unavailable";
 
 export type InstagramFeed = {
   status: InstagramFeedStatus;
+  storiesStatus: InstagramFeedStatus;
+  reelsStatus: InstagramFeedStatus;
   stories: InstagramMediaItem[];
-  storiesFetchedAt: string | null;
   reels: InstagramMediaItem[];
+  fetchedAt: string | null;
 };
 
 export type InstagramStoriesSnapshot = {

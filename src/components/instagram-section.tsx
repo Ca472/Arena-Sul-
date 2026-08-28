@@ -1,15 +1,17 @@
 import { connection } from "next/server";
 import { InstagramShowcase } from "@/components/instagram-showcase";
-import { getInstagramFeed } from "@/lib/instagram/queries";
+import { getLiveInstagramFeed } from "@/lib/instagram/live-query";
 import type { InstagramFeed } from "@/lib/instagram/types";
 
 const INSTAGRAM_PROFILE_URL = "https://www.instagram.com/arenasulsports/";
 
 const fallbackFeed: InstagramFeed = {
   status: "unconfigured",
+  storiesStatus: "unconfigured",
+  reelsStatus: "unconfigured",
   stories: [],
-  storiesFetchedAt: null,
   reels: [],
+  fetchedAt: null,
 };
 
 function InstagramSectionContent({ feed }: { feed: InstagramFeed }) {
@@ -54,6 +56,6 @@ export function InstagramSectionFallback() {
 
 export async function InstagramSection() {
   await connection();
-  const feed = await getInstagramFeed();
+  const feed = await getLiveInstagramFeed();
   return <InstagramSectionContent feed={feed} />;
 }

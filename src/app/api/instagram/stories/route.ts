@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
-import { getLiveInstagramStoriesSnapshot } from "@/lib/instagram/live-query";
+import { getLiveInstagramFeed } from "@/lib/instagram/live-query";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  const snapshot = await getLiveInstagramStoriesSnapshot();
+  const feed = await getLiveInstagramFeed();
+  const snapshot = {
+    status: feed.storiesStatus,
+    stories: feed.stories,
+    fetchedAt: feed.storiesStatus === "connected" ? feed.fetchedAt : null,
+  };
 
   return NextResponse.json(snapshot, {
     headers: {

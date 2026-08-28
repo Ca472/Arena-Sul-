@@ -3,18 +3,14 @@ import test from "node:test";
 
 import { getInstagramFetchCachePolicy } from "../src/lib/instagram/cache-policy.ts";
 
-test("always fetches active Stories again when the page is reloaded", () => {
+test("always fetches active Stories from Meta for each shared live window", () => {
   assert.deepEqual(getInstagramFetchCachePolicy("stories"), {
     cache: "no-store",
   });
 });
 
-test("keeps Reels cached independently for fifteen minutes", () => {
+test("always fetches Reels from Meta for each shared live window", () => {
   assert.deepEqual(getInstagramFetchCachePolicy("media"), {
-    cache: "force-cache",
-    next: {
-      revalidate: 900,
-      tags: ["instagram-reels"],
-    },
+    cache: "no-store",
   });
 });
