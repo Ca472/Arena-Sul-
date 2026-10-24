@@ -43,6 +43,7 @@ O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzido
 - [Configuração do ADMIN e Supabase](docs/ADMIN_SUPABASE_SETUP.md): preparação da autenticação, banco, Storage e operação real.
 - [Google Ads e Consent Mode v2](docs/GOOGLE_ADS_SETUP.md): comportamento, validação e etapa futura de conversões.
 - [Instagram: conexão e renovação automática](docs/INSTAGRAM_SETUP.md): reconexão de `@arenasulsports`, configuração do cron e validação.
+- [Avaliações do Google](docs/GOOGLE_REVIEWS_SETUP.md): seleção manual conferida e requisitos pendentes para sincronização automática.
 
 ## Stack e arquitetura
 

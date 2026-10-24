@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Suspense } from "react";
+import { Suspense, type CSSProperties } from "react";
 import { ArenaLoader } from "@/components/arena-loader";
 import { ArenaOpening } from "@/components/arena-opening";
 import {
@@ -11,6 +11,7 @@ import { SiteHeader } from "@/components/site-header";
 import { StructureGallery } from "@/components/structure-gallery";
 import { buildWhatsAppUrl } from "@/lib/config/whatsapp";
 import { getSiteMediaMap } from "@/lib/site-media/queries";
+import { GOOGLE_REVIEW_SNAPSHOT } from "@/lib/google-reviews/curated";
 
 type ArenaStat = {
   value: string | null;
@@ -20,11 +21,6 @@ type ArenaStat = {
 
 type Amenity = {
   label: string;
-};
-
-type GoogleTestimonial = {
-  author: string;
-  excerpt: string;
 };
 
 const stats: ArenaStat[] = [
@@ -87,24 +83,14 @@ const amenities: Amenity[] = [
   { label: "Estrutura para grupos e eventos" },
 ];
 
-const googleTestimonials: GoogleTestimonial[] = [
-  {
-    author: "Eduardo Barreto",
-    excerpt: "Muito bom.",
-  },
-  {
-    author: "Yorbi Calzadilla",
-    excerpt: "Ambiente excelente",
-  },
-  {
-    author: "Glaucia Kajiyama",
-    excerpt: "Excelente local para praticar esportes em família e com amigos.",
-  },
-  {
-    author: "Agnaldo Tinho",
-    excerpt: "Bom",
-  },
-];
+const googleRatingLabel = GOOGLE_REVIEW_SNAPSHOT.rating.toLocaleString("pt-BR", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 1,
+});
+const googleReviewCountLabel = GOOGLE_REVIEW_SNAPSHOT.totalReviewCount.toLocaleString("pt-BR");
+const googleReviewVerificationLabel = new Intl.DateTimeFormat("pt-BR", {
+  timeZone: "America/Sao_Paulo",
+}).format(new Date(`${GOOGLE_REVIEW_SNAPSHOT.verifiedOn}T12:00:00Z`));
 
 const contactUrl = buildWhatsAppUrl();
 
@@ -401,7 +387,10 @@ export default async function Home() {
               <p className="section-kicker">Depoimentos reais</p>
               <h2 id="testimonials-title">Quem conhece a Arena, recomenda.</h2>
               <p className="testimonials-recency">
-                Últimas 4 avaliações recebidas
+                Avaliações selecionadas no Google · 5 estrelas e com texto
+              </p>
+              <p className="testimonials-verification">
+                Nota e total conferidos em <time dateTime={GOOGLE_REVIEW_SNAPSHOT.verifiedOn}>{googleReviewVerificationLabel}</time>.
               </p>
             </div>
             <a
@@ -409,34 +398,45 @@ export default async function Home() {
               href={mapsPlaceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Ver todas as avaliações da Arena Sul no Google Maps"
+              aria-label={`Nota ${googleRatingLabel} de 5 em ${googleReviewCountLabel} avaliações. Ver todas no Google Maps`}
             >
-              <strong>4,5</strong>
-              <span className="google-rating-stars" aria-hidden="true">
+              <strong>{googleRatingLabel}</strong>
+              <span
+                className="google-rating-stars"
+                aria-hidden="true"
+                style={{ "--google-rating-fill": `${GOOGLE_REVIEW_SNAPSHOT.rating / 5 * 100}%` } as CSSProperties}
+              >
                 ★★★★★
               </span>
-              <span>Mais de 600 avaliações no Google</span>
+              <span>{googleReviewCountLabel} avaliações no Google</span>
             </a>
           </div>
 
           <div className="testimonials-grid shell">
-            {googleTestimonials.map((testimonial) => (
-              <article className="testimonial-card" key={testimonial.author}>
+            {GOOGLE_REVIEW_SNAPSHOT.reviews.map((testimonial) => (
+              <article className="testimonial-card" key={testimonial.id}>
                 <div className="testimonial-meta">
                   <span className="testimonial-source">Avaliação do Google</span>
                   <span
                     className="testimonial-stars"
-                    aria-label="5 de 5 estrelas"
+                    aria-label={`${testimonial.rating} de 5 estrelas`}
                   >
                     ★★★★★
                   </span>
                 </div>
                 <blockquote>
-                  <p>“{testimonial.excerpt}”</p>
+                  <p>“{testimonial.text}”</p>
                 </blockquote>
                 <footer>
                   <strong>{testimonial.author}</strong>
-                  <span aria-hidden="true">G</span>
+                  <a
+                    href={testimonial.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Ver avaliação de ${testimonial.author} no Google`}
+                  >
+                    <span aria-hidden="true">G</span>
+                  </a>
                 </footer>
               </article>
             ))}

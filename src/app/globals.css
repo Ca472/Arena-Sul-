@@ -1482,6 +1482,13 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
   letter-spacing: 0.04em;
 }
 
+.public-site .testimonials-verification {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
 .public-site .google-rating {
   display: grid;
   min-width: min(100%, 270px);
@@ -1516,7 +1523,7 @@ html[data-arena-opening="active"] .public-site .hero-sport-indicators span {
 .public-site .google-rating-stars::before {
   position: absolute;
   inset: 0;
-  width: 90%;
+  width: var(--google-rating-fill, 0%);
   overflow: hidden;
   color: #f7a600;
   content: "★★★★★";
