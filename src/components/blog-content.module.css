@@ -10,6 +10,8 @@
 .content a:hover { color: #a6440a; }
 .content a:focus-visible { outline: 3px solid #ff914d; outline-offset: 5px; }
 .content ul, .content ol { padding-left: 1.5em; }
+.content ul { list-style: disc; }
+.content ol { list-style: decimal; }
 .content li { padding-left: .25em; margin-bottom: .4em; }
 .content li > p { margin-bottom: .5em; }
 .content blockquote { padding: 15px 24px; border-left: 4px solid #ff914d; background: #f7f5ef; color: #42526b; }

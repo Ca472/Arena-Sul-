@@ -25,6 +25,8 @@
 .checkbox { display: flex; min-height: 44px; align-items: center; gap: 12px; font-size: .8rem; line-height: 1.5; }
 .checkbox input { flex: 0 0 auto; width: 18px; height: 18px; accent-color: var(--admin-green); }
 .counter { display: flex; justify-content: space-between; gap: 16px; }
+.counter > p { min-width: 0; flex: 1; }
+.counter > span { flex: 0 0 auto; white-space: nowrap; }
 .form :is(a, button, input):focus-visible { outline: 3px solid #648d7b; outline-offset: 3px; }
 .form button:disabled { cursor: default; }
 .status { margin-bottom: 20px; }
