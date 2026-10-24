@@ -387,7 +387,7 @@ export default async function Home() {
               <p className="section-kicker">Depoimentos reais</p>
               <h2 id="testimonials-title">Quem conhece a Arena, recomenda.</h2>
               <p className="testimonials-recency">
-                Avaliações selecionadas no Google · 5 estrelas e com texto
+                Avaliações selecionadas no Google
               </p>
               <p className="testimonials-verification">
                 Nota e total conferidos em <time dateTime={GOOGLE_REVIEW_SNAPSHOT.verifiedOn}>{googleReviewVerificationLabel}</time>.
