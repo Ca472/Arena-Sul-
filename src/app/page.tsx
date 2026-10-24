@@ -64,7 +64,7 @@ const heroSports = [
   {
     id: "beach-tennis",
     name: "Beach Tennis",
-    professor: "Profº Vinicius Alves",
+    professor: "Profº Felipe Cursino",
     imageSlot: "team-vinicius-alves",
     className: "hero-sport-slide hero-sport-slide-beach-tennis",
   },
@@ -200,7 +200,7 @@ export default async function Home() {
             <div
               className="hero-visual"
               role="img"
-              aria-label="Time Arena Sul: professores Júlio Neto, Gett Lima, Edson Junior, Vinicius Alves e Wallacy"
+              aria-label="Time Arena Sul: professores Júlio Neto, Gett Lima, Edson Junior, Felipe Cursino e Wallacy"
             >
               <div className="hero-sun" aria-hidden="true" />
               <div className="hero-slash hero-slash-one" aria-hidden="true" />

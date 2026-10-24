@@ -90,10 +90,10 @@ export const SITE_MEDIA_DEFINITIONS = [
   {
     key: "team-vinicius-alves",
     section: "Time Arena Sul",
-    label: "Profº Vinicius Alves — Beach Tennis",
+    label: "Profº Felipe Cursino — Beach Tennis",
     description: "Quarta foto do carrossel de professores.",
-    defaultSrc: "/images/hero-beach-tennis.jpg",
-    alt: "Professor Vinicius Alves em uma quadra de Beach Tennis da Arena Sul.",
+    defaultSrc: "/images/hero-beach-tennis-felipe-cursino.jpg",
+    alt: "Professor Felipe Cursino com uma raquete na quadra de Beach Tennis da Arena Sul.",
     recommendation: "Foto vertical 3:4 · ideal 1200 × 1600 px",
     previewAspect: "3 / 4",
   },
