@@ -101,7 +101,7 @@ Uma autorização já expirada ou revogada precisa de nova autorização: no [pa
 
 ## Verificação
 
-O blog é gerenciado no mesmo painel, em `/admin/blog`. O [guia do blog](docs/BLOG_ADMIN_GUIDE.md) explica como salvar rascunhos, publicar artigos e usar capas. A migração `20261024195848_arena_blog.sql` deve ser aplicada antes da publicação deste módulo. Ele reutiliza os administradores e a configuração de Supabase existentes.
+O blog é gerenciado no mesmo painel, em `/admin/blog`. O [guia do blog](docs/BLOG_ADMIN_GUIDE.md) explica o editor visual, as fontes e a formatação, as fotos no corpo, os rascunhos e a publicação. As migrações `20261024195848_arena_blog.sql` e `20261024211244_arena_blog_rich_content.sql` devem ser aplicadas antes da publicação deste módulo. Ele reutiliza os administradores e a configuração de Supabase existentes.
 
 ```bash
 pnpm exec tsc --noEmit

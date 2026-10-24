@@ -1,0 +1,77 @@
+.editor { min-width: 0; overflow: hidden; border: 1px solid var(--admin-border); border-radius: 12px; background: white; }
+.invalid { border-color: #a5493d; }
+.toolbar { display: grid; gap: 10px; padding: 12px; border-bottom: 1px solid var(--admin-border); background: #f3f6f1; }
+.selectors { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.selectors label, .contextPanel label { display: grid; min-width: 0; gap: 5px; color: var(--admin-muted); font-size: .68rem; font-weight: 750; }
+.selectors select, .contextPanel select, .contextPanel input { min-width: 0; min-height: 42px; max-width: 100%; padding: 8px 10px; border: 1px solid var(--admin-border); border-radius: 7px; background: white; color: var(--admin-ink); font: inherit; font-size: .76rem; }
+.selectors label:first-child { flex: 1 1 112px; }
+.selectors label:nth-child(2) { flex: 1 1 140px; }
+.selectors label:nth-child(3) { flex: 0 1 88px; }
+.selectors .colorControl { flex: 0 0 48px; }
+.colorControl input { width: 48px; height: 42px; padding: 4px; border: 1px solid var(--admin-border); border-radius: 7px; background: white; cursor: pointer; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.tools button, .imageOptions > button { display: inline-flex; min-width: 40px; min-height: 42px; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--admin-border); border-radius: 7px; background: white; color: var(--admin-ink); cursor: pointer; font: inherit; font-size: .72rem; font-weight: 700; line-height: 1.3; }
+.tools button[aria-pressed="true"] { border-color: var(--admin-green); background: #dceee4; color: #073e2c; }
+.tools button:hover, .imageOptions > button:hover { border-color: #8ca99b; background: #e8f0e8; }
+.tools button:disabled, .selectors :disabled, .contextPanel :disabled { cursor: default; opacity: .45; }
+.editor :is(button, input, select):focus-visible { outline: 3px solid #648d7b; outline-offset: 2px; }
+.contextPanel { display: grid; gap: 12px; padding: 16px; border-bottom: 1px solid #c4d6c8; background: #edf5ee; }
+.contextPanel > strong { font-size: .8rem; }
+.contextPanel > p { margin: -4px 0 0; color: var(--admin-muted); font-size: .73rem; line-height: 1.6; }
+.imageOptions { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; }
+.imageOptions label { flex: 1 1 130px; }
+.imageOptions > button { min-height: 42px; border-color: #d7ada6; color: #8f2c22; }
+.tablePanel { gap: 9px; }
+.content { min-width: 0; padding: 24px; }
+.prose { min-width: 0; min-height: 460px; outline: none; color: #17352d; font-family: var(--font-body), sans-serif; font-size: 16px; line-height: 1.8; overflow-wrap: anywhere; }
+.prose:focus { outline: 2px solid #b3cebe; outline-offset: 12px; border-radius: 2px; }
+.prose p { margin: 0 0 1em; }
+.prose h2, .prose h3, .prose h4 { margin: 1.1em 0 .5em; color: #14382c; font-family: var(--font-display), sans-serif; font-weight: 400; line-height: 1.15; }
+.prose h2 { font-size: 2.6em; }
+.prose h3 { font-size: 2em; }
+.prose h4 { font-size: 1.55em; }
+.prose ul, .prose ol { margin: 0 0 1em; padding-left: 1.6em; }
+.prose ul { list-style: disc; }
+.prose ol { list-style: decimal; }
+.prose li { padding-left: .15em; }
+.prose li p { margin-bottom: .4em; }
+.prose strong { font-weight: 750; }
+.prose :global(span[style*="Montserrat"]) { font-family: var(--font-body), sans-serif !important; }
+.prose a { color: #075d48; text-decoration: underline; text-underline-offset: .18em; cursor: text; }
+.prose blockquote { margin: 1em 0; padding: .75em 1em; border-left: 4px solid #819e7a; background: #f1f5ed; }
+.prose blockquote p:last-child { margin-bottom: 0; }
+.prose hr { margin: 1.8em 0; border: 0; border-top: 2px solid #cad7cb; }
+.prose code { padding: .1em .25em; border-radius: 3px; background: #edf2eb; font-family: monospace; }
+.prose pre { overflow-x: auto; padding: 16px; border-radius: 8px; background: #edf2eb; }
+.prose table { width: 100%; margin: 1.3em 0; border-collapse: collapse; table-layout: fixed; font-size: .9em; }
+.prose th, .prose td { position: relative; min-width: 48px; padding: .65em; border: 1px solid #aebfb0; vertical-align: top; }
+.prose th { background: #e4eee3; font-weight: 750; text-align: left; }
+.prose td p, .prose th p { margin-bottom: 0; }
+.prose :global(.selectedCell)::after { position: absolute; z-index: 2; inset: 0; background: rgb(99 160 120 / 20%); content: ""; pointer-events: none; }
+.prose :global(.is-editor-empty):first-child::before { float: left; height: 0; color: #839187; content: attr(data-placeholder); pointer-events: none; }
+.imageNode { display: block; max-width: 100%; margin: 1.5em auto; padding: 4px; border: 2px solid transparent; border-radius: 6px; cursor: pointer; }
+.imageNode[data-align="left"] { margin-left: 0; }
+.imageNode[data-align="right"] { margin-right: 0; }
+.imageNode img { display: block; width: 100%; max-width: 100%; height: auto; border-radius: 3px; }
+.imageNode figcaption { margin-top: 8px; color: #596d61; font-size: .8rem; line-height: 1.5; text-align: center; }
+.imageSelected { border-color: #24875f; background: #e8f4ec; }
+.imageNode:focus-visible { outline: 3px solid #4c9b76; outline-offset: 3px; }
+.editorFoot { display: flex; justify-content: space-between; gap: 16px; padding: 12px 16px; border-top: 1px solid var(--admin-border); background: #fafbf8; color: var(--admin-muted); font-size: .68rem; line-height: 1.6; }
+.editorFoot > span:first-child { max-width: 540px; }
+.editorFoot > span:last-child { flex: 0 0 auto; white-space: nowrap; }
+.error { margin: 0; padding: 12px 16px; border-bottom: 1px solid #e7bdb5; background: #fff2ee; color: #8f2c22; font-size: .78rem; line-height: 1.6; }
+.uploadStatus { margin: 0; padding: 12px 16px; border-bottom: 1px solid #d7e4d5; background: #f0f7e9; color: #3b5738; font-size: .75rem; line-height: 1.6; }
+.loading { min-height: 380px; margin: 0; padding: 28px; color: var(--admin-muted); font-size: .85rem; }
+@media (max-width: 680px) {
+  .toolbar { gap: 9px; padding: 9px; }
+  .selectors { gap: 8px; }
+  .selectors label:first-child { flex: 1 1 100px; }
+  .selectors label:nth-child(2) { flex: 1 1 130px; }
+  .selectors label:nth-child(3) { flex: 1 1 88px; }
+  .tools button { min-height: 44px; padding-inline: 9px; font-size: .7rem; }
+  .content { padding: 18px; }
+  .prose { min-height: 380px; }
+  .prose:focus { outline-offset: 8px; }
+  .editorFoot { flex-wrap: wrap; gap: 7px; padding: 12px; }
+  .contextPanel { padding: 13px; }
+}

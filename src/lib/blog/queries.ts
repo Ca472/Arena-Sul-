@@ -8,10 +8,10 @@ import { BLOG_IMAGE_BUCKET, isValidBlogSlug } from "./validation";
 import type { BlogPost, BlogPostSummary } from "./types";
 
 const SUMMARY_SELECT = "id,slug,title,excerpt,status,published_at,created_at,updated_at,cover_storage_path,cover_alt";
-const DETAIL_SELECT = `${SUMMARY_SELECT},content`;
+const DETAIL_SELECT = `${SUMMARY_SELECT},content,content_format,inline_image_paths`;
 type BlogRow = Database["public"]["Tables"]["blog_posts"]["Row"];
-type SummaryRow = Omit<BlogRow, "content" | "created_by" | "updated_by">;
-type DetailRow = SummaryRow & Pick<BlogRow, "content">;
+type SummaryRow = Omit<BlogRow, "content" | "content_format" | "inline_image_paths" | "created_by" | "updated_by">;
+type DetailRow = SummaryRow & Pick<BlogRow, "content" | "content_format" | "inline_image_paths">;
 
 async function coverUrls(rows: SummaryRow[]) {
   const paths = [...new Set(rows.flatMap((row) => row.cover_storage_path ? [row.cover_storage_path] : []))];
@@ -72,7 +72,7 @@ export async function getPublishedBlogPost(slug: string): Promise<BlogPost | nul
   if (error) throw new Error("Não foi possível carregar o artigo.");
   if (!data) return null;
   const row = data as DetailRow;
-  return { ...mapSummary(row, await coverUrls([row])), content: row.content };
+  return { ...mapSummary(row, await coverUrls([row])), content: row.content, contentFormat: row.content_format, inlineImagePaths: row.inline_image_paths };
 }
 
 export async function getPublishedBlogIndex(): Promise<Array<{ slug: string; updatedAt: string }>> {
@@ -119,5 +119,5 @@ export async function getAdminBlogPost(id: string): Promise<BlogPost | null> {
   if (error) throw new Error("Não foi possível carregar o artigo para edição.");
   if (!data) return null;
   const row = data as DetailRow;
-  return { ...mapSummary(row, await coverUrls([row])), content: row.content };
+  return { ...mapSummary(row, await coverUrls([row])), content: row.content, contentFormat: row.content_format, inlineImagePaths: row.inline_image_paths };
 }

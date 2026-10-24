@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { hasExpectedSiteMediaSignature } from "../site-media/catalog.ts";
+import { BLOG_RICH_TEXT_MAX_SERIALIZED_LENGTH, parseRichTextContent, RichTextValidationError } from "./rich-text.ts";
 
 export const BLOG_IMAGE_BUCKET = "blog-images";
 export const BLOG_COVER_MAX_BYTES = 3 * 1024 * 1024;
@@ -17,16 +18,30 @@ export const blogPostSchema = z.object({
   slug: z.string().trim().max(160, "A URL pode ter até 160 caracteres.")
     .refine((value) => value === "" || isValidBlogSlug(value), "Use uma URL com letras minúsculas, números e hífens, com pelo menos 3 caracteres."),
   excerpt: z.string().trim().max(240, "O resumo pode ter até 240 caracteres."),
-  content: z.string().trim().max(BLOG_CONTENT_MAX_LENGTH, "O texto pode ter até 80 mil caracteres."),
+  content: z.string().trim().max(BLOG_RICH_TEXT_MAX_SERIALIZED_LENGTH, "O conteúdo formatado ultrapassa o limite permitido."),
+  contentFormat: z.enum(["markdown", "richtext"]).default("markdown"),
   status: z.enum(["draft", "published"], "Escolha rascunho ou publicado."),
   coverAlt: z.string().trim().max(240, "A descrição da imagem pode ter até 240 caracteres."),
   updatedAt: z.union([z.iso.datetime({ offset: true }), z.literal("")]).default(""),
 }).superRefine((value, context) => {
+  let visibleContent = value.content;
+  let validContent = true;
+  if (value.contentFormat === "richtext") {
+    try {
+      visibleContent = parseRichTextContent(value.content, { postId: value.id }).plainText;
+    } catch (error) {
+      validContent = false;
+      context.addIssue({ code: "custom", path: ["content"], message: error instanceof RichTextValidationError ? error.message : "O conteúdo do editor não pôde ser validado." });
+    }
+  } else if (value.content.length > BLOG_CONTENT_MAX_LENGTH) {
+    validContent = false;
+    context.addIssue({ code: "custom", path: ["content"], message: "O texto pode ter até 80 mil caracteres." });
+  }
   if (value.status !== "published") return;
   const requirements = [
     ["title", value.title.length >= 3, "Para publicar, informe um título com pelo menos 3 caracteres."],
     ["excerpt", value.excerpt.length >= 20, "Para publicar, escreva um resumo com pelo menos 20 caracteres."],
-    ["content", value.content.length >= 80, "Para publicar, escreva um texto com pelo menos 80 caracteres."],
+    ["content", !validContent || visibleContent.replace(/\s+/g, " ").trim().length >= 80, "Para publicar, escreva um texto com pelo menos 80 caracteres."],
   ] as const;
   for (const [field, valid, message] of requirements) {
     if (!valid) context.addIssue({ code: "custom", path: [field], message });

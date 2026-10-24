@@ -19,6 +19,8 @@ export type Database = {
           title: string;
           excerpt: string;
           content: string;
+          content_format: "markdown" | "richtext";
+          inline_image_paths: string[];
           status: BlogStatus;
           published_at: string | null;
           cover_storage_path: string | null;
@@ -34,6 +36,8 @@ export type Database = {
           title?: string;
           excerpt?: string;
           content?: string;
+          content_format?: "markdown" | "richtext";
+          inline_image_paths?: string[];
           status?: BlogStatus;
           published_at?: string | null;
           cover_storage_path?: string | null;

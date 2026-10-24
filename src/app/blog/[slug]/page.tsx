@@ -72,7 +72,7 @@ export default async function BlogPostPage({ params }: Props) {
               <Image src={post.coverUrl} alt={post.coverAlt || post.title} fill sizes="(max-width: 920px) 100vw, 960px" priority />
             </div>
           ) : null}
-          <div className={styles.articleBody}><BlogContent content={post.content} /></div>
+          <div className={styles.articleBody}><BlogContent content={post.content} contentFormat={post.contentFormat} /></div>
         </div>
         <footer className={styles.articleFooter}>
           <div className={`shell ${styles.articleFooterInner}`}>
