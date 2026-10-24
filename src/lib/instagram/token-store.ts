@@ -20,6 +20,7 @@ export type InstagramConnectionMetadata = {
   expiresAt: string;
   connectedAt: string;
   updatedAt: string;
+  lastRefreshedAt: string;
   expired: boolean;
 };
 
@@ -33,7 +34,7 @@ export async function getInstagramConnectionMetadata(): Promise<
 
   const { data, error } = await supabase
     .from("instagram_connections")
-    .select("username, expires_at, connected_at, updated_at")
+    .select("username, expires_at, connected_at, updated_at, last_refreshed_at")
     .eq("id", "arena-sul")
     .maybeSingle();
 
@@ -47,6 +48,7 @@ export async function getInstagramConnectionMetadata(): Promise<
     expiresAt: data.expires_at,
     connectedAt: data.connected_at,
     updatedAt: data.updated_at,
+    lastRefreshedAt: data.last_refreshed_at,
     expired: !Number.isFinite(expiry) || expiry <= Date.now(),
   };
 }

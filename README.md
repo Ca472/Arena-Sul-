@@ -8,6 +8,7 @@ Reconstrução completa do site da Arena Sul Sports em Next.js, baseada no mater
 - História, estrutura, modalidades, locação para eventos, escolas, empresas, manifesto, contato e localização.
 - CTAs diretos para o WhatsApp oficial.
 - Reels reproduzidos dentro do portal e Stories sincronizados pela integração oficial do Instagram.
+- Renovação automática da autorização do Instagram por cron autenticado diário, após configuração e deployment em Production.
 - Listagem pública em `/eventos` e página individual em `/eventos/[slug]`.
 - Área ADMIN em `/admin` para criar, editar, publicar e despublicar eventos.
 - Upload múltiplo de fotos com prévia, validação de formato/tamanho e remoção.
@@ -32,6 +33,8 @@ O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzido
 | `/admin/eventos/novo` | Cadastro de evento e upload múltiplo |
 | `/admin/eventos/[id]/editar` | Edição, publicação e remoção de fotos |
 | `/admin/fotos` | Troca das fotos institucionais exibidas na home |
+| `/admin/integracoes/instagram` | Estado da conexão e convite para autorizar ou reconectar o Instagram |
+| `/api/cron/instagram-renewal` | Renovação diária autenticada da autorização do Instagram |
 
 ## Documentação de referência
 
@@ -39,6 +42,7 @@ O bloco do Instagram usa a API oficial da Meta. Reels em vídeo são reproduzido
 - [Validação de conteúdo](docs/CONTENT_VALIDATION.md): itens que exigem confirmação do cliente antes do lançamento.
 - [Configuração do ADMIN e Supabase](docs/ADMIN_SUPABASE_SETUP.md): preparação da autenticação, banco, Storage e operação real.
 - [Google Ads e Consent Mode v2](docs/GOOGLE_ADS_SETUP.md): comportamento, validação e etapa futura de conversões.
+- [Instagram: conexão e renovação automática](docs/INSTAGRAM_SETUP.md): reconexão de `@arenasulsports`, configuração do cron e validação.
 
 ## Stack e arquitetura
 
@@ -89,6 +93,10 @@ Com `DEMO_MODE=true`, a interface ADMIN pode ser testada, mas nada é salvo. Par
 5. Faça um novo build/deploy, pois a origem permitida das imagens é derivada da URL do Supabase durante o build.
 
 Defina também `SUPABASE_SERVICE_ROLE_KEY` exclusivamente no servidor para a integração do Instagram e o gerenciamento das fotos institucionais. Nunca exponha uma chave privilegiada com prefixo `NEXT_PUBLIC_`.
+
+Para o Instagram, configure as variáveis de [docs/INSTAGRAM_SETUP.md](docs/INSTAGRAM_SETUP.md), incluindo `CRON_SECRET` em **Production**, antes de publicar a automação. O cron em `/api/cron/instagram-renewal` roda diariamente às 09h UTC (06h de Brasília) e renova tokens válidos com pelo menos 24 horas desde a emissão ou última renovação e até 30 dias de validade restante. A nova credencial é cifrada e gravada com comparação da versão anterior, preservando reconexões concorrentes. Falhas retornam HTTP 500; autorização ausente ou expirada retorna 409, sem tokens nos logs. A execução depende do deployment em Production.
+
+Uma autorização já expirada ou revogada precisa de nova autorização: no [painel do Instagram](https://www.arenasulsports.com/admin/integracoes/instagram), entrar como administrador, clicar em **Gerar link de autorização** e **Copiar link**. O responsável abre o convite, clica em **Continuar no Instagram**, entra em `@arenasulsports` e conclui no mesmo navegador até aparecer **Instagram conectado**. O convite vale 24 horas e funciona uma vez; o fluxo iniciado deve terminar em até 20 minutos. Confirmar **Conectado e validado** no painel e conferir a seção Instagram da home após a atualização. O guia contém o passo a passo completo.
 
 ## Verificação
 

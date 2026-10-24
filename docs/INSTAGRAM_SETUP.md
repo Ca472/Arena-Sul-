@@ -24,14 +24,26 @@ Meta não exige que o perfil esteja vinculado a uma Página do Facebook.
 
 ### No momento da autorização
 
-1. O desenvolvedor cria o aplicativo da Arena no painel da Meta e adiciona
-   `@arenasulsports` como conta de teste/autorizada.
-2. A responsável abre somente o link oficial enviado pelo desenvolvedor e
-   confere que o endereço pertence a `instagram.com` ou `facebook.com`.
-3. Ela entra na própria conta, seleciona somente `@arenasulsports` e aprova o
-   acesso básico solicitado pelo aplicativo da Arena.
-4. Ao aparecer a confirmação de sucesso, ela avisa ao desenvolvedor que a
-   autorização foi concluída.
+1. O administrador entra no [painel do Instagram do portal](https://www.arenasulsports.com/admin/integracoes/instagram)
+   com o e-mail e a senha de administrador. O modo demonstração não gera convites.
+2. Clica em **Gerar link de autorização** e depois em **Copiar link** para enviar
+   o convite à responsável por `@arenasulsports`. O link vale **24 horas**, funciona
+   uma única vez e gerar outro convite invalida os anteriores.
+3. A responsável abre o link no domínio `www.arenasulsports.com` e clica em
+   **Continuar no Instagram**. O portal a encaminha à tela oficial do Instagram.
+4. Ela entra na conta `@arenasulsports` e aprova o acesso básico solicitado pelo
+   aplicativo da Arena. Deve concluir no mesmo navegador e aparelho em que clicou
+   em **Continuar no Instagram**, em até **20 minutos**.
+5. Aguarda a página **Instagram conectado**. O administrador atualiza o painel e
+   confere **Conectado e validado** e uma data de validade futura.
+6. Abre a [seção Instagram do portal](https://www.arenasulsports.com/#instagram)
+   e aguarda cerca de 15–30 segundos ou recarrega a página para conferir os Reels
+   e os Stories próprios ainda ativos. Se não houver Story ativo, o bloco pode
+   continuar sem Stories mesmo com a conexão validada.
+
+Esses passos também reconectam uma autorização expirada ou revogada. Se houver
+cancelamento, convite inválido ou erro de segurança, o administrador deve gerar
+outro convite e repetir o fluxo.
 
 Ela **não deve enviar** senha, código de autenticação em dois fatores, segredo
 do aplicativo ou token por WhatsApp, e-mail ou chat. O login e os códigos são
@@ -42,8 +54,9 @@ digitados somente pela própria responsável na tela oficial da Meta/Instagram.
 > Olá! Para colocar automaticamente os Reels e Stories da Arena Sul no novo
 > site, precisamos autorizar uma integração oficial e somente de leitura do
 > Instagram. A conta precisa estar como profissional (Empresa ou Criador) e
-> pública. Você receberá um link oficial da Meta/Instagram, fará o login na
-> própria `@arenasulsports`, selecionará essa conta e aprovará apenas o acesso
+> pública. Você receberá um link do portal da Arena Sul. Ao clicar em
+> **Continuar no Instagram**, fará o login diretamente no Instagram na
+> própria `@arenasulsports` e aprovará apenas o acesso
 > básico. Não será necessário enviar senha, código de dois fatores nem token
 > para ninguém. Quando aparecer a confirmação, basta nos avisar. Faremos o
 > restante da configuração técnica e um teste antes de ativar no site.
@@ -83,12 +96,12 @@ teste e administração do aplicativo.
    callback antes de salvar o redirect no painel da Meta.
 2. Entrar em `/admin/integracoes/instagram` e clicar em
    **Gerar link de autorização**.
-3. Enviar somente o link gerado pelo portal à responsável. Ele é temporário e
-   funciona uma vez.
+3. Clicar em **Copiar link** e enviar somente o link gerado pelo portal à
+   responsável. Ele vale 24 horas, funciona uma vez e substitui convites anteriores.
 4. A responsável abre a página da Arena Sul e clica em
    **Continuar no Instagram**. O `state` e o cookie de segurança são criados no
    navegador dela; não abrir o fluxo em um computador e copiar a URL final para
-   outro.
+   outro. A autorização deve terminar no mesmo navegador em até 20 minutos.
 5. A callback troca o código por token curto e, no servidor, por token longo:
 
    ```text
@@ -102,9 +115,8 @@ teste e administração do aplicativo.
    `@arenasulsports`, cifra o token com AES-256-GCM e salva apenas o valor cifrado
    no banco. App Secret, código e tokens não aparecem em página ou log.
 
-Um token longo normalmente vale cerca de 60 dias. Registrar a data de emissão,
-confirmar a validade antes de ativar a produção e planejar a renovação antes da
-expiração.
+Um token longo normalmente vale cerca de 60 dias. Confirmar a validade antes de
+ativar a produção e configurar a renovação automática descrita abaixo.
 
 ### 3. Configurar a Vercel
 
@@ -122,12 +134,44 @@ INSTAGRAM_OAUTH_REDIRECT_URI=https://www.arenasulsports.com/api/instagram/oauth/
 INSTAGRAM_EXPECTED_USERNAME=arenasulsports
 INSTAGRAM_TOKEN_ENCRYPTION_KEY=<32 bytes aleatórios em base64>
 INSTAGRAM_GRAPH_VERSION=v26.0
+CRON_SECRET=<segredo aleatório exclusivo para autenticar o cron>
 ```
 
 Nunca usar o prefixo `NEXT_PUBLIC_` nessas credenciais. A service-role ignora
 RLS e, por isso, fica isolada no módulo server-only da integração. Depois de
 salvar as variáveis, fazer um novo deployment para que a aplicação receba os
 valores.
+
+### Renovação automática da autorização
+
+O `vercel.json` agenda uma chamada diária a `/api/cron/instagram-renewal` com
+`0 9 * * *`: **09h UTC, 06h em Brasília**. O agendamento só passa a operar após
+publicar esta versão em Production e configurar `CRON_SECRET` nesse ambiente.
+A Vercel envia o segredo no cabeçalho `Authorization: Bearer …`; o endpoint
+recusa chamadas sem a autenticação correta. Não colocar esse segredo no código,
+na URL ou em variáveis `NEXT_PUBLIC_`.
+
+O processo renova somente tokens ainda válidos, emitidos ou renovados há pelo
+menos 24 horas e com **30 dias ou menos de validade restante**. A chamada usa o
+endpoint oficial `https://graph.instagram.com/refresh_access_token` com
+`grant_type=ig_refresh_token`. O token retornado é cifrado com AES-256-GCM antes
+de atualizar a credencial, a validade e a data da última renovação no banco.
+A gravação compara a versão lida da credencial antes de atualizar (compare and
+swap), para não sobrescrever uma reconexão ou renovação concorrente.
+
+Uma falha de consulta, de chamada à Meta ou de persistência retorna HTTP **500**
+para ficar visível na execução do cron. Uma autorização ausente ou expirada
+retorna HTTP **409**. Se a Meta recusar um token revogado antes do prazo de
+expiração registrado, a execução retorna **500** e exige verificar a conexão.
+Os logs registram o resultado e códigos
+de erro sem gravar tokens. A rotina não recupera autorização já expirada ou
+revogada: nesse caso, repetir os passos de reconexão acima.
+
+Depois do deployment, conferir o cron no projeto `arena-sul-portal` na Vercel e
+acompanhar suas execuções. Após a reconexão inicial, confirmar uma validade
+futura no painel; após uma renovação elegível, conferir que `expires_at` e
+`last_refreshed_at` avançaram. Não considerar a automação ativa apenas por
+existir no repositório.
 
 ### 4. Validar antes de ativar em produção
 
@@ -169,10 +213,10 @@ adicionais. Não usar scraping.
 - Se a API estiver indisponível ou o token expirar, o portal volta aos cards
   institucionais e aos links oficiais, sem expor erro técnico ao visitante.
 - As URLs temporárias de mídia retornadas pela Meta não são gravadas no banco.
-- Revisar mensalmente o estado da conexão no painel administrativo e programar
-  a reautorização antes do prazo informado pela Meta para o token longo. Esta
-  primeira versão não renova tokens no caminho público para evitar corridas e
-  gravações concorrentes.
+- A renovação automática é executada pelo cron autenticado diário, fora das
+  consultas públicas de Reels e Stories. Conferir periodicamente as execuções
+  na Vercel e o estado da conexão no painel administrativo; falhas persistentes
+  precisam de revisão antes da expiração.
 - Se a Meta revogar a autorização ou o token expirar, gerar um novo convite e
   pedir uma nova autorização à responsável pela conta. A nova credencial
   substitui a anterior de forma cifrada, sem mudar a identidade vinculada.

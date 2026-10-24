@@ -83,6 +83,8 @@ export default async function InstagramIntegrationPage() {
         <InstagramExpiryCountdown
           expiresAt={connection?.expiresAt ?? null}
           referenceTime={liveSnapshot.fetchedAt}
+          automaticRenewalConfigured={Boolean(process.env.CRON_SECRET?.trim())}
+          lastRefreshedAt={connection?.lastRefreshedAt ?? null}
         />
 
         <section
