@@ -35,11 +35,11 @@ const levelClasses: Record<InstagramExpiryLevel, string> = {
 
 const levelGuidance: Record<InstagramExpiryLevel, string> = {
   healthy:
-    "A autorização está dentro do prazo. Quando faltarem 30 dias, o painel mudará para o aviso de renovação preventiva.",
+    "A autorização está dentro do prazo. A rotina diária tentará renová-la automaticamente quando faltarem 30 dias.",
   attention:
-    "A janela de renovação preventiva começou. Gere o link e conclua a conexão antes de entrar no período urgente.",
+    "A janela de renovação automática começou. Confira este painel após a próxima execução diária; a data de vencimento deve avançar.",
   urgent:
-    "Faltam 7 dias ou menos. Renove agora para reduzir o risco de interrupção dos Reels e Stories.",
+    "Faltam 7 dias ou menos. Se a data não avançou após a rotina diária, verifique os registros no Vercel ou gere um novo link para reconectar.",
   expired:
     "A autorização venceu. Gere um link e conclua uma nova autorização para restaurar a atualização automática.",
   unavailable:
@@ -49,11 +49,15 @@ const levelGuidance: Record<InstagramExpiryLevel, string> = {
 type InstagramExpiryCountdownProps = {
   expiresAt: string | null;
   referenceTime: string | null;
+  automaticRenewalConfigured: boolean;
+  lastRefreshedAt: string | null;
 };
 
 export function InstagramExpiryCountdown({
   expiresAt,
   referenceTime,
+  automaticRenewalConfigured,
+  lastRefreshedAt,
 }: InstagramExpiryCountdownProps) {
   const parsedReferenceTime = referenceTime
     ? new Date(referenceTime).getTime()
@@ -111,16 +115,21 @@ export function InstagramExpiryCountdown({
         ) : null}
         <p>
           {nowMs
-            ? levelGuidance[countdown.level]
+            ? !automaticRenewalConfigured && countdown.level !== "expired"
+              ? "A renovação automática ainda precisa ser configurada no Vercel. Gere um novo link antes do vencimento para manter a integração ativa."
+              : levelGuidance[countdown.level]
             : "Aguarde enquanto o painel calcula o tempo restante."}
         </p>
+        {lastRefreshedAt && Number.isFinite(Date.parse(lastRefreshedAt)) ? (
+          <p>Última autorização ou renovação registrada: {expiryDateFormatter.format(new Date(lastRefreshedAt))}, no horário de Brasília.</p>
+        ) : null}
       </div>
 
       <div className={styles.renewalGuide}>
-        <h3>Como renovar sem interromper o Instagram</h3>
+        <h3>Como reconectar quando necessário</h3>
         <ol>
           <li>
-            Quando o painel avisar que faltam 30 dias ou menos, use o botão <strong>Gerar link de autorização</strong> abaixo.
+            Se a autorização expirou, foi revogada ou a renovação automática falhou, use o botão <strong>Gerar link de autorização</strong> abaixo.
           </li>
           <li>
             Abra o link com a conta oficial <strong>@arenasulsports</strong> conectada. Se o proprietário estiver em outro aparelho, envie o link diretamente para ele.
