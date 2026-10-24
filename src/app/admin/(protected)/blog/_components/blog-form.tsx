@@ -3,11 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { type ChangeEvent, type FormEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import styles from "@/app/admin/admin.module.css";
 import { BlogContent } from "@/components/blog-content";
 import type { BlogFormState, BlogPost } from "@/lib/blog/types";
+import { parseRichTextContent } from "@/lib/blog/rich-text";
 
 import { saveBlogPostAction } from "../actions";
 import blogStyles from "../blog-admin.module.css";
@@ -15,6 +17,11 @@ import blogStyles from "../blog-admin.module.css";
 const INITIAL_STATE: BlogFormState = { status: "idle", message: "" };
 const MAX_COVER_BYTES = 3 * 1024 * 1024;
 const COVER_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const EMPTY_RICH_CONTENT = JSON.stringify({ type: "doc", content: [{ type: "paragraph" }] });
+const RichTextEditor = dynamic(() => import("./rich-text-editor").then((module) => module.RichTextEditor), {
+  ssr: false,
+  loading: () => <p className={blogStyles.helper}>Carregando ferramentas de edição…</p>,
+});
 
 function slugify(value: string) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 160);
@@ -24,24 +31,24 @@ type Props = { postId: string; initialPost?: BlogPost; demoMode: boolean };
 
 export function BlogForm({ postId, initialPost, demoMode }: Props) {
   const router = useRouter();
+  const [articleId] = useState(postId);
+  const contentFormat = initialPost?.contentFormat ?? (initialPost ? "markdown" : "richtext");
+  const initialContent = initialPost?.content ?? EMPTY_RICH_CONTENT;
   const [title, setTitle] = useState(initialPost?.title ?? "");
   const [slug, setSlug] = useState(initialPost?.slug ?? "");
   const [slugEdited, setSlugEdited] = useState(Boolean(initialPost?.title));
   const [excerpt, setExcerpt] = useState(initialPost?.excerpt ?? "");
-  const [content, setContent] = useState(initialPost?.content ?? "");
+  const [content, setContent] = useState(initialContent);
+  const [plainText, setPlainText] = useState(() => contentFormat === "richtext" ? parseRichTextContent(initialContent).plainText : initialContent);
   const [coverAlt, setCoverAlt] = useState(initialPost?.coverAlt ?? "");
   const [removeCover, setRemoveCover] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [fileError, setFileError] = useState("");
   const [preview, setPreview] = useState(false);
-  const [linkEditor, setLinkEditor] = useState(false);
-  const [linkText, setLinkText] = useState("");
-  const [linkUrl, setLinkUrl] = useState("");
-  const [linkError, setLinkError] = useState("");
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [state, setState] = useState<BlogFormState>(INITIAL_STATE);
   const [submitting, setSubmitting] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
-  const contentInput = useRef<HTMLTextAreaElement>(null);
   const previewUrlRef = useRef("");
   const coverSrc = previewUrl || (!removeCover ? initialPost?.coverUrl : null);
   const published = initialPost?.status === "published";
@@ -71,40 +78,19 @@ export function BlogForm({ postId, initialPost, demoMode }: Props) {
     setFileError("");
   }
 
-  function insertMarkdown(before: string, placeholder: string, after = "", replaceSelected = false) {
-    const input = contentInput.current;
-    const start = input?.selectionStart ?? content.length;
-    const end = input?.selectionEnd ?? content.length;
-    const selected = replaceSelected ? placeholder : content.slice(start, end) || placeholder;
-    const insertion = `${before}${selected}${after}`;
-    if (content.length - (end - start) + insertion.length > 80000) return;
-    setContent(`${content.slice(0, start)}${insertion}${content.slice(end)}`);
-    setPreview(false);
-    requestAnimationFrame(() => { input?.focus(); input?.setSelectionRange(start + before.length, start + before.length + selected.length); });
-  }
-
-  function addLink() {
-    const url = linkUrl.trim();
-    if (!/^https?:\/\//i.test(url) || /[\s<>]/.test(url)) {
-      setLinkError("Informe um endereço completo que comece com https:// ou http://.");
-      return;
-    }
-    const text = (linkText.trim() || "Saiba mais").replace(/[\[\]\\]/g, "");
-    insertMarkdown(`[${text}](<`, url, ">)", true);
-    setLinkEditor(false);
-    setLinkText("");
-    setLinkUrl("");
-    setLinkError("");
-  }
+  const updateRichContent = useCallback((value: string, text: string) => { setContent(value); setPlainText(text); }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (demoMode || submitting) return;
+    if (demoMode || submitting || uploadingImages) return;
     const nativeEvent = event.nativeEvent as SubmitEvent;
     const button = nativeEvent.submitter;
     const nextStatus = button instanceof HTMLButtonElement && button.value === "published" ? "published" : "draft";
     const formData = new FormData(event.currentTarget);
+    if (!fileInput.current?.files?.length) formData.delete("cover");
     formData.set("status", nextStatus);
+    formData.set("content", content);
+    formData.set("contentFormat", contentFormat);
     setSubmitting(true);
     setState(INITIAL_STATE);
     try {
@@ -130,8 +116,10 @@ export function BlogForm({ postId, initialPost, demoMode }: Props) {
 
   return (
     <form className={blogStyles.form} onSubmit={submit} aria-busy={submitting}>
-      <input type="hidden" name="id" value={postId} />
+      <input type="hidden" name="id" value={articleId} />
       <input type="hidden" name="updatedAt" value={initialPost?.updatedAt ?? ""} />
+      <input type="hidden" name="content" value={content} />
+      <input type="hidden" name="contentFormat" value={contentFormat} />
       {demoMode ? <p className={`${styles.notice} ${blogStyles.status}`}>Modo de demonstração: você pode escrever e conferir a prévia. Os artigos não são salvos nem publicados neste modo.</p> : null}
       {state.message ? <div className={`${state.status === "error" ? styles.errorNotice : styles.successNotice} ${blogStyles.status}`} role={state.status === "error" ? "alert" : "status"}>{state.message}</div> : null}
       <div className={styles.formGrid}>
@@ -159,18 +147,28 @@ export function BlogForm({ postId, initialPost, demoMode }: Props) {
 
           <section className={styles.formSection} aria-labelledby="article-content-title">
             <h2 id="article-content-title">Conteúdo do artigo</h2>
-            <div className={blogStyles.tabButtons} aria-label="Visualização do conteúdo"><button type="button" aria-pressed={!preview} aria-controls="content" onClick={() => setPreview(false)}>Escrever</button><button type="button" aria-pressed={preview} aria-controls="content-preview" onClick={() => setPreview(true)}>Prévia</button></div>
-            <div className={blogStyles.editor}>
-              {!preview ? <div className={blogStyles.editorButtons} aria-label="Formatação do texto"><button type="button" disabled={submitting} onClick={() => insertMarkdown("\n\n## ", "Subtítulo", "\n\n")}>Subtítulo</button><button type="button" disabled={submitting} onClick={() => insertMarkdown("**", "texto em negrito", "**")}><strong>Negrito</strong></button><button type="button" disabled={submitting} onClick={() => insertMarkdown("\n\n- ", "Primeiro item\n- Segundo item", "\n\n")}>Lista</button><button type="button" disabled={submitting} aria-expanded={linkEditor} aria-controls="link-editor" onClick={() => { setLinkEditor(!linkEditor); setLinkText(contentInput.current ? content.slice(contentInput.current.selectionStart, contentInput.current.selectionEnd) : ""); }}>Inserir link</button></div> : null}
-              {linkEditor && !preview ? <div id="link-editor" className={blogStyles.linkEditor}><div className={styles.field}><label htmlFor="link-text">Texto do link</label><input id="link-text" value={linkText} onChange={(event) => setLinkText(event.target.value)} disabled={submitting} /></div><div className={styles.field}><label htmlFor="link-url">Endereço do link</label><input id="link-url" type="url" value={linkUrl} onChange={(event) => setLinkUrl(event.target.value)} placeholder="https://" disabled={submitting} aria-describedby={linkError ? "link-error" : undefined} />{linkError ? <p id="link-error" className={styles.fieldError}>{linkError}</p> : null}</div><button type="button" className={styles.secondaryButton} disabled={submitting} onClick={addLink}>Adicionar</button></div> : null}
-              <label className="sr-only" htmlFor="content">Texto do artigo em Markdown</label>
-              <textarea ref={contentInput} id="content" name="content" value={content} maxLength={80000} hidden={preview} disabled={submitting} aria-invalid={Boolean(state.fieldErrors?.content)} aria-describedby={`content-hint${state.fieldErrors?.content ? " content-error" : ""}`} onChange={(event) => setContent(event.target.value)} placeholder="Comece a escrever aqui. Use os botões acima para formatar seu artigo." />
-              {preview ? <div id="content-preview" className={blogStyles.preview} aria-label="Prévia do conteúdo">{content.trim() ? <BlogContent content={content} /> : <p className={blogStyles.helper}>A prévia do seu texto aparecerá aqui.</p>}</div> : null}
+            <div className={blogStyles.tabButtons} aria-label="Visualização do conteúdo">
+              <button type="button" aria-pressed={!preview} aria-controls="article-editor" disabled={submitting || uploadingImages} onClick={() => setPreview(false)}>Escrever</button>
+              <button type="button" aria-pressed={preview} aria-controls="content-preview" disabled={submitting || uploadingImages} onClick={() => setPreview(true)}>Prévia</button>
             </div>
-            <div className={blogStyles.counter}><p id="content-hint" className={styles.fieldHint}>Os botões inserem formatação Markdown. A prévia mostra o resultado do texto; HTML não é exibido. Para publicar, escreva pelo menos 80 caracteres.</p><span className={styles.fieldHint}>{content.length.toLocaleString("pt-BR")}/80.000</span></div>
+            <div id="article-editor" className={blogStyles.visualEditor} hidden={preview}>
+              {contentFormat === "richtext" ? (
+                <RichTextEditor postId={articleId} initialContent={initialContent} demoMode={demoMode} disabled={submitting} invalid={Boolean(state.fieldErrors?.content)} describedBy={`content-hint${state.fieldErrors?.content ? " content-error" : ""}`} onChange={updateRichContent} onUploadingChange={setUploadingImages} />
+              ) : (
+                <div className={blogStyles.editor}>
+                  <p className={blogStyles.legacyNotice}>Este artigo usa o formato de texto anterior. A edição abaixo preserva a formatação original.</p>
+                  <label className="sr-only" htmlFor="legacy-content">Texto do artigo no formato anterior</label>
+                  <textarea id="legacy-content" value={content} maxLength={80000} disabled={submitting} aria-invalid={Boolean(state.fieldErrors?.content)} aria-describedby={`content-hint${state.fieldErrors?.content ? " content-error" : ""}`} onChange={(event) => { setContent(event.target.value); setPlainText(event.target.value); }} />
+                </div>
+              )}
+            </div>
+            {preview ? <div id="content-preview" className={blogStyles.preview} aria-label="Prévia do artigo">{plainText.trim() || contentFormat === "richtext" ? <BlogContent content={content} contentFormat={contentFormat} allowLocalImages={demoMode} /> : <p className={blogStyles.helper}>A prévia do seu texto aparecerá aqui.</p>}</div> : null}
+            <div className={blogStyles.counter}>
+              <p id="content-hint" className={styles.fieldHint}>{contentFormat === "richtext" ? "Selecione o texto para mudar a fonte e a formatação. Para publicar, escreva pelo menos 80 caracteres. Salve o rascunho antes de sair." : "A prévia mostra a formatação do texto. Para publicar, escreva pelo menos 80 caracteres."}</p>
+              <span className={`${styles.fieldHint} ${plainText.length > 80000 ? blogStyles.overLimit : ""}`}>{plainText.trim() ? plainText.trim().split(/\s+/).length.toLocaleString("pt-BR") : "0"} palavras · {plainText.length.toLocaleString("pt-BR")}/80.000</span>
+            </div>
             {errors("content")}
           </section>
-
           <section className={styles.formSection} aria-labelledby="article-cover-title">
             <h2 id="article-cover-title">Imagem de capa <span className={styles.fieldHint}>(opcional)</span></h2>
             {coverSrc ? <div className={blogStyles.cover}><Image src={coverSrc} alt={coverAlt || "Prévia da capa selecionada"} fill sizes="(max-width: 1120px) 100vw, 700px" unoptimized={Boolean(previewUrl)} /></div> : null}
@@ -185,8 +183,8 @@ export function BlogForm({ postId, initialPost, demoMode }: Props) {
           <h2 id="article-publish-title">Publicação</h2>
           <span className={`${styles.badge} ${published ? styles.published : styles.draft}`}>{published ? "Publicado" : "Rascunho"}</span>
           <p>{published ? "Salvar como rascunho retira este artigo do site. Você pode publicá-lo novamente depois." : "Rascunhos ficam apenas no painel. Publique quando o título, o resumo e o texto estiverem prontos."}</p>
-          <button className={styles.primaryButton} type="submit" name="status" value="published" disabled={demoMode || submitting || Boolean(fileError)}>{submitting ? "Salvando…" : published ? "Salvar e manter publicado" : "Publicar artigo"}</button>
-          <button className={styles.secondaryButton} type="submit" name="status" value="draft" disabled={demoMode || submitting || Boolean(fileError)}>{published ? "Retirar do ar e salvar rascunho" : "Salvar rascunho"}</button>
+          <button className={styles.primaryButton} type="submit" name="status" value="published" disabled={demoMode || submitting || uploadingImages || Boolean(fileError)}>{uploadingImages ? "Aguarde as fotos…" : submitting ? "Salvando…" : published ? "Salvar e manter publicado" : "Publicar artigo"}</button>
+          <button className={styles.secondaryButton} type="submit" name="status" value="draft" disabled={demoMode || submitting || uploadingImages || Boolean(fileError)}>{published ? "Retirar do ar e salvar rascunho" : "Salvar rascunho"}</button>
           {published && initialPost ? <Link className={styles.secondaryButton} href={`/blog/${initialPost.slug}`} target="_blank" rel="noopener noreferrer">Ver artigo publicado ↗</Link> : null}
           <p>O título e o resumo também ajudam a apresentar o artigo nos resultados de busca.</p>
         </aside>

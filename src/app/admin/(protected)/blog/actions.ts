@@ -6,9 +6,48 @@ import { getAdminIdentity } from "@/lib/auth/admin";
 import { getRuntimeMode } from "@/lib/config/runtime";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { BLOG_IMAGE_BUCKET, blogPostSchema, resolveBlogSlug, validateBlogCover } from "@/lib/blog/validation";
-import type { BlogFormState } from "@/lib/blog/types";
+import { parseRichTextContent, RichTextValidationError } from "@/lib/blog/rich-text";
+import { normalizeOptionalBlogCoverEntry } from "@/lib/blog/cover-input";
+import type { BlogFormState, BlogInlineImageUploadState } from "@/lib/blog/types";
 
 const staleMessage = "Este artigo foi alterado em outra janela. Atualize a página antes de salvar novamente.";
+const postIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/** Staged images remain private until the document is saved and published. */
+export async function uploadBlogInlineImageAction(formData: FormData): Promise<BlogInlineImageUploadState> {
+  if (getRuntimeMode() === "demo") {
+    return { status: "error", message: "O modo demonstração não envia arquivos. Entre no painel real para salvar as fotos." };
+  }
+  const admin = await getAdminIdentity();
+  if (!admin || admin.isDemo) return { status: "error", message: "Sua sessão expirou. Entre novamente antes de enviar uma foto." };
+  const postId = formData.get("postId");
+  const file = formData.get("file");
+  if (typeof postId !== "string" || !postIdPattern.test(postId)) {
+    return { status: "error", message: "O artigo não foi identificado. Atualize a página e tente novamente." };
+  }
+  if (!file || typeof file === "string") return { status: "error", message: "Selecione uma foto JPG, PNG ou WebP." };
+  const metadata = validateBlogCover(file);
+  if (!metadata.valid) return { status: "error", message: metadata.message };
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const validated = validateBlogCover(file, bytes);
+  if (!validated.valid) return { status: "error", message: validated.message };
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return { status: "error", message: "Não foi possível preparar o envio. Tente novamente." };
+  const normalizedId = postId.toLowerCase();
+  const filename = `${randomUUID()}.${validated.extension}`;
+  const storagePath = `${normalizedId}/${filename}`;
+  const { error } = await supabase.storage.from(BLOG_IMAGE_BUCKET).upload(storagePath, bytes, {
+    contentType: validated.mimeType, cacheControl: "3600", upsert: false,
+  });
+  if (error) {
+    console.error(JSON.stringify({ event: "blog_inline_image_upload_failed", code: error.name }));
+    return { status: "error", message: "Não foi possível enviar a foto. Tente novamente." };
+  }
+  return {
+    status: "success", message: "Foto enviada. Salve o artigo para guardar sua posição no texto.",
+    storagePath, src: `/api/blog/images/${normalizedId}/${filename}`,
+  };
+}
 
 export async function saveBlogPostAction(
   _previousState: BlogFormState,
@@ -30,6 +69,7 @@ export async function saveBlogPostAction(
     slug: formData.get("slug") ?? "",
     excerpt: formData.get("excerpt") ?? "",
     content: formData.get("content") ?? "",
+    contentFormat: formData.get("contentFormat") ?? "markdown",
     status: formData.get("status"),
     coverAlt: formData.get("coverAlt") ?? "",
     updatedAt: formData.get("updatedAt") ?? "",
@@ -38,11 +78,29 @@ export async function saveBlogPostAction(
     return { status: "error", message: "Revise os campos destacados antes de salvar.", fieldErrors: parsed.error.flatten().fieldErrors };
   }
   const post = parsed.data;
+  let content = post.content;
+  let inlineImagePaths: string[] = [];
+  if (post.contentFormat === "richtext") {
+    try {
+      const document = parseRichTextContent(content, { postId: post.id });
+      content = document.serialized;
+      inlineImagePaths = document.imagePaths;
+    } catch (error) {
+      const message = error instanceof RichTextValidationError ? error.message : "O conteúdo visual não pôde ser validado.";
+      return { status: "error", message, fieldErrors: { content: [message] } };
+    }
+    if (inlineImagePaths.length) {
+      const { data: images, error } = await supabase.storage.from(BLOG_IMAGE_BUCKET).createSignedUrls(inlineImagePaths, 60);
+      if (error || !inlineImagePaths.every((path) => images?.some((image) => image.path === path && image.signedUrl && !image.error))) {
+        return { status: "error", message: "Uma das fotos do texto não foi encontrada. Envie a foto novamente antes de salvar.", fieldErrors: { content: ["Confira as fotos inseridas no artigo."] } };
+      }
+    }
+  }
   const coverEntry = formData.get("cover");
   if (typeof coverEntry === "string") {
     return { status: "error", message: "Selecione uma imagem para a capa.", fieldErrors: { cover: ["Arquivo de imagem inválido."] } };
   }
-  const cover = coverEntry && (coverEntry.size > 0 || coverEntry.name) ? coverEntry : null;
+  const cover = normalizeOptionalBlogCoverEntry(coverEntry);
   let coverBytes: Uint8Array | null = null;
   let coverExtension: string | null = null;
   if (cover) {
@@ -55,7 +113,7 @@ export async function saveBlogPostAction(
   }
 
   const { data: existing, error: lookupError } = await supabase.from("blog_posts")
-    .select("id,slug,cover_storage_path,updated_at").eq("id", post.id).maybeSingle();
+    .select("id,slug,cover_storage_path,inline_image_paths,updated_at").eq("id", post.id).maybeSingle();
   if (lookupError) return { status: "error", message: "Não foi possível conferir a versão atual do artigo. Tente novamente." };
   if (existing && (!post.updatedAt || post.updatedAt !== existing.updated_at)) {
     return { status: "error", message: staleMessage };
@@ -83,7 +141,8 @@ export async function saveBlogPostAction(
   };
   const slug = resolveBlogSlug(post.slug, post.title, post.id);
   const values = {
-    title: post.title, slug, excerpt: post.excerpt, content: post.content,
+    title: post.title, slug, excerpt: post.excerpt, content,
+    content_format: post.contentFormat, inline_image_paths: inlineImagePaths,
     status: post.status, cover_storage_path: coverPath,
     cover_alt: coverPath ? post.coverAlt || post.title : "", updated_by: admin.id,
   };
@@ -109,9 +168,11 @@ export async function saveBlogPostAction(
     };
   }
 
-  if (existing?.cover_storage_path && existing.cover_storage_path !== coverPath) {
-    await cleanup(existing.cover_storage_path);
-  }
+  // Cover and inline images can share one immutable file. Only remove references
+  // that the committed revision no longer uses, after its concurrency check.
+  const retainedImages = new Set([coverPath, ...inlineImagePaths].filter((path): path is string => Boolean(path)));
+  const priorImages = new Set([existing?.cover_storage_path, ...(existing?.inline_image_paths ?? [])].filter((path): path is string => Boolean(path)));
+  for (const path of priorImages) if (!retainedImages.has(path)) await cleanup(path);
   revalidatePath("/admin/blog");
   revalidatePath(`/admin/blog/${post.id}/editar`);
   revalidatePath("/blog");

@@ -20,4 +20,17 @@
 .content code { padding: .12em .3em; border-radius: 3px; background: #eff1f5; color: #021f4e; font-size: .9em; }
 .content pre { overflow-x: auto; padding: 18px; border-radius: 8px; background: #eff1f5; line-height: 1.6; }
 .content pre code { padding: 0; }
+.content mark { padding: .08em .18em; border-radius: 2px; background: #fff2a8; color: inherit; }
+.imageFigure { display: block; max-width: 100%; margin: 2em auto; }
+.imageFigure[data-align="left"] { margin-left: 0; margin-right: auto; }
+.imageFigure[data-align="right"] { margin-left: auto; margin-right: 0; }
+.inlineImage { display: block; width: 100%; height: auto; border-radius: 5px; }
+.imageFigure figcaption { margin-top: .7em; color: #536076; font-size: .82rem; line-height: 1.6; text-align: center; }
+.tableScroll { max-width: 100%; margin: 1.8em 0; overflow-x: auto; }
+.tableScroll:focus-visible { outline: 3px solid #ff914d; outline-offset: 4px; }
+.tableScroll table { width: 100%; border-collapse: collapse; font-size: .9em; }
+.tableScroll td, .tableScroll th { min-width: 100px; padding: 12px 16px; border: 1px solid #cdd4df; vertical-align: top; text-align: left; }
+.tableScroll th { background: #eef2f6; color: #021f4e; font-weight: 800; }
+.tableScroll :is(td, th) > :last-child { margin-bottom: 0; }
 @media (max-width: 650px) { .content { font-size: .94rem; line-height: 1.85; } .content blockquote { padding-inline: 18px; } }
+@media (max-width: 650px) { .imageFigure { width: 100% !important; } .tableScroll td, .tableScroll th { padding: 10px 12px; } }
