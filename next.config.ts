@@ -15,6 +15,9 @@ const sensitivePageHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: { bodySizeLimit: "4mb" },
+  },
   async headers() {
     return [
       {
@@ -36,6 +39,12 @@ const nextConfig: NextConfig = {
               hostname: new URL(supabaseUrl).hostname,
               port: "",
               pathname: "/storage/v1/object/sign/event-photos/**",
+            },
+            {
+              protocol: "https" as const,
+              hostname: new URL(supabaseUrl).hostname,
+              port: "",
+              pathname: "/storage/v1/object/sign/blog-images/**",
             },
             {
               protocol: "https" as const,

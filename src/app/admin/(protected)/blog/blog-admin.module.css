@@ -1,0 +1,33 @@
+.list { display: grid; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 24px; padding: 22px; border-bottom: 1px solid var(--admin-border); }
+.row:last-child { border-bottom: 0; }
+.rowTitle { display: block; color: var(--admin-ink); font-size: 1rem; line-height: 1.5; overflow-wrap: anywhere; }
+.rowMeta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 7px; color: var(--admin-muted); font-size: .74rem; line-height: 1.6; }
+.rowActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.helper { margin: 0; color: var(--admin-muted); font-size: .78rem; line-height: 1.6; }
+.editor { display: grid; gap: 0; overflow: hidden; border: 1px solid var(--admin-border); border-radius: 11px; background: white; }
+.editorButtons { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px; border-bottom: 1px solid var(--admin-border); background: #f5f7f2; }
+.editorButtons button, .tabButtons button { min-height: 44px; padding: 9px 13px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--admin-ink); cursor: pointer; font: inherit; font-size: .76rem; font-weight: 700; }
+.editorButtons button:hover, .tabButtons button:hover { background: #e6ece5; }
+.editorButtons button:disabled { cursor: default; opacity: .5; }
+.tabButtons { display: flex; gap: 5px; }
+.tabButtons button { border-color: var(--admin-border); }
+.tabButtons button[aria-pressed="true"] { border-color: var(--admin-green); background: var(--admin-green); color: white; }
+.editor textarea { display: block; min-height: 420px; width: 100%; padding: 18px; border: 0; border-radius: 0; color: var(--admin-ink); font: inherit; font-size: .95rem; line-height: 1.8; resize: vertical; }
+.editor textarea[hidden] { display: none; }
+.editor textarea:focus { outline: 3px solid #a3c7b8; outline-offset: -3px; box-shadow: none; }
+.preview { min-height: 420px; padding: 26px; }
+.linkEditor { display: grid; grid-template-columns: 1fr 1fr auto; align-items: end; gap: 12px; padding: 16px; border-bottom: 1px solid var(--admin-border); }
+.cover { position: relative; overflow: hidden; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--admin-border); border-radius: 12px; background: #e8ece6; }
+.cover img { object-fit: cover; }
+.coverInput { display: block; min-height: 48px; width: 100%; max-width: 100%; border: 1px solid var(--admin-border); border-radius: 10px; background: white; color: var(--admin-muted); font: inherit; font-size: .8rem; }
+.coverInput::file-selector-button { min-height: 48px; margin-right: 12px; padding: 10px 15px; border: 0; border-right: 1px solid var(--admin-border); background: #e8eee7; color: var(--admin-ink); cursor: pointer; font: inherit; font-weight: 700; }
+.checkbox { display: flex; min-height: 44px; align-items: center; gap: 12px; font-size: .8rem; line-height: 1.5; }
+.checkbox input { flex: 0 0 auto; width: 18px; height: 18px; accent-color: var(--admin-green); }
+.counter { display: flex; justify-content: space-between; gap: 16px; }
+.counter > p { min-width: 0; flex: 1; }
+.counter > span { flex: 0 0 auto; white-space: nowrap; }
+.form :is(a, button, input):focus-visible { outline: 3px solid #648d7b; outline-offset: 3px; }
+.form button:disabled { cursor: default; }
+.status { margin-bottom: 20px; }
+@media (max-width: 680px) { .row { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 20px; } .row > :last-child { grid-column: 1 / -1; width: 100%; } .linkEditor { grid-template-columns: 1fr; } .preview { padding: 18px; } .editor textarea { min-height: 380px; padding: 15px; } .counter { flex-wrap: wrap; gap: 6px; } }

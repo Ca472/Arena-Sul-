@@ -7,10 +7,45 @@ export type Json =
   | Json[];
 
 export type EventStatus = "draft" | "published";
+export type BlogStatus = "draft" | "published";
 
 export type Database = {
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          id: string;
+          slug: string;
+          title: string;
+          excerpt: string;
+          content: string;
+          status: BlogStatus;
+          published_at: string | null;
+          cover_storage_path: string | null;
+          cover_alt: string;
+          created_by: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          title?: string;
+          excerpt?: string;
+          content?: string;
+          status?: BlogStatus;
+          published_at?: string | null;
+          cover_storage_path?: string | null;
+          cover_alt?: string;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["blog_posts"]["Insert"]>;
+        Relationships: [];
+      };
       admins: {
         Row: {
           user_id: string;
