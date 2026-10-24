@@ -5,6 +5,9 @@ import type { ReactNode } from "react";
 
 import { logoutAction } from "@/app/admin/actions";
 import styles from "@/app/admin/admin.module.css";
+import { AdminIcon } from "@/components/admin/admin-icon";
+import { AdminNavigation } from "@/components/admin/admin-navigation";
+import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { requireAdmin } from "@/lib/auth/admin";
 
 type AdminLayoutProps = {
@@ -18,6 +21,11 @@ export const metadata: Metadata = {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   const admin = await requireAdmin();
+  const displayName = admin.displayName.trim();
+  const accountName = displayName && displayName.toLowerCase() !== admin.email.toLowerCase()
+    ? displayName
+    : "Administrador";
+  const accountInitials = accountName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   return (
     <div className={styles.adminShell}>
@@ -34,44 +42,23 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
             />
             <span className={styles.brandText}>
               <strong>Arena Sul</strong>
-              Administração
+              <span>Painel de conteúdo</span>
             </span>
           </Link>
 
-          <nav className={styles.nav} aria-label="Navegação administrativa">
-            <Link className={styles.navLink} href="/admin">
-              <span className={styles.desktopNavLabel}>Visão geral</span>
-              <span className={styles.mobileNavLabel}>Início</span>
-            </Link>
-            <Link className={styles.navLink} href="/admin/eventos/novo">
-              <span className={styles.desktopNavLabel}>Novo evento</span>
-              <span className={styles.mobileNavLabel}>Novo</span>
-            </Link>
-            <Link className={styles.navLink} href="/admin/fotos">
-              <span className={styles.desktopNavLabel}>Fotos do site</span>
-              <span className={styles.mobileNavLabel}>Fotos</span>
-            </Link>
-            <Link className={styles.navLink} href="/admin/blog">
-              <span className={styles.desktopNavLabel}>Blog</span>
-              <span className={styles.mobileNavLabel}>Blog</span>
-            </Link>
-            <Link className={styles.navLink} href="/admin/integracoes/instagram">
-              <span className={styles.desktopNavLabel}>Instagram</span>
-              <span className={styles.mobileNavLabel}>Insta</span>
-            </Link>
-            <Link className={styles.navLink} href="/">
-              <span className={styles.desktopNavLabel}>Ver o portal</span>
-              <span className={styles.mobileNavLabel}>Site</span>
-            </Link>
-          </nav>
+          <AdminNavigation />
 
           <div className={styles.account}>
-            <div className={styles.accountIdentity}>
-              <strong>{admin.displayName}</strong>
-              <span>{admin.email}</span>
+            <div className={styles.accountProfile}>
+              <span className={styles.accountAvatar} aria-hidden="true">{accountInitials}</span>
+              <div className={styles.accountIdentity}>
+                <strong>{accountName}</strong>
+                <span title={admin.email}>{admin.email}</span>
+              </div>
             </div>
             <form action={logoutAction}>
               <button className={styles.logoutButton} type="submit">
+                <AdminIcon name="logout" size={16} />
                 <span className={styles.desktopLogoutLabel}>
                   {admin.isDemo ? "Sair da demonstração" : "Encerrar sessão"}
                 </span>
@@ -82,6 +69,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         <div className={styles.mainColumn}>
+          <AdminTopbar />
           {admin.isDemo ? (
             <div className={styles.demoBanner} role="status">
               ● Modo demonstração ativo — nenhuma alteração ou foto será salva.
