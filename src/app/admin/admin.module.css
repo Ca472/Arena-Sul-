@@ -661,10 +661,12 @@
 
 .integrationStatus p,
 .inviteOutput p {
+  min-width: 0;
   margin: 0;
   color: var(--admin-muted);
   font-size: 0.82rem;
   line-height: 1.55;
+  overflow-wrap: anywhere;
 }
 
 .inviteForm form {
@@ -901,6 +903,8 @@
   .statCard strong { margin-top: 8px; font-size: 1.65rem; }
   .fieldGrid { grid-template-columns: 1fr; }
   .formSection { gap: 17px; padding: 20px; }
+  .integrationStatus { grid-template-columns: minmax(0, 1fr); }
+  .integrationStatus > .badge { justify-self: start; }
   .panelHeader { flex-wrap: wrap; gap: 12px; padding: 18px; }
   .panelHeader .eventDate { display: none; }
   .eventRow { grid-template-columns: 76px minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 16px; }
