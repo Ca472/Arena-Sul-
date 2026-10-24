@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Suspense, type CSSProperties } from "react";
 import { ArenaLoader } from "@/components/arena-loader";
 import { ArenaOpening } from "@/components/arena-opening";
@@ -538,6 +539,7 @@ export default async function Home() {
                   <a href="#arena">A Arena</a>
                   <a href="#estrutura">Estrutura</a>
                   <a href="#modalidades">Esportes</a>
+                  <Link href="/blog">Blog</Link>
                   <a href="#depoimentos">Avaliações</a>
                   <a
                     href={virtualTourUrl}

@@ -40,7 +40,7 @@ export default async function AdminLoginPage({ searchParams }: LoginPageProps) {
         </div>
 
         <p className={styles.loginIntro}>
-          Acesso exclusivo para a equipe responsável pelas notícias e fotos dos eventos.
+          Acesso exclusivo para a equipe responsável pelo blog, pelos eventos e pelas fotos da Arena Sul.
         </p>
 
         {erro === "configuracao" || mode === "misconfigured" ? (

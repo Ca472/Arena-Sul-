@@ -11,6 +11,7 @@ const links = [
   { href: "/#arena", label: "A Arena" },
   { href: "/#estrutura", label: "Estrutura" },
   { href: "/#modalidades", label: "Esportes" },
+  { href: "/blog", label: "Blog" },
   { href: "/#instagram", label: "Instagram" },
 ];
 
