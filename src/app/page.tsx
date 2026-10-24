@@ -4,6 +4,10 @@ import { Suspense, type CSSProperties } from "react";
 import { ArenaLoader } from "@/components/arena-loader";
 import { ArenaOpening } from "@/components/arena-opening";
 import {
+  HomeBlogSection,
+  HomeBlogSectionFallback,
+} from "@/components/home-blog-section";
+import {
   InstagramSection,
   InstagramSectionFallback,
 } from "@/components/instagram-section";
@@ -454,6 +458,10 @@ export default async function Home() {
             </a>
           </div>
         </section>
+
+        <Suspense fallback={<HomeBlogSectionFallback />}>
+          <HomeBlogSection />
+        </Suspense>
 
         <Suspense fallback={<InstagramSectionFallback />}>
           <InstagramSection />

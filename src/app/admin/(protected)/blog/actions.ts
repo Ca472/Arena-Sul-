@@ -175,6 +175,7 @@ export async function saveBlogPostAction(
   for (const path of priorImages) if (!retainedImages.has(path)) await cleanup(path);
   revalidatePath("/admin/blog");
   revalidatePath(`/admin/blog/${post.id}/editar`);
+  revalidatePath("/");
   revalidatePath("/blog");
   revalidatePath(`/blog/${slug}`);
   if (existing?.slug && existing.slug !== slug) revalidatePath(`/blog/${existing.slug}`);
