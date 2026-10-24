@@ -12,6 +12,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { type ChangeEvent, type KeyboardEvent as ReactKeyboardEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { BLOG_FONT_FAMILIES, BLOG_FONT_SIZES, parseRichTextContent, safeBlogLink } from "@/lib/blog/rich-text";
+import { AdminIcon } from "@/components/admin/admin-icon";
 
 import { uploadBlogInlineImageAction } from "../actions";
 import styles from "./rich-text-editor.module.css";
@@ -85,10 +86,11 @@ type ToolButtonProps = {
   active?: boolean;
   disabled?: boolean;
   onClick: () => void;
+  withLabel?: boolean;
 };
 
-function ToolButton({ children, label, active, disabled, onClick }: ToolButtonProps) {
-  return <button type="button" title={label} aria-label={label} aria-pressed={active} disabled={disabled} onMouseDown={(event) => event.preventDefault()} onClick={onClick}>{children}</button>;
+function ToolButton({ children, label, active, disabled, onClick, withLabel = false }: ToolButtonProps) {
+  return <button className={withLabel ? styles.toolWithLabel : undefined} type="button" title={label} aria-label={label} aria-pressed={active} disabled={disabled} onMouseDown={(event) => event.preventDefault()} onClick={onClick}>{children}</button>;
 }
 
 export function RichTextEditor({ postId, initialContent, demoMode, disabled, invalid, describedBy, onChange, onUploadingChange }: Props) {
@@ -246,28 +248,36 @@ export function RichTextEditor({ postId, initialContent, demoMode, disabled, inv
           <label className={styles.colorControl}>Cor<input type="color" aria-label="Cor do texto" value={/^#[0-9a-f]{6}$/i.test(state?.color || "") ? state?.color : "#16352d"} disabled={toolsDisabled} onChange={(event) => editor?.chain().focus().setColor(event.target.value).run()} /></label>
           <label className={styles.colorControl}>Realce<input type="color" aria-label="Cor de realce" value={/^#[0-9a-f]{6}$/i.test(state?.highlightColor || "") ? state?.highlightColor : "#fff3a3"} disabled={toolsDisabled} onChange={(event) => editor?.chain().focus().setHighlight({ color: event.target.value }).run()} /></label>
         </div>
-        <div className={styles.tools}>
-          <ToolButton label="Negrito" active={state?.bold} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBold().run(); }}><strong>N</strong></ToolButton>
-          <ToolButton label="Itálico" active={state?.italic} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleItalic().run(); }}><em>I</em></ToolButton>
-          <ToolButton label="Sublinhado" active={state?.underline} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleUnderline().run(); }}><u>S</u></ToolButton>
-          <ToolButton label="Riscado" active={state?.strike} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleStrike().run(); }}><s>R</s></ToolButton>
-          <ToolButton label="Realçar texto" active={state?.highlight} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleHighlight({ color: state?.highlightColor || "#fff3a3" }).run(); }}>Realçar</ToolButton>
-          <ToolButton label="Lista com marcadores" active={state?.bullet} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBulletList().run(); }}>• Lista</ToolButton>
-          <ToolButton label="Lista numerada" active={state?.ordered} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleOrderedList().run(); }}>1. Lista</ToolButton>
-          <ToolButton label="Alinhar à esquerda" active={state?.align === "left"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("left").run(); }}>Esquerda</ToolButton>
-          <ToolButton label="Centralizar texto" active={state?.align === "center"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("center").run(); }}>Centro</ToolButton>
-          <ToolButton label="Alinhar à direita" active={state?.align === "right"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("right").run(); }}>Direita</ToolButton>
-          <ToolButton label="Justificar texto" active={state?.align === "justify"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("justify").run(); }}>Justificar</ToolButton>
-        </div>
-        <div className={styles.tools}>
-          <ToolButton label={state?.link ? "Editar link" : "Inserir link"} active={state?.link} disabled={toolsDisabled} onClick={openLink}>Link</ToolButton>
-          <ToolButton label="Inserir fotos no artigo" disabled={toolsDisabled || (state?.imageCount ?? 0) >= IMAGE_LIMIT} onClick={() => fileInput.current?.click()}>＋ Fotos</ToolButton>
-          <ToolButton label="Inserir tabela de três linhas e três colunas" active={state?.table} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(); }}>Tabela</ToolButton>
-          <ToolButton label="Citação" active={state?.quote} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBlockquote().run(); }}>“ Citação</ToolButton>
-          <ToolButton label="Inserir linha divisória" disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setHorizontalRule().run(); }}>Divisor</ToolButton>
-          <ToolButton label="Desfazer" disabled={toolsDisabled || !state?.canUndo} onClick={() => { editor?.chain().focus().undo().run(); }}>↶ Desfazer</ToolButton>
-          <ToolButton label="Refazer" disabled={toolsDisabled || !state?.canRedo} onClick={() => { editor?.chain().focus().redo().run(); }}>↷ Refazer</ToolButton>
-          <ToolButton label="Limpar formatação do texto selecionado" disabled={toolsDisabled} onClick={() => { editor?.chain().focus().unsetAllMarks().clearNodes().run(); }}>Limpar formato</ToolButton>
+        <div className={styles.commandRow}>
+          <div className={styles.toolGroup} role="group" aria-label="Formatação do texto">
+            <ToolButton label="Negrito" active={state?.bold} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBold().run(); }}><AdminIcon name="bold" /></ToolButton>
+            <ToolButton label="Itálico" active={state?.italic} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleItalic().run(); }}><AdminIcon name="italic" /></ToolButton>
+            <ToolButton label="Sublinhado" active={state?.underline} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleUnderline().run(); }}><AdminIcon name="underline" /></ToolButton>
+            <ToolButton label="Riscado" active={state?.strike} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleStrike().run(); }}><AdminIcon name="strikethrough" /></ToolButton>
+            <ToolButton label="Realçar texto" active={state?.highlight} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleHighlight({ color: state?.highlightColor || "#fff3a3" }).run(); }}><AdminIcon name="highlighter" /></ToolButton>
+          </div>
+          <div className={styles.toolGroup} role="group" aria-label="Listas">
+            <ToolButton label="Lista com marcadores" active={state?.bullet} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBulletList().run(); }}><AdminIcon name="list" /></ToolButton>
+            <ToolButton label="Lista numerada" active={state?.ordered} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleOrderedList().run(); }}><AdminIcon name="list-ordered" /></ToolButton>
+          </div>
+          <div className={styles.toolGroup} role="group" aria-label="Alinhamento do texto">
+            <ToolButton label="Alinhar à esquerda" active={state?.align === "left"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("left").run(); }}><AdminIcon name="align-left" /></ToolButton>
+            <ToolButton label="Centralizar texto" active={state?.align === "center"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("center").run(); }}><AdminIcon name="align-center" /></ToolButton>
+            <ToolButton label="Alinhar à direita" active={state?.align === "right"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("right").run(); }}><AdminIcon name="align-right" /></ToolButton>
+            <ToolButton label="Justificar texto" active={state?.align === "justify"} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setTextAlign("justify").run(); }}><AdminIcon name="align-justify" /></ToolButton>
+          </div>
+          <div className={styles.toolGroup} role="group" aria-label="Inserir elementos">
+            <ToolButton label={state?.link ? "Editar link" : "Inserir link"} active={state?.link} disabled={toolsDisabled} onClick={openLink}><AdminIcon name="link" /></ToolButton>
+            <ToolButton label="Inserir fotos no artigo" disabled={toolsDisabled || (state?.imageCount ?? 0) >= IMAGE_LIMIT} onClick={() => fileInput.current?.click()} withLabel><AdminIcon name="image" /><span>Fotos</span></ToolButton>
+            <ToolButton label="Inserir tabela de três linhas e três colunas" active={state?.table} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(); }}><AdminIcon name="table" /></ToolButton>
+            <ToolButton label="Citação" active={state?.quote} disabled={toolsDisabled} onClick={() => { editor?.chain().focus().toggleBlockquote().run(); }}><AdminIcon name="quote" /></ToolButton>
+            <ToolButton label="Inserir linha divisória" disabled={toolsDisabled} onClick={() => { editor?.chain().focus().setHorizontalRule().run(); }}><AdminIcon name="minus" /></ToolButton>
+          </div>
+          <div className={styles.toolGroup} role="group" aria-label="Histórico e formatação">
+            <ToolButton label="Desfazer" disabled={toolsDisabled || !state?.canUndo} onClick={() => { editor?.chain().focus().undo().run(); }}><AdminIcon name="undo" /></ToolButton>
+            <ToolButton label="Refazer" disabled={toolsDisabled || !state?.canRedo} onClick={() => { editor?.chain().focus().redo().run(); }}><AdminIcon name="redo" /></ToolButton>
+            <ToolButton label="Limpar formatação do texto selecionado" disabled={toolsDisabled} onClick={() => { editor?.chain().focus().unsetAllMarks().clearNodes().run(); }}><AdminIcon name="clear-format" /></ToolButton>
+          </div>
         </div>
       </div>
       <input ref={fileInput} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={selectFiles} />
@@ -277,7 +287,7 @@ export function RichTextEditor({ postId, initialContent, demoMode, disabled, inv
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
       {uploadMessage ? <p className={styles.uploadStatus} role="status" aria-live="polite">{uploadMessage}</p> : null}
       {editor ? <EditorContent editor={editor} className={styles.content} /> : <p className={styles.loading} role="status">Carregando editor…</p>}
-      <div className={styles.editorFoot}><span>Você pode arrastar ou colar fotos no texto. JPG, PNG ou WebP, até 3 MB por foto.</span><span>{state?.imageCount ?? 0}/20 fotos</span></div>
+      <div className={styles.editorFoot}><span>Arraste ou cole fotos no texto. JPG, PNG ou WebP · até 3 MB cada.</span><span className={styles.mediaCount}><AdminIcon name="image" size={14} />{state?.imageCount ?? 0}/20 fotos</span></div>
     </div>
   );
 }
