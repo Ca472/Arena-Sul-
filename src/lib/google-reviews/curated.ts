@@ -1,13 +1,14 @@
 /**
- * Manual selection verified in Google's public reviews on 2026-10-24.
+ * Testimonials selected from Google's public reviews on 2026-10-24.
+ * Aggregate rating and count verified on 2026-10-28.
  * This is not a live API response. Change verifiedOn only after a new check.
  * The aggregate includes every rating; the selected testimonials are 5-star
  * reviews with text, chosen from the recent reviews.
  */
 export const GOOGLE_REVIEW_SNAPSHOT = {
-  rating: 4.5,
-  totalReviewCount: 722,
-  verifiedOn: "2026-10-24",
+  rating: 4.6,
+  totalReviewCount: 735,
+  verifiedOn: "2026-10-28",
   reviews: [
     {
       id: "106904439667208395818",

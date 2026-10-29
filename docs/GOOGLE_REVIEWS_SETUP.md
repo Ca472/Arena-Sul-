@@ -2,9 +2,9 @@
 
 ## Estado publicado
 
-A seção usa uma seleção manual conferida na lista pública de avaliações do
-Google em 24/10/2026: nota 4,5 e 722 avaliações. O total inclui todas as notas;
-os quatro depoimentos selecionados têm cinco estrelas e texto.
+A nota e o total foram conferidos no perfil público do Google Maps em
+28/10/2026: nota 4,6 e 735 avaliações. O total inclui todas as notas.
+Os quatro depoimentos selecionados em 24/10/2026 têm cinco estrelas e texto.
 
 Os dados ficam em `src/lib/google-reviews/curated.ts`. A data `verifiedOn`
 representa a conferência real, não a data de uma visita ao site ou de um deploy.
